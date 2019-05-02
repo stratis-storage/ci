@@ -65,7 +65,7 @@ then
 
     if [ ! -f  /etc/dbus-1/system.d/stratisd.conf ]
     then
-        cp $WORKSPACE/stratisd.conf /etc/dbus-1/system.d/.
+        cp $WORKSPACE/stratisd.conf /etc/dbus-1/system.d/
     fi
 
 

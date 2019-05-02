@@ -34,7 +34,7 @@ git clone https://github.com/stratis-storage/stratisd.git
 
 if [ ! -f  /etc/dbus-1/system.d/stratisd.conf ]
 then
-    cp $STRATIS_DEPS_DIR/stratisd/stratisd.conf /etc/dbus-1/system.d/.
+    cp $STRATIS_DEPS_DIR/stratisd/stratisd.conf /etc/dbus-1/system.d/
 fi
 
 cd $STRATIS_DEPS_DIR/stratisd
