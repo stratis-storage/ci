@@ -3,7 +3,7 @@ set -e
 
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# Jenkins will set WORKSPACE to the top level directory that contains
+# Set WORKSPACE to the top level directory that contains
 # the stratis-cli git repo
 if [ -z "$WORKSPACE" ]
 then
