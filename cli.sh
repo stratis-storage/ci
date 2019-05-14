@@ -52,5 +52,5 @@ done
 # Set the PYTHONPATH to use the dependencies
 cd $WORKSPACE
 export PYTHONPATH=src:$STRATIS_DEPS_DIR/dbus-client-gen/src:$STRATIS_DEPS_DIR/dbus-python-client-gen/src:$STRATIS_DEPS_DIR/into-dbus-python/src:$STRATIS_DEPS_DIR/dbus-signature-pyparsing/src
-export STRATISD=$STRATIS_DEPS_DIR/stratisd/target/x86_64-unknown-linux-gnu/debug/stratisd
+export STRATISD=$STRATIS_DEPS_DIR/stratisd/target/debug/stratisd
 make dbus-tests

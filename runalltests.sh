@@ -47,7 +47,6 @@ source $HOME/.cargo/env
 # ACTION!="remove", SUBSYSTEM=="block", KERNEL=="loop*|nvme*|sd*|vd*|xvd*|pmem*|mmcblk*|dasd*|nbd*", OPTIONS+="watch"
 
 rustup default 1.31.0
-rustup target add i686-unknown-linux-gnu
 
 # Then, choose the directory of the test to be executed, and prep
 # the $WORKSPACE environment variable.
