@@ -45,8 +45,10 @@ fi
 cd $WORKSPACE
 rustup default 1.31.0
 cargo clean
-make build
 make $TARGET
+
+# Make a build in order to run test outside the Rust framework
+make build
 
 # If there is a stale STRATIS_DEPS_DIR remove it
 if [ -d $STRATIS_DEPS_DIR ]
