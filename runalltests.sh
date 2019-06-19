@@ -43,10 +43,6 @@ chmod +x install_rustup.sh
 
 source $HOME/.cargo/env
 
-# For tests that use nbd, add the following line to udev:
-# (edit /usr/lib/udev/rules.d/60-block.rules to add nbd* to remove action)
-# ACTION!="remove", SUBSYSTEM=="block", KERNEL=="loop*|nvme*|sd*|vd*|xvd*|pmem*|mmcblk*|dasd*|nbd*", OPTIONS+="watch"
-
 rustup default 1.35.0
 
 # Then, choose the directory of the test to be executed, and prep
