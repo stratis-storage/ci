@@ -6,6 +6,7 @@
 PRESTAGE=`pwd`
 
 dnf -y install git \
+	make \
 	dbus-devel \
 	gcc \
 	systemd-devel \
