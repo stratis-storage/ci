@@ -4,7 +4,6 @@ set -e
 export PATH="$HOME/.cargo/bin:$PATH"
 export STRATIS_DEPS_DIR=$WORKSPACE/stratis-deps
 export RUST_LOG=libstratis=debug
-export TEST_BLOCKDEVS_FILE=~/test_config.json
 
 # Set WORKSPACE to the top level directory that contains the stratisd git repo
 if [ -z $WORKSPACE ]
@@ -46,7 +45,7 @@ then
 
     if [ ! -x $STRATISD ]
     then
-        echo "Required $STRATISD not not found or not executable"
+        echo "Required $STRATISD not found or not executable"
         exit 1
     fi
 
@@ -69,7 +68,6 @@ then
     done
     # Set the PYTHONPATH to use the dependencies
     export PYTHONPATH=src:$STRATIS_DEPS_DIR/dbus-client-gen/src:$STRATIS_DEPS_DIR/dbus-python-client-gen/src:$STRATIS_DEPS_DIR/into-dbus-python/src:$STRATIS_DEPS_DIR/dbus-signature-pyparsing/src
-    cd $STRATIS_DEPS_DIR/dbus-client-gen
 
     cd $WORKSPACE/tests/client-dbus
     make tests
