@@ -67,6 +67,10 @@ export WORKSPACE=`pwd`
 $PRESTAGE/stratisd.sh $STRATISD_MODE
 RC_STRATISD=$?
 echo "Completed stratisd test ($STRATISD_MODE): status $RC_STRATISD"
+echo "Executing stratisd_nonrust test..."
+$PRESTAGE/stratisd_nonrust.sh
+RC_STRATISD_NONRUST=$?
+echo "Completed stratisd_nonrust test: status $RC_STRATISD_NONRUST"
 cd $PRESTAGE/workspace
 
 echo "Executing stratis-cli test..."
@@ -90,5 +94,6 @@ cd $PRESTAGE/workspace
 echo "End of prestage script."
 echo "Results:"
 echo "stratisd-$STRATISD_MODE: $RC_STRATISD"
+echo "stratisd_nonrust: $RC_STRATISD_NONRUST"
 echo "stratis-cli: $RC_STRATISCLI"
 echo "devicemapper-rs: $RC_DEVMAPPER"
