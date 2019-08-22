@@ -26,6 +26,7 @@ dnf -y install git \
 	python3-dateutil \
 	python3-wcwidth \
 	python3-pyparsing \
+	python3-psutil \
 	dbus-devel.x86_64 \
 	systemd-devel.x86_64 \
 	glibc-devel.x86_64 \
