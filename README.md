@@ -20,7 +20,7 @@ Note that the "runalltests.sh" script will clone the "stratisd", "stratis-cli", 
 
 # Running the stratisd test with real devices
 
-To run the stratisd test with scratch test devices, create the file `test_config.json` in the home directory of the user calling the "runalltests.sh" script.
+To run the stratisd test with scratch test devices, create the file `/etc/stratis/test_config.json`.
 
 The stratisd test requires four scratch devices, which should be at least about 8 GiB in size.
 

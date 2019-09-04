@@ -55,7 +55,7 @@ rustup default 1.36.0
 mkdir workspace
 cd workspace
 
-if [ -s "$HOME/test_config.json" ]
+if [ -s "/etc/stratis/test_config.json" ]
 then
 	STRATISD_MODE="test-real"
 else

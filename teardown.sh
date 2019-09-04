@@ -43,7 +43,7 @@ do
 	done
 done
 
-for testdevs in $(grep /dev ~/test_config.json | tr -d \"\,)
+for testdevs in $(grep /dev /etc/stratis/test_config.json | tr -d \"\,)
 do
 	for wipetgt in $(blkid -p $testdevs | grep stratis | awk '{print $1}' | tr -d \:)
 	do
