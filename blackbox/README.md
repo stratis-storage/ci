@@ -11,7 +11,7 @@ Example `/etc/stratis/test_config.json` file:
     "ok_to_destroy_dev_array_key": [
                                    "/dev/vdb",
                                    "/dev/vdc",
-                                   "/dev/vdd",
+                                   "/dev/vdd"
     ]
 }
 ```
