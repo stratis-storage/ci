@@ -96,12 +96,12 @@ dnf -y install output_rpms/$STRATISD_RPMBASENAME*.rpm output_rpms/$STRATIS_CLI_R
 # Start running blackbox tests.
 echo "----------"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
-echo "Executing stratis-cli blackbox tests..."
+echo "Executing blackbox test 'python3 stratis_cli_cert.py' against test devices..."
 python3 stratis-cli-1.0.9/tests/blackbox/stratis_cli_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]}
 
 echo "----------"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
-echo "Executing stratisd blackbox tests..."
+echo "Executing blackbox test 'python3 stratisd_cert.py' against test devices..."
 python3 stratis-cli-1.0.9/tests/blackbox/stratisd_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]}
 
 echo "----------"
