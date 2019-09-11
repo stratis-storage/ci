@@ -68,6 +68,8 @@ rm -rf ${STRATIS_CLI_N}-${STRATIS_CLI_V}
 # Build the stratisd package (along with the rust cargo vendor tarball)
 echo "Building stratisd test package..."
 git clone $STRATISD_REPO
+echo "Most recent commits for ${STRATISD_N}:"
+( cd $STRATISD_N; git status; git log --format="%h %ai :: %s" | head -10 )
 mv -v ${STRATISD_N} ${STRATISD_N}-${STRATISD_V}
 mkdir ${STRATISD_N}-${STRATISD_V}/vendor
 tar czvf ~/rpmbuild/SOURCES/${STRATISD_N}-${STRATISD_V}.tar.gz ${STRATISD_N}-${STRATISD_V}
@@ -81,6 +83,8 @@ rpmbuild -bb stratisd.spec
 # Build the stratis-cli package
 echo "Building stratis-cli test package..."
 git clone $STRATIS_CLI_REPO
+echo "Most recent commits for ${STRATIS_CLI_N}:"
+( cd $STRATIS_CLI_N; git status; git log --format="%h %ai :: %s" | head -10 )
 mv -v ${STRATIS_CLI_N} ${STRATIS_CLI_N}-${STRATIS_CLI_V}
 tar czvf ~/rpmbuild/SOURCES/${STRATIS_CLI_N}-${STRATIS_CLI_V}.tar.gz ${STRATIS_CLI_N}-${STRATIS_CLI_V}
 echo "Executing rpmbuild for stratis-cli..."
