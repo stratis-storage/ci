@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+export STRATISD_DBUS_TIMEOUT=300
+
 if [ ! -e /etc/stratis/test_config.json ]
 then
 	echo "No test device config found; create a ~/test_config.json"
@@ -99,11 +101,13 @@ dnf -y install output_rpms/$STRATISD_RPMBASENAME*.rpm output_rpms/$STRATIS_CLI_R
 
 # Start running blackbox tests.
 echo "----------"
+echo "Stratisd dbus timeout: $STRATISD_DBUS_TIMEOUT"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
 echo "Executing blackbox test 'python3 stratis_cli_cert.py' against test devices..."
 python3 stratis-cli-1.0.9/tests/blackbox/stratis_cli_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || echo "Test failed: stratis_cli_cert"
 
 echo "----------"
+echo "Stratisd dbus timeout: $STRATISD_DBUS_TIMEOUT"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
 echo "Executing blackbox test 'python3 stratisd_cert.py' against test devices..."
 python3 stratis-cli-1.0.9/tests/blackbox/stratisd_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || echo "Test failed: stratisd_cert"
