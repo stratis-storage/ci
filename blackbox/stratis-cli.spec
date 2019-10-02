@@ -1,7 +1,7 @@
 
 Name:           stratis-cli
-Version:        1.0.9
-Release:        9%{?dist}
+Version:        77.77.77
+Release:        77%{?dist}
 Summary:        Command-line tool for interacting with the Stratis daemon
 
 License:        ASL 2.0
@@ -51,5 +51,5 @@ a2x -f manpage docs/stratis.txt
 %{python3_sitelib}/stratis_cli-*.egg-info/
 
 %changelog
-* Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 1.0.9-9
-- Update to 1.0.9-9
+* Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
+- Update to 77.77.77-77
