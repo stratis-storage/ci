@@ -100,17 +100,20 @@ find ~/rpmbuild/RPMS/ -name stratis*.rpm -exec cp -v {} output_rpms/ \;
 dnf -y install output_rpms/$STRATISD_RPMBASENAME*.rpm output_rpms/$STRATIS_CLI_RPMBASENAME*.rpm
 
 # Start running blackbox tests.
+RC_BLACKBOX_STRATISD=0
+RC_BLACKBOX_STRATIS_CLI=0
+
 echo "----------"
 echo "Stratisd dbus timeout: $STRATISD_DBUS_TIMEOUT"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
 echo "Executing blackbox test 'python3 stratis_cli_cert.py' against test devices..."
-python3 ${STRATIS_CLI_N}-${STRATIS_CLI_V}/tests/blackbox/stratis_cli_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || echo "Test failed: stratis_cli_cert"
+python3 ${STRATIS_CLI_N}-${STRATIS_CLI_V}/tests/blackbox/stratis_cli_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || RC_BLACKBOX_STRATIS_CLI=1
 
 echo "----------"
 echo "Stratisd dbus timeout: $STRATISD_DBUS_TIMEOUT"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
 echo "Executing blackbox test 'python3 stratisd_cert.py' against test devices..."
-python3 ${STRATIS_CLI_N}-${STRATIS_CLI_V}/tests/blackbox/stratisd_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || echo "Test failed: stratisd_cert"
+python3 ${STRATIS_CLI_N}-${STRATIS_CLI_V}/tests/blackbox/stratisd_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || RC_BLACKBOX_STRATISD=1
 
 echo "----------"
 echo "Cleaning rpmbuild directories"
@@ -120,3 +123,21 @@ rm -rfv ~/rpmbuild/SOURCES/*
 rm -rfv ~/rpmbuild/SPECS/*
 
 dnf -y remove $STRATISD_RPMBASENAME $STRATIS_CLI_RPMBASENAME
+
+echo "stratisd_cert result: $RC_BLACKBOX_STRATISD"
+echo "stratis_cli_cert result: $RC_BLACKBOX_STRATIS_CLI"
+
+if [ $RC_BLACKBOX_STRATISD -gt 0 ] && [ $RC_BLACKBOX_STRATIS_CLI -gt 0 ]
+then
+	exit 3
+fi
+
+if [ $RC_BLACKBOX_STRATIS_CLI -gt 0 ]
+then
+	exit 2
+fi
+
+if [ $RC_BLACKBOX_STRATISD -gt 0 ]
+then
+	exit 1
+fi
