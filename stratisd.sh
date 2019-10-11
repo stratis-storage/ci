@@ -42,6 +42,6 @@ then
 fi
 
 cd $WORKSPACE
-rustup default 1.36.0
+rustup default 1.37.0
 cargo clean
 make $TARGET

@@ -13,7 +13,7 @@ fi
 
 cd $WORKSPACE
 
-rustup default 1.36.0
+rustup default 1.37.0
 cargo clean
 STRATIS_DESTRUCTIVE_TEST=1 make sudo_test
 
