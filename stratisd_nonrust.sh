@@ -1,7 +1,17 @@
 #!/bin/bash
 set -e
 
-export PATH="$HOME/.cargo/bin:$PATH"
+if [ -z "$RUST_CARGO_PATH" ]
+then
+    echo "Required RUST_CARGO_PATH environment variable not set"
+    exit 1
+fi
+
+echo "Current Rust cargo path: $RUST_CARGO_PATH"
+
+export PATH="$RUST_CARGO_PATH/bin:$PATH"
+echo "Current path: $PATH"
+
 export STRATIS_DEPS_DIR=$WORKSPACE/stratis-deps
 export RUST_LOG=libstratis=debug
 
@@ -75,3 +85,7 @@ export PYTHONPATH=src:$STRATIS_DEPS_DIR/dbus-client-gen/src:$STRATIS_DEPS_DIR/db
 
 cd $WORKSPACE/tests/client-dbus
 make tests
+
+# Cleanup the provided cargo directory's cache and registry
+rm $RUST_CARGO_PATH/.package-cache
+rm -r $RUST_CARGO_PATH/registry

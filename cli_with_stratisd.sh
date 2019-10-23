@@ -1,7 +1,16 @@
 #!/bin/bash
 set -e
 
-export PATH="$HOME/.cargo/bin:$PATH"
+if [ -z "$RUST_CARGO_PATH" ]
+then
+    echo "Required RUST_CARGO_PATH environment variable not set"
+    exit 1
+fi
+
+echo "Current Rust cargo path: $RUST_CARGO_PATH"
+
+export PATH="$RUST_CARGO_PATH/bin:$PATH"
+echo "Current path: $PATH"
 
 # Set WORKSPACE to the top level directory that contains
 # the stratis-cli git repo
@@ -57,3 +66,7 @@ export PYTHONPATH=src:$STRATIS_DEPS_DIR/dbus-client-gen/src:$STRATIS_DEPS_DIR/db
 # Set the stratisd binary base location to $WORKSPACE
 export STRATISD=$WORKSPACE/target/debug/stratisd
 make dbus-tests
+
+# Cleanup the provided cargo directory's cache and registry
+rm $RUST_CARGO_PATH/.package-cache
+rm -r $RUST_CARGO_PATH/registry

@@ -1,7 +1,17 @@
 #!/bin/bash
 set -e
 
-export PATH="$HOME/.cargo/bin:$PATH"
+if [ -z "$RUST_CARGO_PATH" ]
+then
+    echo "Required RUST_CARGO_PATH environment variable not set"
+    exit 1
+fi
+
+echo "Current Rust cargo path: $RUST_CARGO_PATH"
+
+export PATH="$RUST_CARGO_PATH/bin:$PATH"
+echo "Current path: $PATH"
+
 export RUST_LOG=libstratis=debug
 export TEST_BLOCKDEVS_FILE=/etc/stratis/test_config.json
 
@@ -45,3 +55,7 @@ cd $WORKSPACE
 rustup default 1.37.0
 cargo clean
 make $TARGET
+
+# Cleanup the provided cargo directory's cache and registry
+rm $RUST_CARGO_PATH/.package-cache
+rm -r $RUST_CARGO_PATH/registry
