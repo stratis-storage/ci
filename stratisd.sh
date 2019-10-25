@@ -2,7 +2,7 @@
 set -e
 
 export PATH="$HOME/.cargo/bin:$PATH"
-export RUST_LOG=libstratis=debug
+export RUST_LOG=libstratis=info
 export TEST_BLOCKDEVS_FILE=/etc/stratis/test_config.json
 
 TARGET=$1
