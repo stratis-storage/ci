@@ -3,7 +3,7 @@ set -e
 
 export PATH="$HOME/.cargo/bin:$PATH"
 export STRATIS_DEPS_DIR=$WORKSPACE/stratis-deps
-export RUST_LOG=libstratis=debug
+export RUST_LOG=libstratis=info
 
 # Set WORKSPACE to the top level directory that contains the stratisd git repo
 if [ -z $WORKSPACE ]
