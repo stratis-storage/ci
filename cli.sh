@@ -55,3 +55,4 @@ export PYTHONPATH=src:$STRATIS_DEPS_DIR/dbus-client-gen/src:$STRATIS_DEPS_DIR/db
 export STRATISD=$STRATIS_DEPS_DIR/stratisd/target/debug/stratisd
 make dbus-tests
 make keyboard-interrupt-test
+make coverage-no-html
