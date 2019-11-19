@@ -39,6 +39,8 @@ fi
 
 # Switch to the stratisd directory, which is the $WORKSPACE directory.
 cd $WORKSPACE
+rustup default 1.37.0
+cargo clean
 make build
 
 for STRATIS_DEP in dbus-client-gen dbus-signature-pyparsing dbus-python-client-gen into-dbus-python
