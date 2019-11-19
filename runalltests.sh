@@ -18,6 +18,7 @@ dnf -y install git \
 	device-mapper-persistent-data \
 	xfsprogs \
 	python3-hypothesis \
+	python3-coverage \
 	dbus-glib-devel \
 	python3-justbytes.noarch \
 	python3-setuptools \
