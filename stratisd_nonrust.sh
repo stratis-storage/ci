@@ -20,7 +20,7 @@ then
 fi
 
 cd $WORKSPACE
-rustup default 1.37.0
+rustup default 1.38.0
 cargo clean
 
 # Make a build in order to run test outside the Rust framework

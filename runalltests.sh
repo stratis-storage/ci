@@ -46,7 +46,7 @@ chmod +x install_rustup.sh
 
 source $HOME/.cargo/env
 
-rustup default 1.37.0
+rustup default 1.38.0
 
 # Then, choose the directory of the test to be executed, and prep
 # the $WORKSPACE environment variable.
