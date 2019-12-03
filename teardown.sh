@@ -30,6 +30,14 @@ do
 	done
 done
 
+echo "Unmounting active stratis test mounts (if any):"
+for j in $(grep stratis_testing /proc/mounts | awk {'print $2'})
+do
+	echo $j
+	umount $j
+done
+echo
+
 # Now tear down the remnant stratis component devices, top to bottom.
 for i in thin-fs thinpool-pool flex-thinmeta flex-thindata flex-mdv physical-originsub stratis_test_
 do
