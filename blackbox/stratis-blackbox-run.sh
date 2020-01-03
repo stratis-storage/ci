@@ -5,12 +5,13 @@ export STRATISD_DBUS_TIMEOUT=300
 
 if [ ! -e /etc/stratis/test_config.json ]
 then
-	echo "No test device config found; create a ~/test_config.json"
-	echo "file with three devices that can be overwritten for testing."
+	echo "No test device config found; create a test_config.json"
+	echo "file in /etc/stratis with three devices that can be"
+	echo "overwritten for testing."
 	exit 8
 fi
 
-# Create an array of test devices from the ~/test_config.json file.
+# Create an array of test devices from the test_config.json file.
 # This is a naive search for device paths starting with "/dev", then
 # stripping out the quote and comma characters.
 TESTDEVS=($(grep \/dev /etc/stratis/test_config.json | tr -d \"\,))
