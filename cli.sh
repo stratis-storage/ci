@@ -38,6 +38,8 @@ then
 fi
 
 cd $STRATIS_DEPS_DIR/stratisd
+rustup default 1.38.0
+cargo clean
 make build
 
 for STRATIS_DEP in dbus-client-gen dbus-signature-pyparsing dbus-python-client-gen into-dbus-python
