@@ -84,18 +84,8 @@ RC_STRATISCLI=$?
 echo "Completed stratis-cli test: status $RC_STRATISCLI"
 cd $PRESTAGE/workspace
 
-echo "Executing devicemapper-rs test..."
-git clone https://github.com/stratis-storage/devicemapper-rs.git
-cd devicemapper-rs
-export WORKSPACE=`pwd`
-$PRESTAGE/dm_test.sh
-RC_DEVMAPPER=$?
-echo "Completed devicemapper-rs test: status $RC_DEVMAPPER"
-cd $PRESTAGE/workspace
-
 echo "End of prestage script."
 echo "Results:"
 echo "stratisd-$STRATISD_MODE: $RC_STRATISD"
 echo "stratisd_nonrust: $RC_STRATISD_NONRUST"
 echo "stratis-cli: $RC_STRATISCLI"
-echo "devicemapper-rs: $RC_DEVMAPPER"
