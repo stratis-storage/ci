@@ -34,7 +34,11 @@ dnf -y install git \
 	dbus-devel.i686 \
 	systemd-devel.i686 \
 	glibc-devel.i686 \
-	openssl-devel
+	openssl-devel \
+	clang \
+	llvm \
+	llvm-devel \
+	cryptsetup-devel
 
 # The instructions for rustup say to run "curl https://sh.rustup.rs -sSf | sh".
 # The resulting script has an interactive prompt, which would hang.
