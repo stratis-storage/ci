@@ -39,6 +39,10 @@ BASEDEPPKGS=(
 	rust
 	cargo
 	openssl-devel
+	clang
+	llvm
+	llvm-devel
+	cryptsetup-devel
 	make
 )
 
