@@ -93,3 +93,18 @@ echo "Results:"
 echo "stratisd-$STRATISD_MODE: $RC_STRATISD"
 echo "stratisd_nonrust: $RC_STRATISD_NONRUST"
 echo "stratis-cli: $RC_STRATISCLI"
+
+if [ $RC_STRATISD -gt 0 ]
+then
+	exit 1
+fi
+
+if [ $RC_STRATISCLI -gt 0 ]
+then
+	exit 2
+fi
+
+if [ $RC_STRATISD_NONRUST -gt 0 ]
+then
+	exit 4
+fi
