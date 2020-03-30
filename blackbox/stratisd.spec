@@ -17,7 +17,6 @@ Source1:        %{name}-%{version}-vendor.tar.xz
 
 ExclusiveArch:  %{rust_arches}
 
-BuildRequires:  rust-toolset
 BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
 BuildRequires:  %{_bindir}/a2x

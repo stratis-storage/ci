@@ -35,7 +35,6 @@ BASEDEPPKGS=(
 	asciidoc
 	python3-devel
 	dbus-devel
-	rust-toolset
 	systemd-devel
 	rust
 	cargo
