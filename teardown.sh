@@ -39,7 +39,7 @@ done
 echo
 
 # Now tear down the remnant stratis component devices, top to bottom.
-for i in thin-fs thinpool-pool flex-thinmeta flex-thindata flex-mdv physical-originsub stratis_test_
+for i in thin-fs thinpool-pool flex-thinmeta flex-thindata flex-mdv physical-originsub stratis_test_ stratis-.*private-.*-crypt
 do
 	for j in $(dmsetup ls | grep $i | awk {'print $1'})
 	do
