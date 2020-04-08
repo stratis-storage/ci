@@ -43,6 +43,7 @@ BASEDEPPKGS=(
 	llvm
 	llvm-devel
 	cryptsetup-devel
+	libblkid-devel
 	make
 )
 
