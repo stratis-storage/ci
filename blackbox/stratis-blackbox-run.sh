@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-export STRATISD_DBUS_TIMEOUT=300
+export STRATIS_DBUS_TIMEOUT=300
 
 if [ ! -e /etc/stratis/test_config.json ]
 then
@@ -110,13 +110,13 @@ RC_BLACKBOX_STRATISD=0
 RC_BLACKBOX_STRATIS_CLI=0
 
 echo "----------"
-echo "Stratisd dbus timeout: $STRATISD_DBUS_TIMEOUT"
+echo "Stratisd dbus timeout: $STRATIS_DBUS_TIMEOUT"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
 echo "Executing blackbox test 'python3 stratis_cli_cert.py' against test devices..."
 python3 ${STRATIS_CLI_N}-${STRATIS_CLI_V}/tests/blackbox/stratis_cli_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || RC_BLACKBOX_STRATIS_CLI=1
 
 echo "----------"
-echo "Stratisd dbus timeout: $STRATISD_DBUS_TIMEOUT"
+echo "Stratisd dbus timeout: $STRATIS_DBUS_TIMEOUT"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
 echo "Executing blackbox test 'python3 stratisd_cert.py' against test devices..."
 python3 ${STRATIS_CLI_N}-${STRATIS_CLI_V}/tests/blackbox/stratisd_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || RC_BLACKBOX_STRATISD=1
