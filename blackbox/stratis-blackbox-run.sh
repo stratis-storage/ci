@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-export STRATIS_DBUS_TIMEOUT=300
+export STRATIS_DBUS_TIMEOUT=300000
 
 if [ ! -e /etc/stratis/test_config.json ]
 then
