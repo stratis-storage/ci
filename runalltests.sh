@@ -35,6 +35,7 @@ dnf -y install git \
 	clang \
 	llvm \
 	llvm-devel \
+	keyutils \
 	cryptsetup-devel
 
 # The instructions for rustup say to run "curl https://sh.rustup.rs -sSf | sh".
