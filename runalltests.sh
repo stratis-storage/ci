@@ -11,13 +11,10 @@ dnf -y install git \
 	gcc \
 	systemd-devel \
 	xfsprogs \
-	python3-tox \
 	python3-pytest \
 	dbus-python \
 	make \
 	device-mapper-persistent-data \
-	xfsprogs \
-	python3-hypothesis \
 	python3-coverage \
 	dbus-glib-devel \
 	python3-justbytes.noarch \
