@@ -66,7 +66,6 @@ fi
 mkdir output_rpms
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS}/
 
-# Remove the previously created repository directories
 ./reset-upstream-stratis-repos.sh
 
 
