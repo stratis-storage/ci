@@ -22,9 +22,6 @@ then
 	exit 4
 fi
 
-STRATISD_REPO="https://github.com/stratis-storage/stratisd.git"
-STRATIS_CLI_REPO="https://github.com/stratis-storage/stratis-cli.git"
-
 BASEDEPPKGS=(
 	python3-dbus-client-gen
 	python3-dbus-python-client-gen
@@ -70,16 +67,11 @@ mkdir output_rpms
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS}/
 
 # Remove the previously created repository directories
-rm -rf ${STRATISD_N}-${STRATISD_V}
-rm -rf ${STRATIS_CLI_N}-${STRATIS_CLI_V}
+./reset-upstream-stratis-repos.sh
 
 
 # Build the stratisd package (along with the rust cargo vendor tarball)
 echo "Building stratisd test package..."
-git clone $STRATISD_REPO
-echo "Most recent commits for ${STRATISD_N}:"
-( cd $STRATISD_N; git status; git log --format="%h %ci :: %s" | head -20 )
-mv -v ${STRATISD_N} ${STRATISD_N}-${STRATISD_V}
 
 # If the vendor directory exists, remove it.
 # The contents will be repopulated by "cargo vendor".
@@ -99,10 +91,6 @@ rpmbuild -bb stratisd.spec
 
 # Build the stratis-cli package
 echo "Building stratis-cli test package..."
-git clone $STRATIS_CLI_REPO
-echo "Most recent commits for ${STRATIS_CLI_N}:"
-( cd $STRATIS_CLI_N; git status; git log --format="%h %ci :: %s" | head -20 )
-mv -v ${STRATIS_CLI_N} ${STRATIS_CLI_N}-${STRATIS_CLI_V}
 tar czvf ~/rpmbuild/SOURCES/${STRATIS_CLI_N}-${STRATIS_CLI_V}.tar.gz ${STRATIS_CLI_N}-${STRATIS_CLI_V}
 echo "Executing rpmbuild for stratis-cli..."
 rpmbuild -bb stratis-cli.spec
