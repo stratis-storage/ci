@@ -80,7 +80,15 @@ git clone $STRATISD_REPO
 echo "Most recent commits for ${STRATISD_N}:"
 ( cd $STRATISD_N; git status; git log --format="%h %ci :: %s" | head -20 )
 mv -v ${STRATISD_N} ${STRATISD_N}-${STRATISD_V}
-mkdir ${STRATISD_N}-${STRATISD_V}/vendor
+
+# If the vendor directory exists, remove it.
+# The contents will be repopulated by "cargo vendor".
+if [ -d ${STRATISD_N}-${STRATISD_V}/vendor ]
+then
+	echo "stratisd vendor directory already exists.  Removing..."
+	rm -rf ${STRATISD_N}-${STRATISD_V}/vendor
+fi
+
 tar czvf ~/rpmbuild/SOURCES/${STRATISD_N}-${STRATISD_V}.tar.gz ${STRATISD_N}-${STRATISD_V}
 cd ${STRATISD_N}-${STRATISD_V}/
 cargo vendor && tar cJf ../${STRATISD_N}-${STRATISD_V}-vendor.tar.xz vendor/
