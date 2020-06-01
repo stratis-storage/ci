@@ -22,7 +22,6 @@ dnf -y install git \
 	dbus-python \
 	dbus-python-devel \
 	device-mapper-persistent-data \
-	keyutils \
 	openssl-devel \
 	systemd-devel \
 	systemd-devel.i686 \
