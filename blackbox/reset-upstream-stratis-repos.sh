@@ -24,9 +24,21 @@ echo "Most recent commits for ${STRATISD_N}:"
 ( cd $STRATISD_N; git status; git log --format="%h %ci :: %s" | head -20 )
 mv -v ${STRATISD_N} ${STRATISD_N}-${STRATISD_V}
 
+if [ ! -z "$STRATISD_REMOTE" ] && [ ! -z "STRATISD_BRANCH" ]
+then
+	git remote add blackbox $STRATISD_REMOTE
+	git fetch blackbox
+	git checkout -b blackbox blackbox/$STRATISD_BRANCH
+fi
 
 git clone $STRATIS_CLI_REPO
 echo "Most recent commits for ${STRATIS_CLI_N}:"
 ( cd $STRATIS_CLI_N; git status; git log --format="%h %ci :: %s" | head -20 )
 mv -v ${STRATIS_CLI_N} ${STRATIS_CLI_N}-${STRATIS_CLI_V}
 
+if [ ! -z "$STRATIS_CLI_REMOTE" ] && [ ! -z "STRATIS_CLI_BRANCH" ]
+then
+	git remote add blackbox $STRATIS_CLI_REMOTE
+	git fetch blackbox
+	git checkout -b blackbox blackbox/$STRATIS_CLI_BRANCH
+fi
