@@ -36,6 +36,14 @@ fi
 echo "Executing stratisd test ($STRATISD_MODE)"
 git clone https://github.com/stratis-storage/stratisd.git
 cd stratisd
+
+# Check out PR branch if STRATISD_BRANCH and STRATISD_REMOTE are set
+if [ ! -z "$STRATISD_BRANCH" ] && [ ! -z "$STRATISD_REMOTE" ]
+then
+	git remote add pr $STRATISD_REMOTE
+	git checkout -b pr-branch pr/$STRATISD_BRANCH
+fi
+
 export WORKSPACE=`pwd`
 $PRESTAGE/stratisd.sh $STRATISD_MODE
 RC_STRATISD=$?
@@ -49,6 +57,14 @@ cd $PRESTAGE/workspace
 echo "Executing stratis-cli test..."
 git clone https://github.com/stratis-storage/stratis-cli
 cd stratis-cli
+
+# Check out PR branch if STRATIS_CLI_BRANCH and STRATIS_CLI_REMOTE are set
+if [ ! -z "$STRATIS_CLI_BRANCH" ] && [ ! -z "$STRATIS_CLI_REMOTE" ]
+then
+	git remote add pr $STRATIS_CLI_REMOTE
+	git checkout -b pr-branch pr/$STRATIS_CLI_BRANCH
+fi
+
 export WORKSPACE=`pwd`
 $PRESTAGE/cli.sh
 RC_STRATISCLI=$?
