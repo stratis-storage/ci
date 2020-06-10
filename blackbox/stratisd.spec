@@ -19,6 +19,9 @@ ExclusiveArch:  %{rust_arches}
 
 BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
+BuildRequires:  libblkid-devel
+BuildRequires:  cryptsetup-devel
+BuildRequires:  clang
 BuildRequires:  %{_bindir}/a2x
 
 Requires:       xfsprogs
