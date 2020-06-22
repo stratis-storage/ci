@@ -32,6 +32,14 @@ git clone https://github.com/stratis-storage/into-dbus-python.git
 git clone https://github.com/stratis-storage/dbus-signature-pyparsing.git
 git clone https://github.com/stratis-storage/stratis-cli.git
 
+# If a stratis-cli tag is passed in, check out the tag.
+if [ ! -z $1 ]
+then
+	cd stratis-cli
+	git checkout $1
+	cd $STRATIS_DEPS_DIR
+fi
+
 if [ ! -f  /etc/dbus-1/system.d/stratisd.conf ]
 then
     cp $WORKSPACE/stratisd.conf /etc/dbus-1/system.d/
