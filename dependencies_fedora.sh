@@ -32,7 +32,6 @@ dnf -y install git \
 	python3-justbytes \
 	python3-psutil \
 	python3-pyparsing \
-	python3-pytest \
 	python3-pyudev \
 	python3-semantic_version \
 	python3-setuptools \
