@@ -42,6 +42,19 @@ then
 fi
 
 cd $WORKSPACE
-rustup default 1.43.0
+
+# Check to see if rustup is installed.
+# If so, use it to set the rust version.
+# Otherwise, run with the current rust version.
+set +e
+which rustup 2>&1 1>/dev/null
+RC_WHICHRUSTUP=$?
+set -e
+
+if [ $RC_WHICHRUSTUP -eq 0 ]
+then
+	rustup default 1.43.0
+fi
+
 cargo clean
 make $TARGET
