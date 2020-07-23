@@ -48,8 +48,9 @@ a2x -f manpage docs/stratisd.txt
 %{__install} -Dpm0644 -t %{buildroot}%{_datadir}/dbus-1/system.d stratisd.conf
 # Daemon should be really private
 mkdir -p %{buildroot}%{_libexecdir}
+mkdir -p %{buildroot}/usr/lib/udev
 mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
-mv %{buildroot}%{_bindir}/stratis_uuids_to_names %{buildroot}%{_libexecdir}/stratis_uuids_to_names
+mv %{buildroot}%{_bindir}/stratis_uuids_to_names %{buildroot}/usr/lib/udev/stratis_uuids_to_names
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratisd.8
 %{__install} -Dpm0644 -t %{buildroot}%{_unitdir} stratisd.service
 
@@ -71,7 +72,7 @@ mv %{buildroot}%{_bindir}/stratis_uuids_to_names %{buildroot}%{_libexecdir}/stra
 %license LICENSE
 %doc README.md
 %{_libexecdir}/stratisd
-%{_libexecdir}/stratis_uuids_to_names
+/usr/lib/udev/stratis_uuids_to_names
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/system.d/stratisd.conf
 %{_mandir}/man8/stratisd.8*
