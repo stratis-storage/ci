@@ -3,6 +3,7 @@
 # Not interested in packaging lib
 # stratisd is supposed to be daemon used through dbus
 %global __cargo_is_lib() false
+%global udevdir %(pkg-config --variable=udevdir udev)
 
 Name:           stratisd
 Version:        77.77.77
@@ -48,8 +49,11 @@ a2x -f manpage docs/stratisd.txt
 %{__install} -Dpm0644 -t %{buildroot}%{_datadir}/dbus-1/system.d stratisd.conf
 # Daemon should be really private
 mkdir -p %{buildroot}%{_libexecdir}
+mkdir -p %{buildroot}%{udevdir}
 mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
+mv %{buildroot}%{_bindir}/stratis_uuids_to_names %{buildroot}%{udevdir}/stratis_uuids_to_names
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratisd.8
+%{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/99-stratisd.rules
 %{__install} -Dpm0644 -t %{buildroot}%{_unitdir} stratisd.service
 
 %if %{with check}
@@ -70,10 +74,12 @@ mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
 %license LICENSE
 %doc README.md
 %{_libexecdir}/stratisd
+%{udevdir}/stratis_uuids_to_names
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/system.d/stratisd.conf
 %{_mandir}/man8/stratisd.8*
 %{_unitdir}/stratisd.service
+%config %{_udevrulesdir}/99-stratisd.rules
 
 %changelog
 * Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
