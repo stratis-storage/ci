@@ -10,7 +10,7 @@ import sys
 
 def parse_json(path):
     """
-    Opens the provided JSON file and search for the required key.
+    Opens the provided JSON file and searches for the required key.
     The return value is a comma-delimited string of device names.
     """
 
