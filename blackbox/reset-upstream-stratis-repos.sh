@@ -26,9 +26,11 @@ mv -v ${STRATISD_N} ${STRATISD_N}-${STRATISD_V}
 
 if [ ! -z "$STRATISD_REMOTE" ] && [ ! -z "STRATISD_BRANCH" ]
 then
+	cd stratisd
 	git remote add blackbox $STRATISD_REMOTE
 	git fetch blackbox
 	git checkout -b blackbox blackbox/$STRATISD_BRANCH
+	cd ..
 fi
 
 git clone $STRATIS_CLI_REPO
@@ -38,7 +40,9 @@ mv -v ${STRATIS_CLI_N} ${STRATIS_CLI_N}-${STRATIS_CLI_V}
 
 if [ ! -z "$STRATIS_CLI_REMOTE" ] && [ ! -z "STRATIS_CLI_BRANCH" ]
 then
+	cd stratis-cli
 	git remote add blackbox $STRATIS_CLI_REMOTE
 	git fetch blackbox
 	git checkout -b blackbox blackbox/$STRATIS_CLI_BRANCH
+	cd ..
 fi
