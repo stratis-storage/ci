@@ -38,7 +38,7 @@ then
 fi
 
 cd $STRATIS_DEPS_DIR/stratisd
-rustup default 1.43.0
+rustup default 1.45.0
 cargo clean
 make build
 
