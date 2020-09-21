@@ -14,6 +14,8 @@ dnf -y install git \
 	glibc-devel.x86_64 \
 	llvm \
 	llvm-devel \
+	clevis \
+	clevis-luks \
 	cryptsetup-devel \
 	dbus-devel \
 	dbus-devel.i686 \
