@@ -3,7 +3,7 @@
 # Install dependencies for building and testing Stratis on Fedora.
 # For clarity, packages are grouped into sections:
 # - Base build tools (git, make)
-# - Base toolchain (compilers and associated libraries
+# - Base toolchain (compilers and associated libraries)
 # - Core library dependencies (D-Bus, device-mapper, systemd, etc.)
 # - Python 3 dependences
 dnf -y install git \
@@ -14,6 +14,7 @@ dnf -y install git \
 	glibc-devel.x86_64 \
 	llvm \
 	llvm-devel \
+	asciidoc \
 	clevis \
 	clevis-luks \
 	cryptsetup-devel \
