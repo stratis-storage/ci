@@ -23,10 +23,10 @@ dnf -y install git \
 	dbus-devel.i686 \
 	dbus-devel.x86_64 \
 	dbus-glib-devel \
-	dbus-python \
 	dbus-python-devel \
 	device-mapper-persistent-data \
 	openssl-devel \
+	python3-dbus \
 	systemd-devel \
 	systemd-devel.i686 \
 	systemd-devel.x86_64 \
