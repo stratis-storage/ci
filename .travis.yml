@@ -10,24 +10,24 @@ jobs:
   include:
 
     # MANDATORY CHECKS USING CURRENT DEVELOPMENT INTERPRETER
-    - name: "run pylint using Python 3.7.7"
-      python: "3.7.7"
+    - name: "run pylint using Python 3.7.9"
+      python: "3.7.9"
       install: pip install pylint==2.4.4
       env: TASK=lint
-    - name: "check formatting using Python 3.7.7"
-      python: "3.7.7"
+    - name: "check formatting using Python 3.7.9"
+      python: "3.7.9"
       install: pip install black==19.10b0 isort==4.3.21
       env: TASK=fmt-travis
 
     # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
-    - name: "run pylint using Python 3.6.8, omit optional wcwidth dependency"
+    - name: "run pylint using Python 3.6.8"
       python: "3.6.8"
       install: pip install pylint==2.4.4
       env: TASK=lint
 
     # VERIFICATION OF TEST INFRASTRUCTURE
     - name: "run yamllint 1.23.0 on .travis.yml"
-      python: "3.7.7"
+      python: "3.7.9"
       install: pip install yamllint==1.23.0
       env: TASK=yamllint
 
