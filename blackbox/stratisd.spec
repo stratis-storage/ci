@@ -12,11 +12,20 @@ Summary:        Daemon that manages block devices to create filesystems
 
 License:        MPLv2.0
 URL:            https://github.com/stratis-storage/stratisd
+%if 0%{?rhel}
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{name}-%{version}-vendor.tar.xz
-
+%else
+Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+%endif
 
 ExclusiveArch:  %{rust_arches}
+
+%if 0%{?rhel}
+BuildRequires:  rust-toolset
+%else
+BuildRequires:  rust-packaging
+%endif
 
 BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
@@ -36,10 +45,18 @@ Stratisd test build.  This package should not be used in production
 
 
 %prep
+%if 0%{?rhel}
 %setup -q -n %{name}-%{version}
 
 # Source1 is vendored dependencies
 %cargo_prep -V 1
+%else
+%autosetup -p1
+%cargo_prep
+%generate_buildrequires
+%cargo_generate_buildrequires
+echo '/usr/bin/a2x'
+%endif
 
 %build
 %cargo_build
@@ -61,7 +78,7 @@ mv %{buildroot}%{_bindir}/stratis_uuids_to_names %{buildroot}%{udevdir}/stratis_
 
 %if %{with check}
 %check
-%cargo_test -- --skip real_ --skip loop_ --skip travis_
+%cargo_test -- -- --skip real_ --skip loop_ --skip travis_
 %endif
 
 %post
