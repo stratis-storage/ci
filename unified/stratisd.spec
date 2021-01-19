@@ -12,12 +12,8 @@ Summary:        Daemon that manages block devices to create filesystems
 
 License:        MPLv2.0
 URL:            https://github.com/stratis-storage/stratisd
-%if 0%{?rhel}
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{name}-%{version}-vendor.tar.xz
-%else
-Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
-%endif
 
 ExclusiveArch:  %{rust_arches}
 
