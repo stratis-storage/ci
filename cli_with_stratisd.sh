@@ -2,6 +2,7 @@
 set -e
 
 export PATH="$HOME/.cargo/bin:$PATH"
+export RUST_LOG=libstratis=debug,stratisd=debug
 
 # Set WORKSPACE to the top level directory that contains
 # the stratis-cli git repo
