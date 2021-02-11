@@ -48,7 +48,7 @@ fi
 
 # Switch to the stratisd directory, which is the $WORKSPACE directory.
 cd $WORKSPACE
-rustup default 1.47.0
+rustup default 1.49.0
 cargo clean
 make build
 

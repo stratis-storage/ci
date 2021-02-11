@@ -53,7 +53,7 @@ set -e
 
 if [ $RC_WHICHRUSTUP -eq 0 ]
 then
-	rustup default 1.47.0
+	rustup default 1.49.0
 fi
 
 cargo clean
