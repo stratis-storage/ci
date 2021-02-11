@@ -70,7 +70,7 @@ dnf -y install output_rpms/$STRATISD_RPMBASENAME*.rpm output_rpms/$STRATIS_CLI_R
 RC_BLACKBOX_STRATISD=0
 RC_BLACKBOX_STRATIS_CLI=0
 
-if [ -d testing]
+if [ -d testing ]
 then
 	rm -rf testing
 fi
