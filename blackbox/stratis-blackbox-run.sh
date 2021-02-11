@@ -70,17 +70,24 @@ dnf -y install output_rpms/$STRATISD_RPMBASENAME*.rpm output_rpms/$STRATIS_CLI_R
 RC_BLACKBOX_STRATISD=0
 RC_BLACKBOX_STRATIS_CLI=0
 
+if [ -d testing ]
+then
+	rm -rf testing
+fi
+
+git clone https://github.com/stratis-storage/testing
+
 echo "----------"
 echo "Stratisd dbus timeout: $STRATIS_DBUS_TIMEOUT"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
 echo "Executing blackbox test 'python3 stratisd_cert.py' against test devices..."
-python3 ${STRATIS_CLI_N}-${STRATIS_CLI_V}/tests/blackbox/stratisd_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || RC_BLACKBOX_STRATISD=1
+python3 ./testing/stratisd_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || RC_BLACKBOX_STRATISD=1
 
 echo "----------"
 echo "Stratisd dbus timeout: $STRATIS_DBUS_TIMEOUT"
 echo "Test devices: ${TESTDEVS[0]} ${TESTDEVS[1]} ${TESTDEVS[2]}"
 echo "Executing blackbox test 'python3 stratis_cli_cert.py' against test devices..."
-python3 ${STRATIS_CLI_N}-${STRATIS_CLI_V}/tests/blackbox/stratis_cli_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || RC_BLACKBOX_STRATIS_CLI=1
+python3 ./testing/stratis_cli_cert.py -v --disk ${TESTDEVS[0]} --disk ${TESTDEVS[1]} --disk ${TESTDEVS[2]} || RC_BLACKBOX_STRATIS_CLI=1
 
 echo "----------"
 echo "Cleaning rpmbuild directories"
