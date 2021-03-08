@@ -20,14 +20,11 @@ dmsetup info -c
 # If the thin-pool devices are suspended, the next steps will fail.
 # Therefore, resume them now.
 # (If they're not suspended, nothing will happen.)
-for i in thinpool-pool
+for j in $(dmsetup ls | grep thinpool-pool | awk {'print $1'})
 do
-	for j in $(dmsetup ls | grep $i | awk {'print $1'})
-	do
-		echo "Ensuring thin-pool device is not suspended"
-		dmsetup resume $j
-		echo
-	done
+	echo "Ensuring thin-pool device is not suspended"
+	dmsetup resume $j
+	echo
 done
 
 echo "Unmounting active stratis test mounts (if any):"
