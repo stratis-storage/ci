@@ -30,10 +30,14 @@ def parse_json(path):
 if __name__ == "__main__":
     try:
         TEST_CONFIG_PATH = sys.argv[1]
-    except IndexError:
-        raise RuntimeError("Required argument of test_config.json path is missing")
+    except IndexError as err:
+        raise RuntimeError(
+            "Required argument of test_config.json path is missing"
+        ) from err
 
     try:
         parse_json(TEST_CONFIG_PATH)
-    except Exception as error:
-        raise RuntimeError("Parsing JSON in %s failed: %s" % (TEST_CONFIG_PATH, error))
+    except Exception as err:
+        raise RuntimeError(
+            "Parsing JSON in %s failed: %s" % (TEST_CONFIG_PATH, err)
+        ) from err
