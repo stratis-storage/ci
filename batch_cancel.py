@@ -33,6 +33,10 @@ def main():
 
     github = Github(api_key)
     repo = github.get_repo("%s/%s" % (user, repo))
+
+    # False positive on keyword arguments (for astroid >= 2.5)
+    # Bug: https://github.com/PyCQA/pylint/issues/3893
+    # pylint: disable=unexpected-keyword-arg
     runs = itertools.chain(
         repo.get_workflow_runs(actor=actions_user, status="queued"),
         repo.get_workflow_runs(actor=actions_user, status="in_progress"),
