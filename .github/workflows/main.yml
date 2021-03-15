@@ -25,7 +25,7 @@ jobs:
             task: fmt-travis
 
           # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
-          - python-version: 3.9.2
+          - python-version: 3.6.8
             dependencies: pylint==2.6.0 PyGithub==1.53
             task: lint
 
