@@ -53,9 +53,8 @@ mkdir -p %{buildroot}%{_libexecdir}
 mkdir -p %{buildroot}%{udevdir}
 mkdir -p %{buildroot}/developer_tools
 mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
-mv %{buildroot}%{_bindir}/stratis_uuids_to_names %{buildroot}%{udevdir}/stratis_uuids_to_names
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratisd.8
-%{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/11-stratisd.rules
+%{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/14-stratisd.rules
 %{__install} -Dpm0644 -t %{buildroot}%{_unitdir} stratisd.service
 %{__install} -Dpm0755 -t %{buildroot}%{_bindir} developer_tools/stratis_migrate_symlinks.sh
 
@@ -77,14 +76,13 @@ mv %{buildroot}%{_bindir}/stratis_uuids_to_names %{buildroot}%{udevdir}/stratis_
 %license LICENSE
 %doc README.md
 %{_libexecdir}/stratisd
-%{udevdir}/stratis_uuids_to_names
 %{_bindir}/stratis_dbusquery_version
 %{_bindir}/stratis_migrate_symlinks.sh
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/system.d/stratisd.conf
 %{_mandir}/man8/stratisd.8*
 %{_unitdir}/stratisd.service
-%config %{_udevrulesdir}/11-stratisd.rules
+%config %{_udevrulesdir}/14-stratisd.rules
 
 %changelog
 * Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
