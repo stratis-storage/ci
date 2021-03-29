@@ -21,10 +21,12 @@ fi
 
 cd $WORKSPACE
 rustup default 1.49.0
+make clean
 cargo clean
 
 # Make a build in order to run test outside the Rust framework
-make build
+make install PROFILEDIR=debug
+make clean-primary
 
 # If there is a stale STRATIS_DEPS_DIR remove it
 if [ -d $STRATIS_DEPS_DIR ]
@@ -40,12 +42,6 @@ fi
 
 echo "Running client-dbus tests"
 export STRATISD=$WORKSPACE/target/debug/stratisd
-
-if [ ! -f  /etc/dbus-1/system.d/stratisd.conf ]
-then
-    cp $WORKSPACE/stratisd.conf /etc/dbus-1/system.d/
-fi
-
 
 if [ ! -x $STRATISD ]
 then
