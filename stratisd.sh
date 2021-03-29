@@ -57,4 +57,6 @@ then
 fi
 
 cargo clean
+make install
+cargo clean
 make $TARGET
