@@ -56,6 +56,7 @@ then
 	rustup default 1.49.0
 fi
 
+make clean
 cargo clean
 make install
 cargo clean

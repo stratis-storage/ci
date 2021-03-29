@@ -21,6 +21,7 @@ fi
 
 cd $WORKSPACE
 rustup default 1.49.0
+make clean
 cargo clean
 make install
 cargo clean

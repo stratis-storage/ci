@@ -49,6 +49,7 @@ fi
 # Switch to the stratisd directory, which is the $WORKSPACE directory.
 cd $WORKSPACE
 rustup default 1.49.0
+make clean
 cargo clean
 make install
 cargo clean

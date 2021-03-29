@@ -40,6 +40,7 @@ fi
 
 cd $STRATIS_DEPS_DIR/stratisd
 rustup default 1.49.0
+make clean
 cargo clean
 make install
 cargo clean
