@@ -22,7 +22,7 @@ fi
 cd $WORKSPACE
 rustup default 1.49.0
 cargo clean
-cargo install
+make install
 cargo clean
 
 # Make a build in order to run test outside the Rust framework
