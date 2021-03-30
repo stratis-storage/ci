@@ -43,12 +43,6 @@ fi
 echo "Running client-dbus tests"
 export STRATISD=$WORKSPACE/target/debug/stratisd
 
-if [ ! -f  /etc/dbus-1/system.d/stratisd.conf ]
-then
-    cp $WORKSPACE/stratisd.conf /etc/dbus-1/system.d/
-fi
-
-
 if [ ! -x $STRATISD ]
 then
     echo "Required $STRATISD not found or not executable"
