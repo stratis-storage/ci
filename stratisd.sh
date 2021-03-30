@@ -58,6 +58,6 @@ fi
 
 make clean
 cargo clean
-make install
+make install-cfg
 cargo clean
 make $TARGET

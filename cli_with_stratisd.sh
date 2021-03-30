@@ -51,7 +51,7 @@ cd $WORKSPACE
 rustup default 1.49.0
 make clean
 cargo clean
-make install
+make install-cfg
 cargo clean
 make build
 
