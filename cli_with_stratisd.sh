@@ -41,16 +41,13 @@ then
 	cd $STRATIS_DEPS_DIR
 fi
 
-if [ ! -f  /etc/dbus-1/system.d/stratisd.conf ]
-then
-    cp $WORKSPACE/stratisd.conf /etc/dbus-1/system.d/
-fi
-
 # Switch to the stratisd directory, which is the $WORKSPACE directory.
 cd $WORKSPACE
 rustup default 1.49.0
+make clean
 cargo clean
-make build
+make install PROFILEDIR=debug
+make clean-primary
 
 for STRATIS_DEP in dbus-client-gen dbus-signature-pyparsing dbus-python-client-gen into-dbus-python
 do
