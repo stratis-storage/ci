@@ -51,8 +51,8 @@ cd $WORKSPACE
 rustup default 1.49.0
 make clean
 cargo clean
-make install-cfg PROFILE=build
-make clean-daemon
+make install PROFILEDIR=debug
+make clean-primary
 
 for STRATIS_DEP in dbus-client-gen dbus-signature-pyparsing dbus-python-client-gen into-dbus-python
 do

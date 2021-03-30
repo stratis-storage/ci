@@ -58,6 +58,6 @@ fi
 
 make clean
 cargo clean
-make install-cfg PROFILE=build
-make clean-daemon
+make install PROFILEDIR=debug
+make clean-primary
 make $TARGET

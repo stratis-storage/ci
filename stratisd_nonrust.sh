@@ -25,8 +25,8 @@ make clean
 cargo clean
 
 # Make a build in order to run test outside the Rust framework
-make install-cfg PROFILE=build
-make clean-daemon
+make install PROFILEDIR=debug
+make clean-primary
 
 # If there is a stale STRATIS_DEPS_DIR remove it
 if [ -d $STRATIS_DEPS_DIR ]
