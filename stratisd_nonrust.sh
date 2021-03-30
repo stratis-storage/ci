@@ -23,11 +23,10 @@ cd $WORKSPACE
 rustup default 1.49.0
 make clean
 cargo clean
-make install-cfg
-cargo clean
 
 # Make a build in order to run test outside the Rust framework
-make build
+make install-cfg PROFILE=build
+make clean-daemon
 
 # If there is a stale STRATIS_DEPS_DIR remove it
 if [ -d $STRATIS_DEPS_DIR ]
