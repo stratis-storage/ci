@@ -50,13 +50,17 @@ a2x -f manpage docs/stratisd.txt
 %{__install} -Dpm0644 -t %{buildroot}%{_datadir}/dbus-1/system.d stratisd.conf
 # Daemon should be really private
 mkdir -p %{buildroot}%{_libexecdir}
-mkdir -p %{buildroot}%{udevdir}
 mkdir -p %{buildroot}/developer_tools
 mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratisd.8
-%{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/14-stratisd.rules
+%{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/61-stratisd.rules
 %{__install} -Dpm0644 -t %{buildroot}%{_unitdir} stratisd.service
 %{__install} -Dpm0755 -t %{buildroot}%{_bindir} developer_tools/stratis_migrate_symlinks.sh
+
+mkdir -p %{buildroot}%{udevdir}
+mv %{buildroot}%{_bindir}/stratis-utils %{buildroot}%{udevdir}/stratis_utils
+mv %{buildroot}%{udevdir}/stratis_utils %{buildroot}%{udevdir}/stratis-str-cmp
+ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{udevdir}/stratis-base32-decode
 
 %if %{with check}
 %check
