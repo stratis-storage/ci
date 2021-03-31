@@ -86,7 +86,7 @@ ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{udevdir}/stratis-base32-
 %{_datadir}/dbus-1/system.d/stratisd.conf
 %{_mandir}/man8/stratisd.8*
 %{_unitdir}/stratisd.service
-%config %{_udevrulesdir}/14-stratisd.rules
+%config %{_udevrulesdir}/61-stratisd.rules
 
 %changelog
 * Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
