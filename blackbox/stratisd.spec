@@ -55,7 +55,6 @@ mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratisd.8
 %{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/61-stratisd.rules
 %{__install} -Dpm0644 -t %{buildroot}%{_unitdir} stratisd.service
-%{__install} -Dpm0755 -t %{buildroot}%{_bindir} developer_tools/stratis_migrate_symlinks.sh
 
 mkdir -p %{buildroot}%{udevdir}
 mv %{buildroot}%{_bindir}/stratis-utils %{buildroot}%{udevdir}/stratis_utils
@@ -80,8 +79,6 @@ ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{udevdir}/stratis-base32-
 %license LICENSE
 %doc README.md
 %{_libexecdir}/stratisd
-%{_bindir}/stratis_dbusquery_version
-%{_bindir}/stratis_migrate_symlinks.sh
 %dir %{_datadir}/dbus-1
 %{_datadir}/dbus-1/system.d/stratisd.conf
 %{_mandir}/man8/stratisd.8*
