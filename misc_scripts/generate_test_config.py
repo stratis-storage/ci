@@ -25,13 +25,15 @@ Example: "generate_test_config /dev/vdb1 /dev/vdb2 /dev/vdb3"
 import json
 import sys
 
+
 def main():
     """
     Main method
     """
-    drives = (sys.argv[1:])
-    jsonout = json.dumps({'ok_to_destroy_dev_array_key': (drives)}, indent=4)
+    drives = sys.argv[1:]
+    jsonout = json.dumps({"ok_to_destroy_dev_array_key": (drives)}, indent=4)
     print(jsonout)
+
 
 if __name__ == "__main__":
     main()
