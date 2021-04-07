@@ -49,7 +49,7 @@ then
     exit 1
 fi
 
-export STRATIS_PREDICT_USAGE=$WORKSPACE/target/debug/stratis-predict-usage
+export STRATIS_PREDICT_USAGE=/usr/bin/stratis-predict-usage
 
 mkdir $STRATIS_DEPS_DIR
 cd $STRATIS_DEPS_DIR
