@@ -29,7 +29,8 @@ Requires:       xfsprogs
 Requires:       device-mapper-persistent-data
 Requires:       systemd-libs
 Requires:       dbus-libs
-Requires:       clevis-luks >= 15
+
+Recommends:     clevis-luks >= 15
 
 %description
 Stratisd test build.  This package should not be used in production
