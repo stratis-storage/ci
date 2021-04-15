@@ -55,7 +55,7 @@ mkdir -p %{buildroot}/developer_tools
 mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratisd.8
 %{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/61-stratisd.rules
-%{__install} -Dpm0644 -t %{buildroot}%{_unitdir} stratisd.service
+%{__install} -Dpm0644 -t %{buildroot}%{_unitdir} systemd/stratisd.service
 
 mkdir -p %{buildroot}%{udevdir}
 mv %{buildroot}%{_bindir}/stratis-utils %{buildroot}%{udevdir}/stratis_utils
