@@ -61,6 +61,7 @@ mkdir -p %{buildroot}%{udevdir}
 mv %{buildroot}%{_bindir}/stratis-utils %{buildroot}%{udevdir}/stratis_utils
 mv %{buildroot}%{udevdir}/stratis_utils %{buildroot}%{udevdir}/stratis-str-cmp
 ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{udevdir}/stratis-base32-decode
+ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{_bindir}/stratis-predict-usage
 
 %if %{with check}
 %check
@@ -87,6 +88,7 @@ ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{udevdir}/stratis-base32-
 %config %{_udevrulesdir}/61-stratisd.rules
 %{udevdir}/stratis-str-cmp
 %{udevdir}/stratis-base32-decode
+%{_bindir}/stratis-predict-usage
 
 %changelog
 * Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
