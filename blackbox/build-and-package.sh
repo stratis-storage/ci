@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+TAR_CREATE_OPTS="--exclude-vcs --exclude-vcs-ignores"
+
 STRATISD_N=$(rpmspec -P stratisd.spec | grep ^Name | awk {'print $2'})
 STRATISD_V=$(rpmspec -P stratisd.spec | grep ^Version | awk {'print $2'})
 STRATISD_R=$(rpmspec -P stratisd.spec | grep ^Release | awk {'print $2'})
@@ -31,7 +33,7 @@ then
         rm -rf ${STRATISD_N}-${STRATISD_V}/vendor
 fi
 
-tar czvf ~/rpmbuild/SOURCES/${STRATISD_N}-${STRATISD_V}.tar.gz ${STRATISD_N}-${STRATISD_V}
+tar czvf ~/rpmbuild/SOURCES/${STRATISD_N}-${STRATISD_V}.tar.gz ${TAR_CREATE_OPTS} ${STRATISD_N}-${STRATISD_V}
 cd ${STRATISD_N}-${STRATISD_V}/
 cargo vendor && tar cJf ../${STRATISD_N}-${STRATISD_V}-vendor.tar.xz vendor/
 cd ..
@@ -41,7 +43,7 @@ rpmbuild -bb stratisd.spec
 
 # Build the stratis-cli package
 echo "Building stratis-cli test package..."
-tar czvf ~/rpmbuild/SOURCES/${STRATIS_CLI_N}-${STRATIS_CLI_V}.tar.gz ${STRATIS_CLI_N}-${STRATIS_CLI_V}
+tar czvf ~/rpmbuild/SOURCES/${STRATIS_CLI_N}-${STRATIS_CLI_V}.tar.gz ${TAR_CREATE_OPTS} ${STRATIS_CLI_N}-${STRATIS_CLI_V}
 echo "Executing rpmbuild for stratis-cli..."
 rpmbuild -bb stratis-cli.spec
 
