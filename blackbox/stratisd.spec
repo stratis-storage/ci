@@ -31,6 +31,7 @@ Requires:       device-mapper-persistent-data
 Requires:       systemd-libs
 Requires:       dbus-libs
 
+Recommends:     dracut >= 051
 Recommends:     clevis-luks >= 15
 
 %description
@@ -60,7 +61,7 @@ mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
 %{__install} -Dpm0644 -t %{buildroot}%{_unitdir} systemd/stratisd.service
 %{__install} -Dpm0644 -t %{buildroot}%{dracutdir}/dracut.conf.d dracut/90-stratis.conf
 mkdir -p %{buildroot}%{dracutdir}/modules.d/90stratis
-# dracut provides the 90stratis/module-setup.sh file
+%{__install} -Dpm0755 -t %{buildroot}%{dracutdir}/modules.d/90stratis dracut/90stratis/module-setup.sh
 %{__install} -Dpm0755 -t %{buildroot}%{dracutdir}/modules.d/90stratis dracut/90stratis/stratis-rootfs-setup
 %{__install} -Dpm0644 -t %{buildroot}%{dracutdir}/modules.d/90stratis dracut/90stratis/stratisd-min.service
 %{__install} -Dpm0644 -t %{buildroot}%{dracutdir}/modules.d/90stratis dracut/90stratis/61-stratisd.rules
@@ -110,6 +111,7 @@ ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{_unitdir}/system-generat
 %{dracutdir}/modules.d/90stratis-clevis/module-setup.sh
 %{dracutdir}/modules.d/90stratis-clevis/stratis-clevis-rootfs-setup
 %{dracutdir}/modules.d/90stratis/61-stratisd.rules
+%{dracutdir}/modules.d/90stratis/module-setup.sh
 %{dracutdir}/modules.d/90stratis/stratis-rootfs-setup
 %{dracutdir}/modules.d/90stratis/stratisd-min.service
 %{_unitdir}/stratisd-min-postinitrd.service
