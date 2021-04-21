@@ -51,6 +51,12 @@ fi
 
 export STRATIS_PREDICT_USAGE=/usr/bin/stratis-predict-usage
 
+if [ ! -x $STRATIS_PREDICT_USAGE ]
+then
+    echo "Required $STRATIS_PREDICT_USAGE not found or not executable"
+    exit 1
+fi
+
 mkdir $STRATIS_DEPS_DIR
 cd $STRATIS_DEPS_DIR
 
