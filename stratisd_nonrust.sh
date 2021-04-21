@@ -57,6 +57,22 @@ then
     exit 1
 fi
 
+export STRATISD_MIN=$WORKSPACE/target/debug/stratisd-min
+
+if [ ! -x $STRATISD_MIN ]
+then
+    echo "Required $STRATISD_MIN not found or not executable"
+    exit 1
+fi
+
+export STRATIS_MIN=$WORKSPACE/target/debug/stratis-min
+
+if [ ! -x $STRATIS_MIN ]
+then
+    echo "Required $STRATIS_MIN not found or not executable"
+    exit 1
+fi
+
 mkdir $STRATIS_DEPS_DIR
 cd $STRATIS_DEPS_DIR
 
