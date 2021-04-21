@@ -64,5 +64,4 @@ cd $STRATIS_DEPS_DIR/stratis-cli
 export PYTHONPATH=src:$STRATIS_DEPS_DIR/dbus-client-gen/src:$STRATIS_DEPS_DIR/dbus-python-client-gen/src:$STRATIS_DEPS_DIR/into-dbus-python/src:$STRATIS_DEPS_DIR/dbus-signature-pyparsing/src
 # Set the stratisd binary base location to $WORKSPACE
 export STRATISD=$WORKSPACE/target/debug/stratisd
-export STRATIS_PREDICT_USAGE=/usr/bin/stratis-predict-usage
 make dbus-tests
