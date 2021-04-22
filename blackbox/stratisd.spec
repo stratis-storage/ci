@@ -69,6 +69,7 @@ mkdir -p %{buildroot}%{dracutdir}/modules.d/90stratis-clevis
 %{__install} -Dpm0755 -t %{buildroot}%{dracutdir}/modules.d/90stratis-clevis dracut/90stratis-clevis/module-setup.sh
 %{__install} -Dpm0755 -t %{buildroot}%{dracutdir}/modules.d/90stratis-clevis dracut/90stratis-clevis/stratis-clevis-rootfs-setup
 %{__install} -Dpm0644 -t %{buildroot}%{_unitdir} systemd/stratisd-min-postinitrd.service
+%{__install} -Dpm0644 -t %{buildroot}%{_unitdir} systemd/stratis-fstab-setup\@.service
 
 mkdir -p %{buildroot}%{udevdir}
 mv %{buildroot}%{_bindir}/stratis-utils %{buildroot}%{udevdir}/stratis_utils
@@ -80,6 +81,7 @@ ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{_unitdir}/system-generat
 ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{_unitdir}/system-generators/stratis-setup-generator
 %{__install} -Dpm0755 -t %{buildroot}%{_bindir} target/release/stratis-min
 %{__install} -Dpm0755 -t %{buildroot}%{_libexecdir} target/release/stratisd-min
+%{__install} -Dpm0755 -t %{buildroot}%{_usr}/lib/systemd systemd/stratis-fstab-setup
 
 %if %{with check}
 %check
@@ -115,10 +117,12 @@ ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{_unitdir}/system-generat
 %{dracutdir}/modules.d/90stratis/stratis-rootfs-setup
 %{dracutdir}/modules.d/90stratis/stratisd-min.service
 %{_unitdir}/stratisd-min-postinitrd.service
+%{_unitdir}/stratis-fstab-setup@.service
 %{_unitdir}/system-generators/stratis-clevis-setup-generator
 %{_unitdir}/system-generators/stratis-setup-generator
 %{_bindir}/stratis-min
 %{_libexecdir}/stratisd-min
+%{_usr}/lib/systemd/stratis-fstab-setup
 
 
 
