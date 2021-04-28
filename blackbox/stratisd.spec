@@ -54,7 +54,6 @@ a2x -f manpage docs/stratisd.txt
 %{__install} -Dpm0644 -t %{buildroot}%{_datadir}/dbus-1/system.d stratisd.conf
 # Daemon should be really private
 mkdir -p %{buildroot}%{_libexecdir}
-mkdir -p %{buildroot}/developer_tools
 mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratisd.8
 %{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/61-stratisd.rules
