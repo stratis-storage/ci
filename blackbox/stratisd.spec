@@ -46,7 +46,7 @@ Stratisd test build.  This package should not be used in production
 
 %build
 %cargo_build
-%cargo_build --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
+%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
 a2x -f manpage docs/stratisd.txt
 
 %install
