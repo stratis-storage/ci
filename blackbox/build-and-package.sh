@@ -35,9 +35,9 @@ fi
 
 tar czvf ~/rpmbuild/SOURCES/${STRATISD_N}-${STRATISD_V}.tar.gz ${TAR_CREATE_OPTS} ${STRATISD_N}-${STRATISD_V}
 cd ${STRATISD_N}-${STRATISD_V}/
-cargo vendor && tar cJf ../${STRATISD_N}-${STRATISD_V}-vendor.tar.xz vendor/
+cargo vendor && tar czvf ../${STRATISD_N}-${STRATISD_V}-vendor.tar.gz vendor/
 cd ..
-cp ${STRATISD_N}-${STRATISD_V}-vendor.tar.xz ~/rpmbuild/SOURCES
+cp ${STRATISD_N}-${STRATISD_V}-vendor.tar.gz ~/rpmbuild/SOURCES
 echo "Executing rpmbuild for stratisd..."
 rpmbuild -bb stratisd.spec
 

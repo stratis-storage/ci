@@ -39,9 +39,9 @@ cd ..
 tar czf ./SOURCES/stratisd-77.77.77.tar.gz stratisd-77.77.77
 sha512sum SOURCES/stratisd-77.77.77.tar.gz
 cd stratisd-77.77.77/
-cargo vendor && tar cJf ../SOURCES/stratisd-77.77.77-vendor.tar.xz vendor/
+cargo vendor && tar czvf ../SOURCES/stratisd-77.77.77-vendor.tar.gz vendor/
 cd ..
-sha512sum SOURCES/stratisd-77.77.77-vendor.tar.xz
+sha512sum SOURCES/stratisd-77.77.77-vendor.tar.gz
 cp ci/unified/stratisd.spec SPECS/
 rpmbuild -bs --define "_topdir $(pwd)" SPECS/stratisd.spec
 mock -r fedora-rawhide-x86_64 SRPMS/stratisd-77.77.77-77.fc32.src.rpm
@@ -49,6 +49,6 @@ mock_status=$?
 
 echo "mock status: $mock_status"
 sha512sum SOURCES/stratisd-77.77.77.tar.gz
-sha512sum SOURCES/stratisd-77.77.77-vendor.tar.xz
+sha512sum SOURCES/stratisd-77.77.77-vendor.tar.gz
 
 cp -v /var/lib/mock/fedora-rawhide-x86_64/result/*.rpm output_rpms/
