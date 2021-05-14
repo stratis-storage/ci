@@ -27,6 +27,12 @@ jobs:
               python3-isort
             image: fedora:32
             task: fmt-travis
+          # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
+          - dependencies: >
+              pylint
+              python3-pygithub
+            image: fedora:29
+            task: lint
 
           # VERIFICATION OF TEST INFRASTRUCTURE
           - dependencies: >
