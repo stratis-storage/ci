@@ -30,9 +30,8 @@ jobs:
           # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
           - dependencies: >
               pylint
-              python3-pygithub
             image: fedora:29
-            task: lint
+            task: lint-non-pygithub
 
           # VERIFICATION OF TEST INFRASTRUCTURE
           - dependencies: >
