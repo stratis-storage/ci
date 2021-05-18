@@ -3,6 +3,11 @@ lint:
 	pylint ./blackbox/parse_json.py
 	pylint ./misc_scripts/
 
+.PHONY: lint-non-pygithub
+lint-non-pygithub:
+	pylint ./blackbox/parse_json.py
+	pylint ./misc_scripts/generate_test_config.py
+
 .PHONY: fmt
 fmt:
 	isort ./blackbox/parse_json.py
