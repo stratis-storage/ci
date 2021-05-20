@@ -20,6 +20,8 @@ jobs:
           - dependencies: >
               pylint
               python3-pygithub
+              python3-requests
+              python3-semantic_version
             image: fedora:32
             task: lint
           - dependencies: >
