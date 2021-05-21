@@ -20,12 +20,12 @@ jobs:
               python3-pygithub
               python3-requests
               python3-semantic_version
-            image: fedora:33
+            image: fedora:34
             task: lint
           - dependencies: >
               black
               python3-isort
-            image: fedora:33
+            image: fedora:34
             task: fmt-travis
 
     runs-on: ubuntu-18.04
