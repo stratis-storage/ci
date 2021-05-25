@@ -22,12 +22,12 @@ jobs:
               python3-pygithub
               python3-requests
               python3-semantic_version
-            image: fedora:32
+            image: fedora:33
             task: lint
           - dependencies: >
               black
               python3-isort
-            image: fedora:32
+            image: fedora:33
             task: fmt-travis
           # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
           - dependencies: >
@@ -38,7 +38,7 @@ jobs:
           # VERIFICATION OF TEST INFRASTRUCTURE
           - dependencies: >
               yamllint
-            image: fedora:32
+            image: fedora:33
             task: yamllint
     runs-on: ubuntu-18.04
     container: ${{ matrix.image }}
