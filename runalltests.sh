@@ -40,38 +40,13 @@ export WORKSPACE=`pwd`
 $PRESTAGE/stratisd.sh $STRATISD_MODE
 RC_STRATISD=$?
 echo "Completed stratisd test ($STRATISD_MODE): status $RC_STRATISD"
-echo "Executing stratisd_nonrust test..."
-$PRESTAGE/stratisd_nonrust.sh
-RC_STRATISD_NONRUST=$?
-echo "Completed stratisd_nonrust test: status $RC_STRATISD_NONRUST"
-cd $PRESTAGE/workspace
-
-echo "Executing stratis-cli test..."
-git clone https://github.com/stratis-storage/stratis-cli
-cd stratis-cli
-export WORKSPACE=`pwd`
-$PRESTAGE/cli.sh
-RC_STRATISCLI=$?
-echo "Completed stratis-cli test: status $RC_STRATISCLI"
 cd $PRESTAGE/workspace
 
 echo "End of prestage script."
 echo "Results:"
 echo "stratisd-$STRATISD_MODE: $RC_STRATISD"
-echo "stratisd_nonrust: $RC_STRATISD_NONRUST"
-echo "stratis-cli: $RC_STRATISCLI"
 
 if [ $RC_STRATISD -gt 0 ]
 then
 	exit 1
-fi
-
-if [ $RC_STRATISCLI -gt 0 ]
-then
-	exit 2
-fi
-
-if [ $RC_STRATISD_NONRUST -gt 0 ]
-then
-	exit 4
 fi
