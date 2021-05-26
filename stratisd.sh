@@ -47,7 +47,7 @@ cd $WORKSPACE
 # If so, use it to set the rust version.
 # Otherwise, run with the current rust version.
 set +e
-which rustup 2>&1 1>/dev/null
+which rustup 1>/dev/null 2>&1
 RC_WHICHRUSTUP=$?
 set -e
 
