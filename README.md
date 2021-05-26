@@ -6,15 +6,11 @@ A set of scripts intended to facilitate Continuous Integration (CI) testing for 
 
 "runalltests.sh": Install the dependency packages, and run all of the CI tests.  (Run this script if setting up on a new system.)
 
-Note that the "runalltests.sh" script will clone the "stratisd" and "stratis-cli" repositories, and execute the appropriate tests.
+Note that the "runalltests.sh" script will clone the "stratisd" repository, and execute the appropriate tests.
 
 ## CI scripts:
 
-"cli.sh": stratis-cli test suite CI script
-
 "stratisd.sh": stratisd test suite CI script (for the rust tests)
-
-"stratisd_nonrust.sh": stratisd test suite CI script (for the client-dbus tests)
 
 # Running the stratisd test with real devices
 
