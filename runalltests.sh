@@ -15,6 +15,9 @@ curl -o install_rustup.sh https://sh.rustup.rs
 chmod +x install_rustup.sh
 ./install_rustup.sh -y
 
+# Load the Rust cargo env script.  Disable shellcheck, since it is
+# intended to be in the home directory.
+# shellcheck source=/dev/null
 source $HOME/.cargo/env
 
 rustup default 1.49.0
@@ -25,7 +28,7 @@ rustup default 1.49.0
 # export WORKSPACE="/root/workspace/stratisd"
 
 mkdir workspace
-cd workspace
+cd workspace || exit
 
 if [ -s "/etc/stratis/test_config.json" ]
 then
@@ -35,12 +38,13 @@ else
 fi
 echo "Executing stratisd test ($STRATISD_MODE)"
 git clone https://github.com/stratis-storage/stratisd.git
-cd stratisd
-export WORKSPACE=`pwd`
+cd stratisd || exit
+WORKSPACE=`pwd`
+export WORKSPACE
 $PRESTAGE/stratisd.sh $STRATISD_MODE
 RC_STRATISD=$?
 echo "Completed stratisd test ($STRATISD_MODE): status $RC_STRATISD"
-cd $PRESTAGE/workspace
+cd $PRESTAGE/workspace || exit
 
 echo "End of prestage script."
 echo "Results:"

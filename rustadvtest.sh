@@ -40,6 +40,7 @@ cd workspace
 
 git clone https://github.com/stratis-storage/stratisd.git
 cd stratisd
-export WORKSPACE=$(pwd)
+WORKSPACE=$(pwd)
+export WORKSPACE
 
 $PRESTAGE/stratisd.sh test-real

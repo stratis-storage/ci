@@ -20,7 +20,7 @@ dmsetup info -c
 # If the thin-pool devices are suspended, the next steps will fail.
 # Therefore, resume them now.
 # (If they're not suspended, nothing will happen.)
-for j in $(dmsetup ls | grep thinpool-pool | awk {'print $1'})
+for j in $(dmsetup ls | grep thinpool-pool | awk '{print $1}')
 do
 	echo "Ensuring thin-pool device is not suspended"
 	dmsetup resume $j
@@ -28,7 +28,7 @@ do
 done
 
 echo "Unmounting active stratis test mounts (if any):"
-for j in $(grep stratis_testing /proc/mounts | awk {'print $2'})
+for j in $(grep stratis_testing /proc/mounts | awk '{print $2}')
 do
 	echo $j
 	umount $j
@@ -38,7 +38,7 @@ echo
 # Now tear down the remnant stratis component devices, top to bottom.
 for i in thin-fs thinpool-pool flex-thinmeta flex-thindata flex-mdv physical-originsub stratis_test_ stratis-.*private-.*-crypt
 do
-	for j in $(dmsetup ls | grep $i | awk {'print $1'})
+	for j in $(dmsetup ls | grep $i | awk '{print $1}')
 	do
 		echo "Removing device:"
 		dmsetup info -c $j

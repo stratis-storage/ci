@@ -52,3 +52,23 @@ jobs:
           ${{ matrix.dependencies }}
       - name: Run test
         run: make -f Makefile ${{ matrix.task }}
+  shell-check:
+    strategy:
+      matrix:
+        include:
+          - dependencies: >
+              findutils
+              ShellCheck
+            image: fedora:33
+            task: shellcheck
+    runs-on: ubuntu-18.04
+    container: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: >
+          dnf install -y
+          make
+          ${{ matrix.dependencies }}
+      - name: Run test
+        run: find . -name '*.sh' | xargs shellcheck --severity=warning
