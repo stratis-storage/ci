@@ -57,6 +57,7 @@ jobs:
       matrix:
         include:
           - dependencies: >
+              findutils
               ShellCheck
             image: fedora:33
             task: shellcheck
