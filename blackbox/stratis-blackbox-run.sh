@@ -15,7 +15,7 @@ fi
 # This is a naive search for device paths starting with "/dev", then
 # stripping out the quote and comma characters.
 TESTDEVS_RESULT=$(./parse_json.py /etc/stratis/test_config.json)
-TESTDEVS=($(echo $TESTDEVS_RESULT | tr ',' ' '))
+IFS="," read -a TESTDEVS <<< "$(echo $TESTDEVS_RESULT)"
 
 if [ ! -e stratisd.spec ] || [ ! -e stratis-cli.spec ]
 then
