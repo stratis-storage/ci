@@ -48,14 +48,14 @@ BASEDEPPKGS=(
 
 dnf -y install "${BASEDEPPKGS[@]}"
 
-STRATISD_N=$(rpmspec -P stratisd.spec | grep ^Name | awk {'print $2'})
-STRATISD_V=$(rpmspec -P stratisd.spec | grep ^Version | awk {'print $2'})
-STRATISD_R=$(rpmspec -P stratisd.spec | grep ^Release | awk {'print $2'})
+STRATISD_N=$(rpmspec -P stratisd.spec | grep ^Name | awk '{print $2}')
+STRATISD_V=$(rpmspec -P stratisd.spec | grep ^Version | awk '{print $2}')
+STRATISD_R=$(rpmspec -P stratisd.spec | grep ^Release | awk '{print $2}')
 STRATISD_RPMBASENAME="${STRATISD_N}-${STRATISD_V}-${STRATISD_R}"
 echo "stratisd package target: $STRATISD_RPMBASENAME"
-STRATIS_CLI_N=$(rpmspec -P stratis-cli.spec | grep ^Name | awk {'print $2'})
-STRATIS_CLI_V=$(rpmspec -P stratis-cli.spec | grep ^Version | awk {'print $2'})
-STRATIS_CLI_R=$(rpmspec -P stratis-cli.spec | grep ^Release | awk {'print $2'})
+STRATIS_CLI_N=$(rpmspec -P stratis-cli.spec | grep ^Name | awk '{print $2}')
+STRATIS_CLI_V=$(rpmspec -P stratis-cli.spec | grep ^Version | awk '{print $2}')
+STRATIS_CLI_R=$(rpmspec -P stratis-cli.spec | grep ^Release | awk '{print $2}')
 STRATIS_CLI_RPMBASENAME="${STRATIS_CLI_N}-${STRATIS_CLI_V}-${STRATIS_CLI_R}"
 echo "stratis-cli package target: $STRATIS_CLI_RPMBASENAME"
 
