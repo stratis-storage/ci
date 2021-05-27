@@ -17,7 +17,7 @@ fi
 TESTDEVS_RESULT=$(./parse_json.py /etc/stratis/test_config.json)
 TESTDEVS=($(echo $TESTDEVS_RESULT | tr ',' ' '))
 
-if [ ! -e stratisd.spec -o ! -e stratis-cli.spec ]
+if [ ! -e stratisd.spec ] || [ ! -e stratis-cli.spec ]
 then
 	echo "Both stratisd.spec and stratis-cli.spec must be present."
 	exit 4
