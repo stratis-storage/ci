@@ -30,3 +30,7 @@ fmt-travis:
 .PHONY: yamllint
 yamllint:
 	yamllint --strict .github/workflows/*.yml
+
+.PHONY: shellcheck
+shellcheck:
+	find . -name '*.sh' | xargs shellcheck --severity=warning
