@@ -71,4 +71,4 @@ jobs:
           make
           ${{ matrix.dependencies }}
       - name: Run test
-        run: find . -name '*.sh' | xargs shellcheck --severity=warning
+        run: make -f Makefile ${{ matrix.task }}
