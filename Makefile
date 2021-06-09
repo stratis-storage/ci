@@ -16,6 +16,8 @@ fmt:
 	isort ./misc_scripts/
 	black ./blackbox/parse_json.py
 	black ./dependency_management/
+	black ./dependency_management/compare_fedora_versions
+	black ./dependency_management/set_lower_bounds
 	black ./misc_scripts/
 
 .PHONY: fmt-travis
@@ -25,6 +27,8 @@ fmt-travis:
 	isort --diff --check-only ./misc_scripts/
 	black ./blackbox/parse_json.py --check
 	black ./dependency_management/ --check
+	black ./dependency_management/compare_fedora_versions --check
+	black ./dependency_management/set_lower_bounds --check
 	black ./misc_scripts/ --check
 
 .PHONY: yamllint
