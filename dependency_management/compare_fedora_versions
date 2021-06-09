@@ -49,7 +49,10 @@ def main():
     explicit_dependencies = build_cargo_metadata()
 
     # Build koji dict
-    koji_repo_dict = build_koji_repo_dict(frozenset(explicit_dependencies.keys()))
+    koji_repo_dict = build_koji_repo_dict(
+        frozenset(explicit_dependencies.keys()),
+        "https://kojipkgs.fedoraproject.org/repos/rawhide/latest/x86_64/pkglist",
+    )
 
     result = {"missing": [], "high": [], "low": []}
     for crate, version in explicit_dependencies.items():
