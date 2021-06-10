@@ -47,7 +47,13 @@ def main():
             "dependency can be bumped to a higher version in Fedora."
         )
     )
-    parser.parse_args()
+    help_text = (
+        "Fedora release for which to check dependencies: "
+        "'rawhide' or 'f<n>' where <n> is some natural number"
+    )
+    parser.add_argument("--release", action="store", default="rawhide", help=help_text)
+
+    args = parser.parse_args()
 
     # Read the dependency versions specified in Cargo.toml
     explicit_dependencies = build_cargo_metadata()
@@ -55,7 +61,7 @@ def main():
     # Build koji dict
     koji_repo_dict = build_koji_repo_dict(
         frozenset(explicit_dependencies.keys()),
-        synthesize_koji_repo_dict_url("rawhide"),
+        synthesize_koji_repo_dict_url(args.release),
     )
 
     result = {"missing": [], "high": [], "low": []}
