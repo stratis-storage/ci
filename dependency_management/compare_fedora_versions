@@ -25,7 +25,11 @@ import json
 import sys
 
 # isort: LOCAL
-from _utils import build_cargo_metadata, build_koji_repo_dict
+from _utils import (
+    build_cargo_metadata,
+    build_koji_repo_dict,
+    synthesize_koji_repo_dict_url,
+)
 
 
 def main():
@@ -43,13 +47,22 @@ def main():
             "dependency can be bumped to a higher version in Fedora."
         )
     )
-    parser.parse_args()
+    help_text = (
+        "Fedora release for which to check dependencies: "
+        "'rawhide' or 'f<n>' where <n> is some natural number"
+    )
+    parser.add_argument("--release", action="store", default="rawhide", help=help_text)
+
+    args = parser.parse_args()
 
     # Read the dependency versions specified in Cargo.toml
     explicit_dependencies = build_cargo_metadata()
 
     # Build koji dict
-    koji_repo_dict = build_koji_repo_dict(frozenset(explicit_dependencies.keys()))
+    koji_repo_dict = build_koji_repo_dict(
+        frozenset(explicit_dependencies.keys()),
+        synthesize_koji_repo_dict_url(args.release),
+    )
 
     result = {"missing": [], "high": [], "low": []}
     for crate, version in explicit_dependencies.items():
