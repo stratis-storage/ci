@@ -66,6 +66,18 @@ def build_cargo_tree_dict():
     return version_dict
 
 
+def synthesize_koji_repo_dict_url(release):
+    """
+    From the specified release, synthesize the URL for the repo dict.
+
+    :param str release: the release to make the URL from
+    :rtype: str
+    """
+    return "https://kojipkgs.fedoraproject.org/repos/%s/latest/x86_64/pkglist" % (
+        release if release == "rawhide" else "%s-build" % release
+    )
+
+
 def build_koji_repo_dict(crates, url):
     """
     :param crates: a set of crates

@@ -25,7 +25,11 @@ import json
 import sys
 
 # isort: LOCAL
-from _utils import build_cargo_metadata, build_koji_repo_dict
+from _utils import (
+    build_cargo_metadata,
+    build_koji_repo_dict,
+    synthesize_koji_repo_dict_url,
+)
 
 
 def main():
@@ -51,7 +55,7 @@ def main():
     # Build koji dict
     koji_repo_dict = build_koji_repo_dict(
         frozenset(explicit_dependencies.keys()),
-        "https://kojipkgs.fedoraproject.org/repos/rawhide/latest/x86_64/pkglist",
+        synthesize_koji_repo_dict_url("rawhide"),
     )
 
     result = {"missing": [], "high": [], "low": []}
