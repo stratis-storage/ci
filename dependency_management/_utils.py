@@ -111,7 +111,7 @@ def build_koji_repo_dict(crates, url):
     return koji_repo_dict
 
 
-def build_cargo_metadata():
+def build_cargo_metadata(manifestpath):
     """
     Build a dict mapping crate to version spec from Cargo.toml.
     """
@@ -122,6 +122,8 @@ def build_cargo_metadata():
         "--no-deps",
         "--all-features",
     ]
+    if manifestpath is not None:
+        command.append("--manifest-path=%s" % manifestpath)
     proc = subprocess.Popen(command, stdout=subprocess.PIPE)
     stream = proc.stdout
     metadata_str = stream.readline()
