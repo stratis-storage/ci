@@ -54,13 +54,13 @@ def main():
     parser.add_argument("--release", action="store", default="rawhide", help=help_text)
     help_text = "Manifest path for the cargo metadata command"
     parser.add_argument(
-        "--manifest-path", action="store", dest="manifestpath", help=help_text
+        "--manifest-path", action="store", dest="manifest_path", help=help_text
     )
 
     args = parser.parse_args()
 
     # Read the dependency versions specified in Cargo.toml
-    explicit_dependencies = build_cargo_metadata(args.manifestpath)
+    explicit_dependencies = build_cargo_metadata(args.manifest_path)
 
     # Build koji dict
     koji_repo_dict = build_koji_repo_dict(
