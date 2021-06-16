@@ -3,11 +3,13 @@
 Script for batch cancelling Github Actions CI jobs.
 """
 
+# isort: STDLIB
 import itertools
 import os
 import sys
 from getpass import getpass
 
+# isort: THIRDPARTY
 from github import Github
 
 

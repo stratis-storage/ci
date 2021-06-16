@@ -4,6 +4,7 @@ Helper module for parsing a JSON configuration file into a usable
 format for bash.
 """
 
+# isort: STDLIB
 import json
 import sys
 
