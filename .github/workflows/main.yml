@@ -19,6 +19,8 @@ jobs:
           # MANDATORY CHECKS USING CURRENT DEVELOPMENT INTERPRETER
           - dependencies: >
               pylint
+              python3-dbus
+              python3-dbus-python-client-gen
               python3-pygithub
               python3-requests
               python3-semantic_version
@@ -32,6 +34,9 @@ jobs:
           # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
           - dependencies: >
               pylint
+              python3-dbus
+              python3-dbus-python-client-gen
+              python3-semantic_version
             image: fedora:29
             task: lint-non-pygithub
 
