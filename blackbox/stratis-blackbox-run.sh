@@ -30,7 +30,6 @@ BASEDEPPKGS=(
 	python3-psutil
 	rpm-build
 	rpmdevtools
-	keyutils
 	asciidoc
 	python3-devel
 	dbus-devel
