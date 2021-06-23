@@ -57,6 +57,39 @@ def main():
         "--manifest-path", action="store", dest="manifest_path", help=help_text
     )
 
+    help_text = "Ignore a dependency known to be missing"
+    parser.add_argument(
+        "--ignore-missing",
+        action="extend",
+        dest="ignore_missing",
+        nargs="*",
+        type=str,
+        default=[],
+        help=help_text,
+    )
+
+    help_text = "Ignore a dependency known to be higer than those available"
+    parser.add_argument(
+        "--ignore-high",
+        action="extend",
+        dest="ignore_high",
+        nargs="*",
+        type=str,
+        default=[],
+        help=help_text,
+    )
+
+    help_text = "Ignore a dependency known to be lower than those available"
+    parser.add_argument(
+        "--ignore-low",
+        action="extend",
+        dest="ignore_low",
+        nargs="*",
+        type=str,
+        default=[],
+        help=help_text,
+    )
+
     args = parser.parse_args()
 
     # Read the dependency versions specified in Cargo.toml
@@ -96,6 +129,14 @@ def main():
                 file=sys.stderr,
             )
             result["low"].append(crate)
+
+    result["missing"] = [
+        missing for missing in result["missing"] if missing not in args.ignore_missing
+    ]
+
+    result["high"] = [high for high in result["high"] if high not in args.ignore_high]
+
+    result["low"] = [low for low in result["low"] if low not in args.ignore_low]
 
     print(json.dumps(result), file=sys.stdout)
     return 1 if any(x != [] for x in result.values()) else 0
