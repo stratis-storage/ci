@@ -57,6 +57,36 @@ def main():
         "--manifest-path", action="store", dest="manifest_path", help=help_text
     )
 
+    help_text = "Ignore missing crates"
+    parser.add_argument(
+        "--ignore-missing",
+        action="extend",
+        dest="ignore_missing",
+        nargs="*",
+        type=str,
+        help=help_text,
+    )
+
+    help_text = "Ignore high crates"
+    parser.add_argument(
+        "--ignore-high",
+        action="extend",
+        dest="ignore_high",
+        nargs="*",
+        type=str,
+        help=help_text,
+    )
+
+    help_text = "Ignore low crates"
+    parser.add_argument(
+        "--ignore-low",
+        action="extend",
+        dest="ignore_low",
+        nargs="*",
+        type=str,
+        help=help_text,
+    )
+
     args = parser.parse_args()
 
     # Read the dependency versions specified in Cargo.toml
@@ -96,6 +126,17 @@ def main():
                 file=sys.stderr,
             )
             result["low"].append(crate)
+
+    ignore_missing = [] if args.ignore_missing is None else args.ignore_missing
+    result["missing"] = [
+        missing for missing in result["missing"] if missing not in ignore_missing
+    ]
+
+    ignore_high = [] if args.ignore_high is None else args.ignore_high
+    result["high"] = [high for high in result["high"] if high not in ignore_high]
+
+    ignore_low = [] if args.ignore_low is None else args.ignore_low
+    result["low"] = [low for low in result["low"] if low not in ignore_low]
 
     print(json.dumps(result), file=sys.stdout)
     return 1 if any(x != [] for x in result.values()) else 0
