@@ -64,6 +64,7 @@ def main():
         dest="ignore_missing",
         nargs="*",
         type=str,
+        default=[],
         help=help_text,
     )
 
@@ -74,6 +75,7 @@ def main():
         dest="ignore_high",
         nargs="*",
         type=str,
+        default=[],
         help=help_text,
     )
 
@@ -84,6 +86,7 @@ def main():
         dest="ignore_low",
         nargs="*",
         type=str,
+        default=[],
         help=help_text,
     )
 
