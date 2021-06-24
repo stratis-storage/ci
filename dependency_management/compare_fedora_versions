@@ -57,7 +57,7 @@ def main():
         "--manifest-path", action="store", dest="manifest_path", help=help_text
     )
 
-    help_text = "Ignore missing crates"
+    help_text = "Ignore a dependency known to be missing"
     parser.add_argument(
         "--ignore-missing",
         action="extend",
@@ -68,7 +68,7 @@ def main():
         help=help_text,
     )
 
-    help_text = "Ignore high crates"
+    help_text = "Ignore a dependency known to be higer than those available"
     parser.add_argument(
         "--ignore-high",
         action="extend",
@@ -79,7 +79,7 @@ def main():
         help=help_text,
     )
 
-    help_text = "Ignore low crates"
+    help_text = "Ignore a dependency known to be lower than those available"
     parser.add_argument(
         "--ignore-low",
         action="extend",
