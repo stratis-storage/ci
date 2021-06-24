@@ -130,16 +130,13 @@ def main():
             )
             result["low"].append(crate)
 
-    ignore_missing = args.ignore_missing
     result["missing"] = [
-        missing for missing in result["missing"] if missing not in ignore_missing
+        missing for missing in result["missing"] if missing not in args.ignore_missing
     ]
 
-    ignore_high = args.ignore_high
-    result["high"] = [high for high in result["high"] if high not in ignore_high]
+    result["high"] = [high for high in result["high"] if high not in args.ignore_high]
 
-    ignore_low = args.ignore_low
-    result["low"] = [low for low in result["low"] if low not in ignore_low]
+    result["low"] = [low for low in result["low"] if low not in args.ignore_low]
 
     print(json.dumps(result), file=sys.stdout)
     return 1 if any(x != [] for x in result.values()) else 0
