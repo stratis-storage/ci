@@ -44,7 +44,8 @@ def build_cargo_tree_dict(manifest_path):
     Build a map of crate names to versions from the output of cargo tree.
     Determine only the versions of direct dependencies.
 
-    :param str manifest_path: the path to the Cargo manifest file
+    :param manifest_path: the path to the Cargo manifest file
+    :type manifest_path: str or NoneType
     :returns: a map from crates names to sets of versions
     :rtype: dict of str * set of Version
     """
@@ -118,7 +119,8 @@ def build_cargo_metadata(manifest_path):
     """
     Build a dict mapping crate to version spec from Cargo.toml.
 
-    :param str manifest_path: the path to the Cargo manifest file
+    :param manifest_path: the path to the Cargo manifest file
+    :type manifest_path: str or NoneType
     """
     command = [
         "cargo",
