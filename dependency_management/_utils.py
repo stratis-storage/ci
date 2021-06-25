@@ -117,6 +117,8 @@ def build_koji_repo_dict(crates, url):
 def build_cargo_metadata(manifest_path):
     """
     Build a dict mapping crate to version spec from Cargo.toml.
+
+    :param str manifest_path: the path to the Cargo manifest file
     """
     command = [
         "cargo",
