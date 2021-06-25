@@ -40,13 +40,14 @@ def _do_updates(explicit_dependencies, cargo_tree, manifest_path):
     )
 
     update_failed = False
+    command_prefix = [
+        "cargo",
+        "update",
+    ]
     for (crate, version) in explicit_dependencies.items():
         current_version = cargo_tree[crate]
-        command = [
-            "cargo",
-            "update",
-            "-p",
-            "%s:%s" % (crate, current_version),
+        command = command_prefix + [
+            "--package=%s:%s" % (crate, current_version),
             "--precise=%s" % version,
         ]
         if manifest_path is not None:
