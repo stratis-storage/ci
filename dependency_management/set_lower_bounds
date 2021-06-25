@@ -52,7 +52,10 @@ def _do_updates(explicit_dependencies, cargo_tree, manifest_path):
         if manifest_path is not None:
             command.append("--manifest-path=%s" % manifest_path)
         try:
-            subprocess.run(command, check=True,)
+            subprocess.run(
+                command,
+                check=True,
+            )
         except subprocess.CalledProcessError as err:
             update_failed = True
             print(err, file=sys.stderr)
