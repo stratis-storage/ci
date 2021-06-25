@@ -28,7 +28,7 @@ import sys
 from _utils import build_cargo_metadata, build_cargo_tree_dict
 
 
-def _do_updates(explicit_dependencies, cargo_tree):
+def _do_updates(explicit_dependencies, cargo_tree, manifest_path):
     """
     Emit commands that update dependencies to the lowest allowed by Cargo.toml.
     """
@@ -40,17 +40,21 @@ def _do_updates(explicit_dependencies, cargo_tree):
     )
 
     update_failed = False
+    command_prefix = [
+        "cargo",
+        "update",
+    ]
+    if manifest_path is not None:
+        command_prefix.append("--manifest-path=%s" % manifest_path)
     for (crate, version) in explicit_dependencies.items():
         current_version = cargo_tree[crate]
+        command = command_prefix + [
+            "--package=%s:%s" % (crate, current_version),
+            "--precise=%s" % version,
+        ]
         try:
             subprocess.run(
-                [
-                    "cargo",
-                    "update",
-                    "-p",
-                    "%s:%s" % (crate, current_version),
-                    "--precise=%s" % version,
-                ],
+                command,
                 check=True,
             )
         except subprocess.CalledProcessError as err:
@@ -81,9 +85,9 @@ def main():
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
 
     # Read the dependency versions specified in Cargo.lock from Cargo.toml
-    current_dependencies = build_cargo_tree_dict()
+    current_dependencies = build_cargo_tree_dict(args.manifest_path)
 
-    return _do_updates(explicit_dependencies, current_dependencies)
+    return _do_updates(explicit_dependencies, current_dependencies, args.manifest_path)
 
 
 if __name__ == "__main__":
