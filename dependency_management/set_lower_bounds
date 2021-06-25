@@ -42,18 +42,17 @@ def _do_updates(explicit_dependencies, cargo_tree, manifest_path):
     update_failed = False
     for (crate, version) in explicit_dependencies.items():
         current_version = cargo_tree[crate]
+        command = [
+            "cargo",
+            "update",
+            "-p",
+            "%s:%s" % (crate, current_version),
+            "--precise=%s" % version,
+        ]
+        if manifest_path is not None:
+            command.append("--manifest-path=%s" % manifest_path)
         try:
-            subprocess.run(
-                [
-                    "cargo",
-                    "update",
-                    "-p",
-                    "%s:%s" % (crate, current_version),
-                    "--precise=%s" % version,
-                    "--manifest-path=%s" % manifest_path,
-                ],
-                check=True,
-            )
+            subprocess.run(command, check=True,)
         except subprocess.CalledProcessError as err:
             update_failed = True
             print(err, file=sys.stderr)
@@ -77,9 +76,6 @@ def main():
     )
 
     args = parser.parse_args()
-
-    if args.manifest_path is None:
-        sys.exit("The --manifest-path parameter must be a path to a Cargo.toml file")
 
     # Read the dependency versions specified in Cargo.toml
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
