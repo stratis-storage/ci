@@ -81,7 +81,7 @@ def main():
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
 
     # Read the dependency versions specified in Cargo.lock from Cargo.toml
-    current_dependencies = build_cargo_tree_dict()
+    current_dependencies = build_cargo_tree_dict(args.manifest_path)
 
     return _do_updates(explicit_dependencies, current_dependencies)
 

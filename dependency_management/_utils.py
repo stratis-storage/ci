@@ -39,7 +39,7 @@ VERSION_RE = re.compile(
 )
 
 
-def build_cargo_tree_dict():
+def build_cargo_tree_dict(manifest_path):
     """
     Build a map of crate names to versions from the output of cargo tree.
     Determine only the versions of direct dependencies.
@@ -48,6 +48,8 @@ def build_cargo_tree_dict():
     :rtype: dict of str * set of Version
     """
     command = ["cargo", "tree", "--charset=ascii", "--all-features"]
+    if manifest_path is not None:
+        command.append("--manifest-path=%s" % manifest_path)
     proc = subprocess.Popen(command, stdout=subprocess.PIPE)
 
     stream = proc.stdout
