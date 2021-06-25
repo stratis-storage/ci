@@ -28,7 +28,7 @@ import sys
 from _utils import build_cargo_metadata, build_cargo_tree_dict
 
 
-def _do_updates(explicit_dependencies, cargo_tree):
+def _do_updates(explicit_dependencies, cargo_tree, manifest_path):
     """
     Emit commands that update dependencies to the lowest allowed by Cargo.toml.
     """
@@ -50,6 +50,7 @@ def _do_updates(explicit_dependencies, cargo_tree):
                     "-p",
                     "%s:%s" % (crate, current_version),
                     "--precise=%s" % version,
+                    "--manifest-path=%s" % manifest_path,
                 ],
                 check=True,
             )
@@ -83,7 +84,7 @@ def main():
     # Read the dependency versions specified in Cargo.lock from Cargo.toml
     current_dependencies = build_cargo_tree_dict(args.manifest_path)
 
-    return _do_updates(explicit_dependencies, current_dependencies)
+    return _do_updates(explicit_dependencies, current_dependencies, args.manifest_path)
 
 
 if __name__ == "__main__":
