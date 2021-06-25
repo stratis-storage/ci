@@ -44,14 +44,14 @@ def _do_updates(explicit_dependencies, cargo_tree, manifest_path):
         "cargo",
         "update",
     ]
+    if manifest_path is not None:
+        command_prefix.append("--manifest-path=%s" % manifest_path)
     for (crate, version) in explicit_dependencies.items():
         current_version = cargo_tree[crate]
         command = command_prefix + [
             "--package=%s:%s" % (crate, current_version),
             "--precise=%s" % version,
         ]
-        if manifest_path is not None:
-            command.append("--manifest-path=%s" % manifest_path)
         try:
             subprocess.run(
                 command,
