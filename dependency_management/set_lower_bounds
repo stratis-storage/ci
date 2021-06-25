@@ -78,6 +78,9 @@ def main():
 
     args = parser.parse_args()
 
+    if args.manifest_path is None:
+        sys.exit("The --manifest-path parameter must be a path to a Cargo.toml file")
+
     # Read the dependency versions specified in Cargo.toml
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
 
