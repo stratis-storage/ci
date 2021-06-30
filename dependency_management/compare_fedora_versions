@@ -25,11 +25,19 @@ import json
 import sys
 
 # isort: LOCAL
-from _utils import (
-    build_cargo_metadata,
-    build_koji_repo_dict,
-    synthesize_koji_repo_dict_url,
-)
+from _utils import build_cargo_metadata, build_koji_repo_dict
+
+
+def get_errors(exc):
+    """
+    Generates a sequence of exceptions starting with exc and following the chain
+    of causes.
+    """
+    while True:
+        yield exc
+        exc = getattr(exc, "__cause__") or getattr(exc, "__context__")
+        if exc is None:
+            return
 
 
 def main():
@@ -97,10 +105,14 @@ def main():
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
 
     # Build koji dict
-    koji_repo_dict = build_koji_repo_dict(
-        frozenset(explicit_dependencies.keys()),
-        synthesize_koji_repo_dict_url(args.release),
-    )
+    try:
+        koji_repo_dict = build_koji_repo_dict(
+            frozenset(explicit_dependencies.keys()), args.release
+        )
+    except RuntimeError as err:
+        raise RuntimeError(
+            'Unable to parse repo page for release "%s"' % args.release
+        ) from err
 
     result = {"missing": [], "high": [], "low": []}
     for crate, version in explicit_dependencies.items():
@@ -144,4 +156,8 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except RuntimeError as err:
+        errors = list(get_errors(err))
+        sys.exit("; ".join(str(e) for e in errors))

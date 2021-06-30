@@ -70,33 +70,48 @@ def build_cargo_tree_dict(manifest_path):
     return version_dict
 
 
-def synthesize_koji_repo_dict_url(release):
-    """
-    From the specified release, synthesize the URL for the repo dict.
-
-    :param str release: the release to make the URL from
-    :rtype: str
-    """
-    return "https://kojipkgs.fedoraproject.org/repos/%s/latest/x86_64/pkglist" % (
-        release if release == "rawhide" else "%s-build" % release
-    )
-
-
-def build_koji_repo_dict(crates, url):
+def build_koji_repo_dict(crates, release):
     """
     :param crates: a set of crates
     :type cargo_tree: set of str
-    :param str url: URL of koki repo dict
+    :param str release: release of fedora for which to build the dict
     :returns: a dictionary containing information from the koji repo webpage
     the keys are the string representations of dependencies
     the values are the versions of dependencies
     :rtype: dict of str * Version
+    :raises: RuntimeError
     """
-    koji_repo_dict = {}
+    if release != "rawhide":
+        try:
+            if release[0] != "f":
+                raise RuntimeError(
+                    'release argument must be "rawhide" or f<n> where n is an integer, was "%s"'
+                    % release
+                )
+
+            release_number = int(release[1:])
+
+            if release_number < 34:
+                raise RuntimeError(
+                    "release number must be at least 34, was %d" % release_number
+                )
+        except (IndexError, ValueError) as err:
+            raise RuntimeError(
+                'release must be "rawhide" or f<n> where n is an integer, was "%s"'
+                % release
+            ) from err
+
+    url = "https://kojipkgs.fedoraproject.org/repos/%s/latest/x86_64/pkglist" % (
+        release if release == "rawhide" else "%s-build" % release
+    )
 
     requests_var = requests.get(url)
+    if requests_var.status_code != 200:
+        raise RuntimeError("Page at URL %s not found" % url)
+
     packages = requests_var.text
 
+    koji_repo_dict = {}
     for line in packages.splitlines():
         matches = KOJI_RE.match(line)
         if matches is None:
