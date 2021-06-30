@@ -39,12 +39,13 @@ def main():
     parser = argparse.ArgumentParser(
         description=(
             "Compares versions of direct dependencies in Fedora with versions "
-            "specified in Cargo.toml. Prints some information to stdout. Rules "
-            "for exit code: "
-            "if exit code & 0x4 == 0x4, a dependency is missing in "
-            "Fedora, if exit code & 0x8 = 0x8, a dependency is higher than "
-            "that available in Fedora, if exit code & 0x10 == 0x10, then a "
-            "dependency can be bumped to a higher version in Fedora."
+            "specified in Cargo.toml. Prints the result of the comparison to "
+            "stdout in JSON format. Returns a non-zero exit code if any "
+            "missing, too low, or too high dependencies are to be found in the "
+            "JSON output. Logs the discovery of any missing, too low, or "
+            "too high dependency to standard error. Note that, because it is "
+            "possible to specify dependencies to ignore in any category, "
+            "log messages may be emitted in cases where the exit code is 0."
         )
     )
     help_text = (
@@ -52,7 +53,7 @@ def main():
         "'rawhide' or 'f<n>' where <n> is some natural number"
     )
     parser.add_argument("--release", action="store", default="rawhide", help=help_text)
-    help_text = "Manifest path for the cargo metadata command"
+    help_text = "Manifest path for cargo commands"
     parser.add_argument(
         "--manifest-path", action="store", dest="manifest_path", help=help_text
     )
