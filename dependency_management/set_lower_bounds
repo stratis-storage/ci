@@ -74,7 +74,7 @@ def main():
             "in Cargo.toml."
         )
     )
-    help_text = "Manifest path for the cargo metadata command"
+    help_text = "Manifest path for cargo commands"
     parser.add_argument(
         "--manifest-path", action="store", dest="manifest_path", help=help_text
     )
