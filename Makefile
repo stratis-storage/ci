@@ -31,6 +31,7 @@ fmt-travis:
 	black ./dependency_management/compare_fedora_versions --check
 	black ./dependency_management/set_lower_bounds --check
 	black ./misc_scripts/* --check
+	shfmt -d .
 
 .PHONY: yamllint
 yamllint:
