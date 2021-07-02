@@ -29,6 +29,7 @@ jobs:
           - dependencies: >
               black
               python3-isort
+              shfmt
             image: fedora:33
             task: fmt-travis
           # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
