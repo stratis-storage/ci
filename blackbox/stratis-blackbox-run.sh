@@ -3,8 +3,7 @@ set -e
 
 export STRATIS_DBUS_TIMEOUT=300000
 
-if [ ! -e /etc/stratis/test_config.json ]
-then
+if [ ! -e /etc/stratis/test_config.json ]; then
 	echo "No test device config found; create a test_config.json"
 	echo "file in /etc/stratis with three devices that can be"
 	echo "overwritten for testing."
@@ -15,10 +14,9 @@ fi
 # This is a naive search for device paths starting with "/dev", then
 # stripping out the quote and comma characters.
 TESTDEVS_RESULT=$(./parse_json.py /etc/stratis/test_config.json)
-IFS="," read -a TESTDEVS <<< "$(echo $TESTDEVS_RESULT)"
+IFS="," read -a TESTDEVS <<<"$(echo $TESTDEVS_RESULT)"
 
-if [ ! -e stratisd.spec ] || [ ! -e stratis-cli.spec ]
-then
+if [ ! -e stratisd.spec ] || [ ! -e stratis-cli.spec ]; then
 	echo "Both stratisd.spec and stratis-cli.spec must be present."
 	exit 4
 fi
@@ -69,8 +67,7 @@ dnf -y install output_rpms/$STRATISD_RPMBASENAME*.rpm output_rpms/$STRATIS_CLI_R
 RC_BLACKBOX_STRATISD=0
 RC_BLACKBOX_STRATIS_CLI=0
 
-if [ -d testing ]
-then
+if [ -d testing ]; then
 	rm -rf testing
 fi
 
@@ -100,17 +97,14 @@ dnf -y remove $STRATISD_RPMBASENAME $STRATIS_CLI_RPMBASENAME
 echo "stratisd_cert result: $RC_BLACKBOX_STRATISD"
 echo "stratis_cli_cert result: $RC_BLACKBOX_STRATIS_CLI"
 
-if [ $RC_BLACKBOX_STRATISD -gt 0 ] && [ $RC_BLACKBOX_STRATIS_CLI -gt 0 ]
-then
+if [ $RC_BLACKBOX_STRATISD -gt 0 ] && [ $RC_BLACKBOX_STRATIS_CLI -gt 0 ]; then
 	exit 3
 fi
 
-if [ $RC_BLACKBOX_STRATIS_CLI -gt 0 ]
-then
+if [ $RC_BLACKBOX_STRATIS_CLI -gt 0 ]; then
 	exit 2
 fi
 
-if [ $RC_BLACKBOX_STRATISD -gt 0 ]
-then
+if [ $RC_BLACKBOX_STRATISD -gt 0 ]; then
 	exit 1
 fi

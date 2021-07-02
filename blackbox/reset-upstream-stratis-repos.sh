@@ -19,10 +19,13 @@ rm -rf $STRATIS_CLI_DIR
 
 git clone $STRATISD_REPO $STRATISD_DIR
 echo "Most recent commits for ${STRATISD_N}:"
-( cd $STRATISD_DIR; git status; git log --format="%h %ci :: %s" | head -20 )
+(
+	cd $STRATISD_DIR
+	git status
+	git log --format="%h %ci :: %s" | head -20
+)
 
-if [ ! -z "$STRATISD_REMOTE" ] && [ ! -z "$STRATISD_BRANCH" ]
-then
+if [ ! -z "$STRATISD_REMOTE" ] && [ ! -z "$STRATISD_BRANCH" ]; then
 	cd $STRATISD_DIR
 	git remote add blackbox $STRATISD_REMOTE
 	git fetch blackbox
@@ -32,10 +35,13 @@ fi
 
 git clone $STRATIS_CLI_REPO $STRATIS_CLI_DIR
 echo "Most recent commits for ${STRATIS_CLI_N}:"
-( cd $STRATIS_CLI_DIR; git status; git log --format="%h %ci :: %s" | head -20 )
+(
+	cd $STRATIS_CLI_DIR
+	git status
+	git log --format="%h %ci :: %s" | head -20
+)
 
-if [ ! -z "$STRATIS_CLI_REMOTE" ] && [ ! -z "$STRATIS_CLI_BRANCH" ]
-then
+if [ ! -z "$STRATIS_CLI_REMOTE" ] && [ ! -z "$STRATIS_CLI_BRANCH" ]; then
 	cd $STRATIS_CLI_DIR
 	git remote add blackbox $STRATIS_CLI_REMOTE
 	git fetch blackbox
