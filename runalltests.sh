@@ -3,7 +3,7 @@
 # Run all tests from the Stratis CI test suite
 # Current distro: Fedora (29)
 
-PRESTAGE=`pwd`
+PRESTAGE=$(pwd)
 
 ./dependencies_fedora.sh
 
@@ -30,8 +30,7 @@ rustup default 1.49.0
 mkdir workspace
 cd workspace || exit
 
-if [ -s "/etc/stratis/test_config.json" ]
-then
+if [ -s "/etc/stratis/test_config.json" ]; then
 	STRATISD_MODE="test-real"
 else
 	STRATISD_MODE="test-loop"
@@ -39,7 +38,7 @@ fi
 echo "Executing stratisd test ($STRATISD_MODE)"
 git clone https://github.com/stratis-storage/stratisd.git
 cd stratisd || exit
-WORKSPACE=`pwd`
+WORKSPACE=$(pwd)
 export WORKSPACE
 $PRESTAGE/stratisd.sh $STRATISD_MODE
 RC_STRATISD=$?
@@ -50,7 +49,6 @@ echo "End of prestage script."
 echo "Results:"
 echo "stratisd-$STRATISD_MODE: $RC_STRATISD"
 
-if [ $RC_STRATISD -gt 0 ]
-then
+if [ $RC_STRATISD -gt 0 ]; then
 	exit 1
 fi

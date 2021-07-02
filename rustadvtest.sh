@@ -9,8 +9,7 @@ PRESTAGE=$(pwd)
 
 ADVISORY=$1
 
-if [ -z $ADVISORY ]
-then
+if [ -z $ADVISORY ]; then
 	echo "Usage: $0 <advisory>"
 	echo "  (where <advisory> is the FEDORA-YYYY-XXXXXXXXXX string)"
 	echo "   used in the --advisory parameter of a dnf command"
@@ -18,8 +17,7 @@ then
 	exit 1
 fi
 
-if [ ! -s /etc/stratis/test_config.json ]
-then
+if [ ! -s /etc/stratis/test_config.json ]; then
 	echo "This script requires test devices to be defined"
 	echo "in the file /etc/stratis/test_config.json."
 	exit 1
@@ -29,8 +27,7 @@ fi
 
 dnf -y install cargo rust --enablerepo=updates-testing --advisory=$ADVISORY
 
-if [ -d workspace ]
-then
+if [ -d workspace ]; then
 	echo -n "Removing prior workspace directory..."
 	rm -rf workspace
 	echo " done."

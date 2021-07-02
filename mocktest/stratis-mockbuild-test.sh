@@ -1,32 +1,26 @@
 #!/bin/bash
 set -e
 
-if [ ! -d SOURCES ]
-then
+if [ ! -d SOURCES ]; then
 	mkdir SOURCES
 fi
 
-if [ ! -d SPECS ]
-then
+if [ ! -d SPECS ]; then
 	mkdir SPECS
 fi
 
-if [ -d stratisd-77.77.77 ]
-then
+if [ -d stratisd-77.77.77 ]; then
 	rm -rf stratisd-77.77.77
 fi
 
-if [ -d ci ]
-then
+if [ -d ci ]; then
 	rm -rf ci
 fi
 
-if [ -d output_rpms ]
-then
+if [ -d output_rpms ]; then
 	rm -rf output_rpms
 fi
 mkdir output_rpms
-
 
 dnf config-manager --set-enable updates-testing
 dnf -y install rpm-build mock cargo git
