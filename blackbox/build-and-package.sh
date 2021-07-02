@@ -14,10 +14,9 @@ STRATIS_CLI_R=$(rpmspec -P stratis-cli.spec | grep ^Release | awk '{print $2}')
 STRATIS_CLI_RPMBASENAME="${STRATIS_CLI_N}-${STRATIS_CLI_V}-${STRATIS_CLI_R}"
 echo "stratis-cli package target: $STRATIS_CLI_RPMBASENAME"
 
-if [ -d output_rpms ]
-then
-        echo "output_rpms directory already exists.  Recreating..."
-        rm -rvf output_rpms
+if [ -d output_rpms ]; then
+	echo "output_rpms directory already exists.  Recreating..."
+	rm -rvf output_rpms
 fi
 mkdir output_rpms
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS}/
@@ -27,10 +26,9 @@ echo "Building stratisd test package..."
 
 # If the vendor directory exists, remove it.
 # The contents will be repopulated by "cargo vendor".
-if [ -d ${STRATISD_N}-${STRATISD_V}/vendor ]
-then
-        echo "stratisd vendor directory already exists.  Removing..."
-        rm -rf ${STRATISD_N}-${STRATISD_V}/vendor
+if [ -d ${STRATISD_N}-${STRATISD_V}/vendor ]; then
+	echo "stratisd vendor directory already exists.  Removing..."
+	rm -rf ${STRATISD_N}-${STRATISD_V}/vendor
 fi
 
 tar czvf ~/rpmbuild/SOURCES/${STRATISD_N}-${STRATISD_V}.tar.gz ${TAR_CREATE_OPTS} ${STRATISD_N}-${STRATISD_V}
