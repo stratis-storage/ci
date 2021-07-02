@@ -19,6 +19,7 @@ fmt:
 	black ./dependency_management/compare_fedora_versions
 	black ./dependency_management/set_lower_bounds
 	black ./misc_scripts/*
+	shfmt -l -w .
 
 .PHONY: fmt-travis
 fmt-travis:
