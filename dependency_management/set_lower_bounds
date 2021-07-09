@@ -23,45 +23,81 @@ incorrect by being too low.
 import argparse
 import subprocess
 import sys
+from random import shuffle
 
 # isort: LOCAL
 from _utils import build_cargo_metadata, build_cargo_tree_dict
 
 
-def _do_updates(explicit_dependencies, cargo_tree, manifest_path):
+def _do_updates(explicit_dependencies, manifest_path):
     """
     Emit commands that update dependencies to the lowest allowed by Cargo.toml.
-    """
-    assert frozenset(explicit_dependencies.keys()) == frozenset(
-        cargo_tree.keys()
-    ), "in Cargo.toml but not in 'cargo tree' output: %s, vice-versa: %s" % (
-        frozenset(explicit_dependencies.keys()) - frozenset(cargo_tree.keys()),
-        frozenset(cargo_tree.keys()) - frozenset(explicit_dependencies.keys()),
-    )
 
-    update_failed = False
+    :param explicit_dependencies: map of the dependencies in Cargo.toml
+    :type explicit_dependencies: dict of str * str
+    :param manifest_path: the path to Cargo.toml
+    :type manifest_path: str or NoneType
+    :returns: crates that failed to update
+    :rtypes: list of str * str
+    """
+
     command_prefix = [
         "cargo",
         "update",
     ]
     if manifest_path is not None:
         command_prefix.append("--manifest-path=%s" % manifest_path)
-    for (crate, version) in explicit_dependencies.items():
-        current_version = cargo_tree[crate]
-        command = command_prefix + [
-            "--package=%s:%s" % (crate, current_version),
-            "--precise=%s" % version,
-        ]
-        try:
-            subprocess.run(
-                command,
-                check=True,
-            )
-        except subprocess.CalledProcessError as err:
-            update_failed = True
-            print(err, file=sys.stderr)
 
-    return "Failed to set the versions of some crates" if update_failed else None
+    def _update_once(updatables):
+        """
+        Try once to update all crates to their precise versions.
+        Randomize the order in which updates are tried.
+
+        :param updatables: crates to update
+        :type updatables: list of str * str
+
+        :returns: the crates that failed to update
+        :rtype: list of str * str
+        """
+        # Read the dependency versions specified in Cargo.lock from Cargo.toml
+        cargo_tree = build_cargo_tree_dict(manifest_path)
+
+        assert frozenset(explicit_dependencies.keys()) == frozenset(
+            cargo_tree.keys()
+        ), "in Cargo.toml but not in 'cargo tree' output: %s, vice-versa: %s" % (
+            frozenset(explicit_dependencies.keys()) - frozenset(cargo_tree.keys()),
+            frozenset(cargo_tree.keys()) - frozenset(explicit_dependencies.keys()),
+        )
+
+        shuffle(updatables)
+
+        failed = []
+        for (crate, version) in updatables:
+            current_version = cargo_tree[crate]
+            command = command_prefix + [
+                "--package=%s:%s" % (crate, current_version),
+                "--precise=%s" % version,
+            ]
+            try:
+                subprocess.run(
+                    command,
+                    check=True,
+                )
+            except subprocess.CalledProcessError as err:
+                failed.append((crate, version))
+                print(err, file=sys.stderr)
+
+        return failed
+
+    updatables = list(explicit_dependencies.items())[:]
+    while len(updatables) != 0:
+        print("Update iteration started...", file=sys.stderr)
+        result = _update_once(updatables)
+        if frozenset(result) >= frozenset(updatables):
+            break
+        updatables = result
+
+    return updatables
 
 
 def main():
@@ -84,10 +120,7 @@ def main():
     # Read the dependency versions specified in Cargo.toml
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
 
-    # Read the dependency versions specified in Cargo.lock from Cargo.toml
-    current_dependencies = build_cargo_tree_dict(args.manifest_path)
-
-    return _do_updates(explicit_dependencies, current_dependencies, args.manifest_path)
+    return 0 if _do_updates(explicit_dependencies, args.manifest_path) == [] else 1
 
 
 if __name__ == "__main__":
