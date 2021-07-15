@@ -55,7 +55,7 @@ SPECS = {
     "org.storage.stratis3.pool.r0": """
 <interface name="org.storage.stratis3.pool.r0">
 <method name="CreateFilesystems">
-<arg name="specs" type="as" direction="in"/>
+<arg name="specs" type="a(s(bs))" direction="in"/>
 <arg name="results" type="(ba(os))" direction="out"/>
 <arg name="return_code" type="q" direction="out"/>
 <arg name="return_string" type="s" direction="out"/>
@@ -152,7 +152,7 @@ def setup_minimal_object_set(bus):
     ((_, (filesystems)), return_code, return_msg,) = Pool.Methods.CreateFilesystems(
         pool_proxy,
         {
-            "specs": ["fs_name"],
+            "specs": [("fs_name", (False, ""))],
         },
     )
 
