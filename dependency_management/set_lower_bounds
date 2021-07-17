@@ -33,12 +33,16 @@ def _do_updates(explicit_dependencies, manifest_path):
     """
     Emit commands that update dependencies to the lowest allowed by Cargo.toml.
 
+    Postcondition: lhs of return value == [] -> all crates were updated
+
+    Postcondition: lhs of return value == [] -> rhs of return value == []
+
     :param explicit_dependencies: map of the dependencies in Cargo.toml
     :type explicit_dependencies: dict of str * str
     :param manifest_path: the path to Cargo.toml
     :type manifest_path: str or NoneType
-    :returns: crates that failed to update
-    :rtypes: list of str * str
+    :returns: a pair of list of crates and versions
+    :rtype: pair of list of str * str * list of str * str
     """
 
     command_prefix = [
@@ -48,16 +52,19 @@ def _do_updates(explicit_dependencies, manifest_path):
     if manifest_path is not None:
         command_prefix.append("--manifest-path=%s" % manifest_path)
 
-    def _update_once(updatables):
+    updatables = list(explicit_dependencies.items())[:]
+
+    def _update_once():
         """
         Try once to update all crates to their precise versions.
         Randomize the order in which updates are tried.
 
-        :param updatables: crates to update
-        :type updatables: list of str * str
-
-        :returns: the crates that failed to update
-        :rtype: list of str * str
+        Postcondition: lhs of return value == [] -> all packages have
+        been updated to their values in Cargo.toml.
+        Postcondition: frozenset(rhs of return value) <=
+                       frozenset(lhs of return value)
+        :returns: the crates that were tried and that failed to update
+        :rtype: pair of list of str * str * list of str * str
         """
         # Read the dependency versions specified in Cargo.lock from Cargo.toml
         cargo_tree = build_cargo_tree_dict(manifest_path)
@@ -71,33 +78,57 @@ def _do_updates(explicit_dependencies, manifest_path):
 
         shuffle(updatables)
 
+        tried = []
         failed = []
         for (crate, version) in updatables:
             current_version = cargo_tree[crate]
-            command = command_prefix + [
-                "--package=%s:%s" % (crate, current_version),
-                "--precise=%s" % version,
-            ]
-            try:
-                subprocess.run(
-                    command,
-                    check=True,
-                )
-            except subprocess.CalledProcessError as err:
-                failed.append((crate, version))
-                print(err, file=sys.stderr)
+            if current_version != version:
+                command = command_prefix + [
+                    "--package=%s:%s" % (crate, current_version),
+                    "--precise=%s" % version,
+                ]
+                try:
+                    tried.append((crate, version))
+                    subprocess.run(
+                        command,
+                        check=True,
+                    )
+                except subprocess.CalledProcessError as err:
+                    failed.append((crate, version))
+                    print(err, file=sys.stderr)
 
-        return failed
+                # If any update was attempted, rebuilding the tree information
+                # may yield new version information for direct dependencies
+                # that were not explicitly updated as direct dependencies can
+                # also be transitive dependencies.
+                cargo_tree = build_cargo_tree_dict(manifest_path)
 
-    updatables = list(explicit_dependencies.items())[:]
-    while len(updatables) != 0:
+        return (tried, failed)
+
+    # The loop terminates if all packages have reached their value in
+    # Cargo.toml. It may terminate without finding a solution which does exist.
+    # This is because the solution found for transitive dependencies when
+    # reducing a dependency to its lowest value may prohibit being able to
+    # reduce other dependencies, and the originally reduced dependencies are
+    # never perturbed in order to look for a different solution. There are
+    # standard ML techniques for dealing with this problem which are not worth
+    # pursuing now. There is a very small possibility that the loop will fail to
+    # terminate if there is an oscillation of versions due to some mutually
+    # dependent packages.
+    while True:
         print("Update iteration started...", file=sys.stderr)
-        result = _update_once(updatables)
-        if frozenset(result) >= frozenset(updatables):
-            break
-        updatables = result
+        (tried, failed) = _update_once()
 
-    return updatables
+        # Indicates that there were no packages left to adjust
+        if tried == []:
+            break
+
+        # Indicates that there was a failure to adjust every package not
+        # yet at its value in Cargo.toml
+        if tried == failed:
+            break
+
+    return (tried, failed)
 
 
 def main():
@@ -120,7 +151,9 @@ def main():
     # Read the dependency versions specified in Cargo.toml
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
 
-    return 0 if _do_updates(explicit_dependencies, args.manifest_path) == [] else 1
+    return (
+        0 if _do_updates(explicit_dependencies, args.manifest_path) == ([], []) else 1
+    )
 
 
 if __name__ == "__main__":
