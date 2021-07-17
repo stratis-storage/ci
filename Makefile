@@ -1,7 +1,7 @@
 .PHONY: lint
 lint:
 	pylint ./blackbox/parse_json.py
-	pylint ./dependency_management/* --disable=duplicate-code
+	pylint ./dependency_management/*
 	pylint ./misc_scripts/*
 
 .PHONY: lint-non-pygithub
