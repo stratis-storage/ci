@@ -4,6 +4,7 @@ change_toolchain_version: change the toolchain version in the GitHub Actions
 workflow configurations.
 """
 
+# isort: STDLIB
 import argparse
 
 KEY_LSRT = r"# LOWEST SUPPORTED RUST TOOLCHAIN"
