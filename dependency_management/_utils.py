@@ -158,6 +158,10 @@ def build_cargo_metadata(manifest_path):
     result = dict()
     for item in dependencies:
         matches = VERSION_RE.match(item["req"])
+        if matches is None:
+            raise RuntimeError(
+                'Unexpected version string "%s" for %s' % (item["req"], item)
+            )
         major = int(matches["major"] or 0)
         minor = int(matches["minor"] or 0)
         patch = int(matches["patch"] or 0)
