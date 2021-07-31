@@ -40,6 +40,49 @@ def get_errors(exc):
             return
 
 
+def _main_engine(explicit_dependencies, koji_repo_dict):
+    """
+    Computes the information about the explicit dependencies in Cargo.toml
+    based on the specified kobj repo dict.
+
+    :param explciit_dependencies: the dependencies in Cargo.toml
+    :param koji_repo_dict: corresponding values in the repo dict
+
+    :returns: a summary of the data found, as a dict
+    :rtype: dict of str * list of str
+    """
+    (missing, high, low) = ([], [], [])
+    for crate, version in explicit_dependencies.items():
+        koji_version = koji_repo_dict.get(crate)
+        if koji_version is None:
+            print("No Fedora package for crate %s found" % crate, file=sys.stderr)
+            missing.append(crate)
+            continue
+
+        if koji_version < version:
+            print(
+                "Version %s of crate %s higher than maximum %s that is available on Fedora"
+                % (version, crate, koji_version),
+                file=sys.stderr,
+            )
+            high.append(crate)
+            continue
+
+        exclusive_upper_bound = (
+            version.next_major() if version.major != 0 else version.next_minor()
+        )
+
+        if koji_version >= exclusive_upper_bound:
+            print(
+                "Version %s of crate %s is available in Fedora. Requires update in Cargo.toml"
+                % (koji_version, crate),
+                file=sys.stderr,
+            )
+            low.append(crate)
+
+    return {"high": high, "low": low, "missing": missing}
+
+
 def main():
     """
     The main method
@@ -99,7 +142,41 @@ def main():
         help=help_text,
     )
 
+    help_text = "Ignore all dependencies in specified category"
+    parser.add_argument(
+        "--ignore-category",
+        action="extend",
+        dest="ignore_category",
+        nargs="*",
+        choices=["high", "low", "missing"],
+        default=[],
+        help=help_text,
+    )
+
     args = parser.parse_args()
+
+    itemized_ignores = {
+        "high": args.ignore_high,
+        "low": args.ignore_low,
+        "missing": args.ignore_missing,
+    }
+
+    def filter_items(items, category):
+        """
+        Filter items according to command-line arguments
+
+        :param items: a list of items
+        :type items: list of str
+        :param str category: the category to filter
+
+        :returns: the filtered items
+        :rtype: list of str
+        """
+        return (
+            []
+            if category in args.ignore_category
+            else [item for item in items if item not in itemized_ignores[category]]
+        )
 
     # Read the dependency versions specified in Cargo.toml
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
@@ -114,42 +191,13 @@ def main():
             'Unable to parse repo page for release "%s"' % args.release
         ) from err
 
-    result = {"missing": [], "high": [], "low": []}
-    for crate, version in explicit_dependencies.items():
-        koji_version = koji_repo_dict.get(crate)
-        if koji_version is None:
-            print("No Fedora package for crate %s found" % crate, file=sys.stderr)
-            result["missing"].append(crate)
-            continue
+    result = _main_engine(explicit_dependencies, koji_repo_dict)
 
-        if koji_version < version:
-            print(
-                "Version %s of crate %s higher than maximum %s that is available on Fedora"
-                % (version, crate, koji_version),
-                file=sys.stderr,
-            )
-            result["high"].append(crate)
-            continue
-
-        exclusive_upper_bound = (
-            version.next_major() if version.major != 0 else version.next_minor()
-        )
-
-        if koji_version >= exclusive_upper_bound:
-            print(
-                "Version %s of crate %s is available in Fedora. Requires update in Cargo.toml"
-                % (koji_version, crate),
-                file=sys.stderr,
-            )
-            result["low"].append(crate)
-
-    result["missing"] = [
-        missing for missing in result["missing"] if missing not in args.ignore_missing
-    ]
-
-    result["high"] = [high for high in result["high"] if high not in args.ignore_high]
-
-    result["low"] = [low for low in result["low"] if low not in args.ignore_low]
+    result = {
+        "missing": filter_items(result["missing"], "missing"),
+        "high": filter_items(result["high"], "high"),
+        "low": filter_items(result["low"], "low"),
+    }
 
     print(json.dumps(result), file=sys.stdout)
     return 1 if any(x != [] for x in result.values()) else 0
