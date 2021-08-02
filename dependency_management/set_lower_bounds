@@ -33,16 +33,14 @@ def _do_updates(explicit_dependencies, manifest_path):
     """
     Emit commands that update dependencies to the lowest allowed by Cargo.toml.
 
-    Postcondition: lhs of return value == [] -> all crates were updated
-
-    Postcondition: lhs of return value == [] -> rhs of return value == []
+    Postcondition: return value == [] <-> all crates were updated
 
     :param explicit_dependencies: map of the dependencies in Cargo.toml
     :type explicit_dependencies: dict of str * str
     :param manifest_path: the path to Cargo.toml
     :type manifest_path: str or NoneType
-    :returns: a pair of list of crates and versions
-    :rtype: pair of list of str * str * list of str * str
+    :returns: a list of the crates that were last tried
+    :rtype: list of str * str
     """
 
     command_prefix = [
@@ -128,7 +126,7 @@ def _do_updates(explicit_dependencies, manifest_path):
         if tried == failed:
             break
 
-    return (tried, failed)
+    return tried
 
 
 def main():
@@ -151,9 +149,27 @@ def main():
     # Read the dependency versions specified in Cargo.toml
     explicit_dependencies = build_cargo_metadata(args.manifest_path)
 
-    return (
-        0 if _do_updates(explicit_dependencies, args.manifest_path) == ([], []) else 1
+    tried = _do_updates(explicit_dependencies, args.manifest_path)
+    if tried == []:
+        print(
+            (
+                "Dependency versions in Cargo.lock have been set to the "
+                "minimum values that satisfy the Cargo.toml specification"
+            ),
+            file=sys.stderr,
+        )
+        return 0
+
+    print(
+        (
+            "Crates that could not be updated to their minimum version "
+            "compatible with the Cargo.toml specification:"
+        ),
+        file=sys.stderr,
     )
+    for (crate, version) in tried:
+        print("%s could not be updated to %s" % (crate, version), file=sys.stderr)
+    return 1
 
 
 if __name__ == "__main__":
