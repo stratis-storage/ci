@@ -8,6 +8,7 @@ workflow configurations.
 import argparse
 
 KEY_LSRT = r"# LOWEST SUPPORTED RUST TOOLCHAIN"
+KEY_CDRT = r"# CURRENT DEVELOPMENT RUST TOOLCHAIN"
 
 
 def main():
@@ -16,6 +17,7 @@ def main():
     """
 
     parser = argparse.ArgumentParser()
+    parser.add_argument("toolchain", choices=["lowest", "current"])
     parser.add_argument("file")
     parser.add_argument("old_version")
     parser.add_argument("new_version")
@@ -24,8 +26,13 @@ def main():
     filename = args.file
     outfilename = filename + ".new"
 
-    old_verstring = args.old_version + r"  " + KEY_LSRT
-    new_verstring = args.new_version + r"  " + KEY_LSRT
+    if args.toolchain == "lowest":
+        search_key = KEY_LSRT
+    elif args.toolchain == "current":
+        search_key = KEY_CDRT
+
+    old_verstring = args.old_version + r"  " + search_key
+    new_verstring = args.new_version + r"  " + search_key
 
     print("Test outfile: %s" % outfilename)
     print("Old version: %s" % args.old_version)
@@ -34,7 +41,7 @@ def main():
     with open(filename, "r") as file:
         for line in file:
 
-            if KEY_LSRT in line:
+            if search_key in line:
                 templine = line.replace(old_verstring, new_verstring)
                 if args.new_version not in templine:
                     raise ValueError("Old version not in file")
