@@ -17,10 +17,12 @@ def main():
     """
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("toolchain", choices=["lowest", "current"])
-    parser.add_argument("file")
-    parser.add_argument("old_version")
-    parser.add_argument("new_version")
+    parser.add_argument(
+        "toolchain", choices=["lowest", "current"], help="the toolchain to change"
+    )
+    parser.add_argument("file", help="the configuration file to change")
+    parser.add_argument("old_version", help="the old Rust version")
+    parser.add_argument("new_version", help="the new Rust version")
     args = parser.parse_args()
 
     filename = args.file
