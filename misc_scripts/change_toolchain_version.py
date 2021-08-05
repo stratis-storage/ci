@@ -24,7 +24,6 @@ def main():
     args = parser.parse_args()
 
     filename = args.file
-    outfilename = filename + ".new"
 
     if args.toolchain == "lowest":
         search_key = KEY_LSRT
@@ -34,7 +33,6 @@ def main():
     old_verstring = args.old_version + r"  " + search_key
     new_verstring = args.new_version + r"  " + search_key
 
-    print("Test outfile: %s" % outfilename)
     print("Old version: %s" % args.old_version)
     print("New version: %s" % args.new_version)
 
