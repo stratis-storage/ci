@@ -9,6 +9,7 @@ import argparse
 
 KEY_LSRT = r"# LOWEST SUPPORTED RUST TOOLCHAIN"
 KEY_CDRT = r"# CURRENT DEVELOPMENT RUST TOOLCHAIN"
+TOOLCHAIN_CHOICES = ["lowest", "current"]
 
 
 def main():
@@ -18,7 +19,7 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "toolchain", choices=["lowest", "current"], help="the toolchain to change"
+        "toolchain", choices=TOOLCHAIN_CHOICES, help="the toolchain to change"
     )
     parser.add_argument("file", help="the configuration file to change")
     parser.add_argument("old_version", help="the old Rust version")
