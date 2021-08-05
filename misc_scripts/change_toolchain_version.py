@@ -33,9 +33,6 @@ def main():
     old_verstring = args.old_version + r"  " + search_key
     new_verstring = args.new_version + r"  " + search_key
 
-    print("Old version: %s" % args.old_version)
-    print("New version: %s" % args.new_version)
-
     with open(filename, "r") as file:
         for line in file:
 
