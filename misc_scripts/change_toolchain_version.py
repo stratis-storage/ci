@@ -23,9 +23,9 @@ def search_file(args, search_key, old_verstring, new_verstring, filename):
                 templine = line.replace(old_verstring, new_verstring)
                 if args.new_version not in templine:
                     raise ValueError("Old version not in file")
-                print(templine)
+                print(templine, end="")
             else:
-                print(line)
+                print(line, end="")
 
 
 def main():
