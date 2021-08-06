@@ -12,7 +12,7 @@ KEY_CDRT = r"# CURRENT DEVELOPMENT RUST TOOLCHAIN"
 TOOLCHAIN_CHOICES = ["lowest", "current"]
 
 
-def search_file(new_version, search_key, old_verstring, new_verstring, filename):
+def search_file(search_key, old_verstring, new_verstring, filename):
     """
     Read the file.
     """
@@ -24,7 +24,7 @@ def search_file(new_version, search_key, old_verstring, new_verstring, filename)
 
             if search_key in line:
                 templine = line.replace(old_verstring, new_verstring)
-                if new_version not in templine:
+                if new_verstring not in templine:
                     raise RuntimeError("Old version not in file")
                 output.append(templine)
             else:
@@ -47,7 +47,6 @@ def main():
     parser.add_argument("new_version", help="the new Rust version")
     args = parser.parse_args()
 
-    new_version = args.new_version
     filename = args.file
 
     if args.toolchain == "lowest":
@@ -59,7 +58,7 @@ def main():
     new_verstring = args.new_version + r"  " + search_key
 
     output = search_file(
-        new_version, search_key, old_verstring, new_verstring, filename
+        search_key, old_verstring, new_verstring, filename
     )
 
     for line in output:
