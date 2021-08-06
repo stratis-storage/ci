@@ -15,6 +15,11 @@ TOOLCHAIN_CHOICES = ["lowest", "current"]
 def search_file(search_key, old_verstring, new_verstring, filename):
     """
     Read the file.
+
+    :param str search_key: the search key for the line to replace
+    :param str old_verstring: old version string
+    :param str new_verstring: new version string
+    :param str filename: the name of the file to read
     """
 
     output = []
@@ -57,9 +62,7 @@ def main():
     old_verstring = args.old_version + r"  " + search_key
     new_verstring = args.new_version + r"  " + search_key
 
-    output = search_file(
-        search_key, old_verstring, new_verstring, filename
-    )
+    output = search_file(search_key, old_verstring, new_verstring, filename)
 
     for line in output:
         print(line, end="")
