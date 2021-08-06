@@ -47,12 +47,14 @@ def main():
     parser.add_argument(
         "toolchain", choices=TOOLCHAIN_CHOICES, help="the toolchain to change"
     )
-    parser.add_argument("file", help="the configuration file to change")
+    parser.add_argument("file", help="the configuration file to read")
+    parser.add_argument("outfile", help="the configuration file to write")
     parser.add_argument("old_version", help="the old Rust version")
     parser.add_argument("new_version", help="the new Rust version")
     args = parser.parse_args()
 
     filename = args.file
+    outfilename = args.outfile
 
     if args.toolchain == "lowest":
         search_key = KEY_LSRT
@@ -64,8 +66,12 @@ def main():
 
     output = search_file(search_key, old_verstring, new_verstring, filename)
 
-    for line in output:
-        print(line, end="")
+    # for line in output:
+    #     print(line, end="")
+
+    with open(outfilename, "w+") as outfile:
+        for outline in output:
+            outfile.write(outline)
 
 
 if __name__ == "__main__":
