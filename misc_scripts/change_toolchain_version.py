@@ -22,7 +22,7 @@ def search_file(args, search_key, old_verstring, new_verstring, filename):
             if search_key in line:
                 templine = line.replace(old_verstring, new_verstring)
                 if args.new_version not in templine:
-                    raise ValueError("Old version not in file")
+                    raise RuntimeError("Old version not in file")
                 print(templine, end="")
             else:
                 print(line, end="")
