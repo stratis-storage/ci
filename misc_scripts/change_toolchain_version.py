@@ -16,6 +16,9 @@ def search_file(new_version, search_key, old_verstring, new_verstring, filename)
     """
     Read the file.
     """
+
+    output = []
+
     with open(filename, "r") as file:
         for line in file:
 
@@ -23,9 +26,11 @@ def search_file(new_version, search_key, old_verstring, new_verstring, filename)
                 templine = line.replace(old_verstring, new_verstring)
                 if new_version not in templine:
                     raise RuntimeError("Old version not in file")
-                print(templine, end="")
+                output.append(templine)
             else:
-                print(line, end="")
+                output.append(line)
+
+    return output
 
 
 def main():
@@ -53,7 +58,12 @@ def main():
     old_verstring = args.old_version + r"  " + search_key
     new_verstring = args.new_version + r"  " + search_key
 
-    search_file(new_version, search_key, old_verstring, new_verstring, filename)
+    output = search_file(
+        new_version, search_key, old_verstring, new_verstring, filename
+    )
+
+    for line in output:
+        print(line, end="")
 
 
 if __name__ == "__main__":
