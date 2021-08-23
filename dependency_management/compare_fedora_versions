@@ -206,6 +206,6 @@ def main():
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except RuntimeError as err:
-        errors = list(get_errors(err))
+    except RuntimeError as pgm_err:
+        errors = list(get_errors(pgm_err))
         sys.exit("; ".join(str(e) for e in errors))
