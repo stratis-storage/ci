@@ -25,6 +25,7 @@ jobs:
           - dependencies: >
               black
               python3-isort
+              shfmt
             image: fedora:34
             task: fmt-travis
 
