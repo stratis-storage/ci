@@ -2,12 +2,12 @@
 lint:
 	pylint ./blackbox/parse_json.py
 	pylint ./dependency_management/*
-	pylint ./misc_scripts/*
+	pylint ./misc_scripts/* --disable=R0801
 
 .PHONY: lint-non-pygithub
 lint-non-pygithub:
 	pylint ./blackbox/parse_json.py
-	pylint ./misc_scripts/* --ignore=batch_cancel.py
+	pylint ./misc_scripts/* --disable=R0801 --ignore=batch_cancel.py,create_release.py
 
 .PHONY: fmt
 fmt:
