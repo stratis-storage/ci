@@ -1,0 +1,40 @@
+Test for maintenance mode messages (cause a pool to go into "no ipc requests" state)
+
+
+
+
+- Create a test key in "testkey.txt"
+- # stratis key set --keyfile-path ./testkey.txt key1
+- # stratis pool create --key-desc key1 spool1 <dev1> <dev2> <dev3> <dev4>
+- # systemctl stop stratisd
+
+- Run the script below to change the encryption header on <dev3>,
+  substituting the device path:
+
+-----------
+#!/bin/bash
+
+DEV_IN_POOL='<dev3>'
+NEW_KEY_DESC='stratis-1-key-key2'
+
+export OLD_KEY_DESC=$(cryptsetup token export --token-id=1 $DEV_IN_POOL | jq '.key_description')
+
+echo "old key description: $OLD_KEY_DESC"
+
+export NEW_JSON=$(cryptsetup token export --token-id=1 $DEV_IN_POOL | jq '.key_description="'$NEW_KEY_DESC'"')
+
+cryptsetup token remove --token-id=1 $DEV_IN_POOL; echo $NEW_JSON | cryptsetup token import --token-id=1 $DEV_IN_POOL
+---------
+
+- # systemctl start stratisd
+- # stratis pool list
+
+The pool should appear with an "Alerts" value of "EM001"
+
+Attempt a mutating method call:
+
+- stratis fs create spool1 sfs1
+
+(To check the key description on each device:)
+cryptsetup token export --token-id=1 <device>
+

@@ -1,0 +1,4 @@
+test_no_ipc_requests
+- Allow placing pools in restricted usage states:
+  https://github.com/stratis-storage/stratisd/pull/2746
+  https://github.com/stratis-storage/stratisd/pull/2740
