@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """
-change_toolchain_version: change the toolchain version in the GitHub Actions
-workflow configurations.
+update_workflow_config: update the GitHub Actions workflow configuration,
+either by changing the Rusttoolchain version, or changing the Fedora
+version.
 """
 
 # isort: STDLIB
@@ -10,6 +11,10 @@ import argparse
 KEY_LSRT = r"# LOWEST SUPPORTED RUST TOOLCHAIN"
 KEY_CDRT = r"# CURRENT DEVELOPMENT RUST TOOLCHAIN"
 TOOLCHAIN_CHOICES = ["lowest", "current"]
+
+KEY_CFDE = r"# CURRENT DEVELOPMENT ENVIRONMENT"
+KEY_NFDE = r"# NEXT DEVELOPMENT ENVIRONMENT"
+ENV_CHOICES = ["current", "next"]
 
 
 def search_file(search_key, old_verstring, new_verstring, filename):
@@ -44,22 +49,38 @@ def main():
     """
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
+    subparsers = parser.add_subparsers()
+    parser_r = subparsers.add_parser("rust")
+    parser_r.add_argument(
         "toolchain", choices=TOOLCHAIN_CHOICES, help="the toolchain to change"
     )
-    parser.add_argument("file", help="the configuration file to read")
-    parser.add_argument("outfile", help="the configuration file to write")
-    parser.add_argument("old_version", help="the old Rust version")
-    parser.add_argument("new_version", help="the new Rust version")
+    parser_r.add_argument("file", help="the configuration file to read")
+    parser_r.add_argument("outfile", help="the configuration file to write")
+    parser_r.add_argument("old_version", help="the old Rust version")
+    parser_r.add_argument("new_version", help="the new Rust version")
+    parser_e = subparsers.add_parser("fedora")
+    parser_e.add_argument(
+        "fedora", choices=ENV_CHOICES, help="the environment to change"
+    )
+    parser_e.add_argument("file", help="the configuration file to read")
+    parser_e.add_argument("outfile", help="the configuration file to write")
+    parser_e.add_argument("old_version", help="the old Fedora version")
+    parser_e.add_argument("new_version", help="the new Fedora version")
     args = parser.parse_args()
 
     filename = args.file
     outfilename = args.outfile
 
-    if args.toolchain == "lowest":
-        search_key = KEY_LSRT
-    elif args.toolchain == "current":
-        search_key = KEY_CDRT
+    if hasattr(args, "toolchain"):
+        if args.toolchain == "lowest":
+            search_key = KEY_LSRT
+        elif args.toolchain == "current":
+            search_key = KEY_CDRT
+    elif hasattr(args, "fedora"):
+        if args.fedora == "current":
+            search_key = KEY_CFDE
+        elif args.fedora == "next":
+            search_key = KEY_NFDE
 
     old_verstring = args.old_version + r"  " + search_key
     new_verstring = args.new_version + r"  " + search_key
