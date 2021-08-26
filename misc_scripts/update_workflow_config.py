@@ -44,11 +44,10 @@ def search_file(search_key, old_verstring, new_verstring, filename):
     return output
 
 
-def main():
+def gen_parser():
     """
-    Main method
+    Generate args object by parsing arguments.
     """
-
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
     parser_r = subparsers.add_parser("rust")
@@ -67,7 +66,16 @@ def main():
     parser_e.add_argument("outfile", help="the configuration file to write")
     parser_e.add_argument("old_version", help="the old Fedora version")
     parser_e.add_argument("new_version", help="the new Fedora version")
-    args = parser.parse_args()
+
+    return parser.parse_args()
+
+
+def main():
+    """
+    Main method
+    """
+
+    args = gen_parser()
 
     filename = args.file
     outfilename = args.outfile
