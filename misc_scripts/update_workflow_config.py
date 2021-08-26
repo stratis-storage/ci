@@ -12,9 +12,10 @@ KEY_LSRT = r"# LOWEST SUPPORTED RUST TOOLCHAIN"
 KEY_CDRT = r"# CURRENT DEVELOPMENT RUST TOOLCHAIN"
 TOOLCHAIN_CHOICES = ["lowest", "current"]
 
+KEY_LFDE = r"# LOWEST DEVELOPMENT ENVIRONMENT"
 KEY_CFDE = r"# CURRENT DEVELOPMENT ENVIRONMENT"
 KEY_NFDE = r"# NEXT DEVELOPMENT ENVIRONMENT"
-ENV_CHOICES = ["current", "next"]
+ENV_CHOICES = ["lowest", "current", "next"]
 
 
 def search_file(search_key, old_verstring, new_verstring, filename):
@@ -77,7 +78,9 @@ def main():
         elif args.toolchain == "current":
             search_key = KEY_CDRT
     elif hasattr(args, "fedora"):
-        if args.fedora == "current":
+        if args.fedora == "lowest":
+            search_key = KEY_LFDE
+        elif args.fedora == "current":
             search_key = KEY_CFDE
         elif args.fedora == "next":
             search_key = KEY_NFDE
