@@ -52,20 +52,20 @@ def build_cargo_tree_dict(manifest_path):
     command = ["cargo", "tree", "--charset=ascii", "--all-features"]
     if manifest_path is not None:
         command.append("--manifest-path=%s" % manifest_path)
-    proc = subprocess.Popen(command, stdout=subprocess.PIPE)
 
-    stream = proc.stdout
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        stream = proc.stdout
 
-    version_dict = dict()
-    line = stream.readline()
-    while line != b"":
-        line_str = line.decode("utf-8").rstrip()
-        cargo_tree_match = CARGO_TREE_RE.search(line_str)
-        if cargo_tree_match is not None:
-            version_dict[cargo_tree_match.group("crate")] = Version(
-                cargo_tree_match.group("version")
-            )
+        version_dict = dict()
         line = stream.readline()
+        while line != b"":
+            line_str = line.decode("utf-8").rstrip()
+            cargo_tree_match = CARGO_TREE_RE.search(line_str)
+            if cargo_tree_match is not None:
+                version_dict[cargo_tree_match.group("crate")] = Version(
+                    cargo_tree_match.group("version")
+                )
+            line = stream.readline()
 
     return version_dict
 
@@ -146,9 +146,10 @@ def build_cargo_metadata(manifest_path):
     ]
     if manifest_path is not None:
         command.append("--manifest-path=%s" % manifest_path)
-    proc = subprocess.Popen(command, stdout=subprocess.PIPE)
-    stream = proc.stdout
-    metadata_str = stream.readline()
+
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        metadata_str = proc.stdout.readline()
+
     metadata = json.loads(metadata_str)
     packages = metadata["packages"]
     assert len(packages) == 1
