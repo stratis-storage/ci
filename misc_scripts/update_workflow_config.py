@@ -70,6 +70,22 @@ def gen_parser():
     return parser
 
 
+def process_file(search_key, args):
+    """
+    Process the file.
+    """
+    filename = args.file
+    outfilename = args.outfile
+    old_verstring = args.old_version + r"  " + search_key
+    new_verstring = args.new_version + r"  " + search_key
+
+    output = search_file(search_key, old_verstring, new_verstring, filename)
+
+    with open(outfilename, "w+") as outfile:
+        for outline in output:
+            outfile.write(outline)
+
+
 def main():
     """
     Main method
@@ -77,9 +93,6 @@ def main():
 
     parser = gen_parser()
     args = parser.parse_args()
-
-    filename = args.file
-    outfilename = args.outfile
 
     if hasattr(args, "toolchain"):
         if args.toolchain == "lowest":
@@ -94,14 +107,7 @@ def main():
         elif args.fedora == "next":
             search_key = KEY_NFDE
 
-    old_verstring = args.old_version + r"  " + search_key
-    new_verstring = args.new_version + r"  " + search_key
-
-    output = search_file(search_key, old_verstring, new_verstring, filename)
-
-    with open(outfilename, "w+") as outfile:
-        for outline in output:
-            outfile.write(outline)
+    process_file(search_key, args)
 
 
 if __name__ == "__main__":
