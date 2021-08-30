@@ -50,7 +50,7 @@ def gen_parser():
     """
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
-    parser_r = subparsers.add_parser("rust")
+    parser_r = subparsers.add_parser("rust", help="Rust version")
     parser_r.add_argument(
         "toolchain", choices=TOOLCHAIN_CHOICES, help="the toolchain to change"
     )
@@ -58,7 +58,7 @@ def gen_parser():
     parser_r.add_argument("outfile", help="the configuration file to write")
     parser_r.add_argument("old_version", help="the old Rust version")
     parser_r.add_argument("new_version", help="the new Rust version")
-    parser_e = subparsers.add_parser("fedora")
+    parser_e = subparsers.add_parser("fedora", help="Fedora version")
     parser_e.add_argument(
         "fedora", choices=ENV_CHOICES, help="the environment to change"
     )
