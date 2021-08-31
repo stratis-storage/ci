@@ -76,6 +76,9 @@ def gen_parser():
 def process_file(search_key, args):
     """
     Process the file.
+
+    :param str search_key: the search key for the line to replace
+    :param args: the arguments passed on the command line
     """
     filename = args.file
     outfilename = args.outfile
@@ -92,6 +95,8 @@ def process_file(search_key, args):
 def process_toolchain(args):
     """
     Process toolchain change command.
+
+    :param args: the arguments passed on the command line
     """
     if args.toolchain == "lowest":
         search_key = KEY_LSRT
@@ -103,6 +108,8 @@ def process_toolchain(args):
 def process_env(args):
     """
     Process environment change command.
+
+    :param args: the arguments passed on the command line
     """
     if args.fedora == "lowest":
         search_key = KEY_LFDE
