@@ -58,6 +58,8 @@ def gen_parser():
     parser_r.add_argument("outfile", help="the configuration file to write")
     parser_r.add_argument("old_version", help="the old Rust version")
     parser_r.add_argument("new_version", help="the new Rust version")
+    parser_r.set_defaults(func=process_toolchain)
+
     parser_e = subparsers.add_parser("fedora", help="Fedora version")
     parser_e.add_argument(
         "fedora", choices=ENV_CHOICES, help="the environment to change"
@@ -66,6 +68,7 @@ def gen_parser():
     parser_e.add_argument("outfile", help="the configuration file to write")
     parser_e.add_argument("old_version", help="the old Fedora version")
     parser_e.add_argument("new_version", help="the new Fedora version")
+    parser_e.set_defaults(func=process_env)
 
     return parser
 
@@ -86,6 +89,30 @@ def process_file(search_key, args):
             outfile.write(outline)
 
 
+def process_toolchain(args):
+    """
+    Process toolchain change command.
+    """
+    if args.toolchain == "lowest":
+        search_key = KEY_LSRT
+    elif args.toolchain == "current":
+        search_key = KEY_CDRT
+    process_file(search_key, args)
+
+
+def process_env(args):
+    """
+    Process environment change command.
+    """
+    if args.fedora == "lowest":
+        search_key = KEY_LFDE
+    elif args.fedora == "current":
+        search_key = KEY_CFDE
+    elif args.fedora == "next":
+        search_key = KEY_NFDE
+    process_file(search_key, args)
+
+
 def main():
     """
     Main method
@@ -93,21 +120,7 @@ def main():
 
     parser = gen_parser()
     args = parser.parse_args()
-
-    if hasattr(args, "toolchain"):
-        if args.toolchain == "lowest":
-            search_key = KEY_LSRT
-        elif args.toolchain == "current":
-            search_key = KEY_CDRT
-    elif hasattr(args, "fedora"):
-        if args.fedora == "lowest":
-            search_key = KEY_LFDE
-        elif args.fedora == "current":
-            search_key = KEY_CFDE
-        elif args.fedora == "next":
-            search_key = KEY_NFDE
-
-    process_file(search_key, args)
+    args.func(args)
 
 
 if __name__ == "__main__":
