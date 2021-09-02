@@ -24,13 +24,13 @@ jobs:
               python3-pygithub
               python3-requests
               python3-semantic_version
-            image: fedora:33  # CURRENT DEVELOPMENT ENVIRONMENT
+            image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: lint
           - dependencies: >
               black
               python3-isort
               shfmt
-            image: fedora:33  # CURRENT DEVELOPMENT ENVIRONMENT
+            image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: fmt-travis
           # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
           - dependencies: >
@@ -44,7 +44,7 @@ jobs:
           # VERIFICATION OF TEST INFRASTRUCTURE
           - dependencies: >
               yamllint
-            image: fedora:33  # CURRENT DEVELOPMENT ENVIRONMENT
+            image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: yamllint
     runs-on: ubuntu-18.04
     container: ${{ matrix.image }}
@@ -65,7 +65,7 @@ jobs:
           - dependencies: >
               findutils
               ShellCheck
-            image: fedora:33  # CURRENT DEVELOPMENT ENVIRONMENT
+            image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: shellcheck
     runs-on: ubuntu-18.04
     container: ${{ matrix.image }}
