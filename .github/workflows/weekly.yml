@@ -19,6 +19,8 @@ jobs:
               pylint
               python3-dbus
               python3-dbus-python-client-gen
+              python3-matplotlib
+              python3-numpy
               python3-pygithub
               python3-requests
               python3-semantic_version

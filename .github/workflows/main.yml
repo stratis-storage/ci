@@ -21,6 +21,8 @@ jobs:
               pylint
               python3-dbus
               python3-dbus-python-client-gen
+              python3-matplotlib
+              python3-numpy
               python3-pygithub
               python3-requests
               python3-semantic_version
@@ -37,6 +39,8 @@ jobs:
               pylint
               python3-dbus
               python3-dbus-python-client-gen
+              python3-matplotlib
+              python3-numpy
               python3-semantic_version
             image: fedora:29  # LOWEST DEVELOPMENT ENVIRONMENT
             task: lint-non-pygithub
