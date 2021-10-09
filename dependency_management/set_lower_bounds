@@ -101,6 +101,14 @@ def _do_updates(explicit_dependencies, manifest_path):
                 # also be transitive dependencies.
                 cargo_tree = build_cargo_tree_dict(manifest_path)
 
+                # "cargo update" succeeded but did not change the version to
+                # the one specified. This can happen when the specified crate
+                # is in a sub-directory of the current crate and is specified
+                # by a path key in Cargo.toml. In that case, "cargo update"
+                # chooses to succeed.
+                if cargo_tree[crate] == current_version:
+                    tried = [(c, v) for (c, v) in tried if c != crate]
+
         return (tried, failed)
 
     # The loop terminates if all packages have reached their value in
