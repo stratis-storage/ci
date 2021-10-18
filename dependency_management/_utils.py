@@ -26,7 +26,7 @@ import subprocess
 
 # isort: THIRDPARTY
 import requests
-from semantic_version import Version
+from semantic_version import SimpleSpec, Version
 
 CARGO_TREE_RE = re.compile(
     r"^[|`]-- (?P<crate>[a-z0-9_\-]+) v(?P<version>[0-9\.]+)( \(.*\))?$"
@@ -34,9 +34,27 @@ CARGO_TREE_RE = re.compile(
 KOJI_RE = re.compile(
     r"^toplink/packages/rust-(?P<name>[^\/]*?)/(?P<version>[^\/]*?)/[^]*)]*"
 )
-VERSION_RE = re.compile(
-    r"^\^(?P<major>[0-9]+)(\.(?P<minor>[0-9]+))?(\.(?P<patch>[0-9]+))?$"
-)
+
+
+def version_from_spec(spec):
+    """
+    Return a version calculated from a spec string by stripping '^'.
+
+    Precondition: Spec string must start with a '^'
+
+    :param SimpleSpec spec: a spec string from "cargo metadata" output
+    :returns: the lowest version that spec could correspond to
+    :rtype: Version
+    :raises RuntimeError: if spec string can not be interpreted
+    """
+    spec_str = str(spec)
+
+    if spec_str[0] != "^":
+        raise RuntimeError(
+            "Expected specification format %s to begin with a '^'" % spec
+        )
+
+    return Version(spec_str[1:])
 
 
 def build_cargo_tree_dict(manifest_path):
@@ -136,6 +154,8 @@ def build_cargo_metadata(manifest_path):
 
     :param manifest_path: the path to the Cargo manifest file
     :type manifest_path: str or NoneType
+    :returns: a dict mapping crate name to version specification
+    :rtype: str * SimpleSpec
     """
     command = [
         "cargo",
@@ -158,14 +178,6 @@ def build_cargo_metadata(manifest_path):
 
     result = dict()
     for item in dependencies:
-        matches = VERSION_RE.match(item["req"])
-        if matches is None:
-            raise RuntimeError(
-                'Unexpected version string "%s" for %s' % (item["req"], item)
-            )
-        major = int(matches["major"] or 0)
-        minor = int(matches["minor"] or 0)
-        patch = int(matches["patch"] or 0)
-        result[item["name"]] = Version(major=major, minor=minor, patch=patch)
+        result[item["name"]] = SimpleSpec(item["req"])
 
     return result
