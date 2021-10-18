@@ -25,7 +25,7 @@ import json
 import sys
 
 # isort: LOCAL
-from _utils import build_cargo_metadata, build_koji_repo_dict
+from _utils import build_cargo_metadata, build_koji_repo_dict, version_from_spec
 
 
 def get_errors(exc):
@@ -52,12 +52,22 @@ def _main_engine(explicit_dependencies, koji_repo_dict):
     :rtype: dict of str * list of str
     """
     (missing, high, low) = ([], [], [])
-    for crate, version in explicit_dependencies.items():
+    for crate, spec in explicit_dependencies.items():
         koji_version = koji_repo_dict.get(crate)
         if koji_version is None:
             print("No Fedora package for crate %s found" % crate, file=sys.stderr)
             missing.append(crate)
             continue
+
+        if koji_version in spec:
+            continue
+
+        try:
+            version = version_from_spec(spec)
+        except RuntimeError as err:
+            raise RuntimeError(
+                "Could not parse version from specification for crate %s" % crate
+            ) from err
 
         if koji_version < version:
             print(
@@ -68,17 +78,14 @@ def _main_engine(explicit_dependencies, koji_repo_dict):
             high.append(crate)
             continue
 
-        exclusive_upper_bound = (
-            version.next_major() if version.major != 0 else version.next_minor()
+        # The koji version is not in the spec and it is not less than the spec
+        # so it must be more.
+        print(
+            "Version %s of crate %s is available in Fedora. Requires update in Cargo.toml"
+            % (koji_version, crate),
+            file=sys.stderr,
         )
-
-        if koji_version >= exclusive_upper_bound:
-            print(
-                "Version %s of crate %s is available in Fedora. Requires update in Cargo.toml"
-                % (koji_version, crate),
-                file=sys.stderr,
-            )
-            low.append(crate)
+        low.append(crate)
 
     return {"high": high, "low": low, "missing": missing}
 

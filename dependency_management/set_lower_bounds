@@ -26,7 +26,7 @@ import sys
 from random import shuffle
 
 # isort: LOCAL
-from _utils import build_cargo_metadata, build_cargo_tree_dict
+from _utils import build_cargo_metadata, build_cargo_tree_dict, version_from_spec
 
 
 def _do_updates(explicit_dependencies, manifest_path):
@@ -78,7 +78,21 @@ def _do_updates(explicit_dependencies, manifest_path):
 
         tried = []
         failed = []
-        for (crate, version) in updatables:
+        for (crate, spec) in updatables:
+            if str(spec) == "*":
+                continue
+
+            try:
+                version = version_from_spec(spec)
+            except RuntimeError as err:
+                raise RuntimeError(
+                    (
+                        "Specified spec %s for crate %s could not be "
+                        "converted to a version to use as an update target"
+                    )
+                    % (spec, crate)
+                ) from err
+
             current_version = cargo_tree[crate]
             if current_version != version:
                 command = command_prefix + [
