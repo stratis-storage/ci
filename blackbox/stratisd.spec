@@ -58,7 +58,6 @@ mv %{buildroot}%{_bindir}/stratisd %{buildroot}%{_libexecdir}/stratisd
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratisd.8
 %{__install} -Dpm0644 -t %{buildroot}%{_udevrulesdir} udev/61-stratisd.rules
 %{__install} -Dpm0644 -t %{buildroot}%{_unitdir} systemd/stratisd.service
-%{__install} -Dpm0644 -t %{buildroot}%{dracutdir}/dracut.conf.d dracut/90-stratis.conf
 mkdir -p %{buildroot}%{dracutdir}/modules.d/90stratis
 %{__install} -Dpm0755 -t %{buildroot}%{dracutdir}/modules.d/90stratis dracut/90stratis/module-setup.sh
 %{__install} -Dpm0755 -t %{buildroot}%{dracutdir}/modules.d/90stratis dracut/90stratis/stratis-rootfs-setup
@@ -108,7 +107,6 @@ ln %{buildroot}%{udevdir}/stratis-str-cmp %{buildroot}%{_unitdir}/system-generat
 %{udevdir}/stratis-str-cmp
 %{udevdir}/stratis-base32-decode
 %{_bindir}/stratis-predict-usage
-%{dracutdir}/dracut.conf.d/90-stratis.conf
 %{dracutdir}/modules.d/90stratis-clevis/module-setup.sh
 %{dracutdir}/modules.d/90stratis-clevis/stratis-clevis-rootfs-setup
 %{dracutdir}/modules.d/90stratis/61-stratisd.rules
