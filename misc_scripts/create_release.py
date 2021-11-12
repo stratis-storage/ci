@@ -18,13 +18,71 @@ Uploads the vendored dependency tarball as a release asset.
 """
 
 # isort: STDLIB
+import argparse
+import json
 import os
-import re
+import subprocess
 import sys
 from getpass import getpass
 
 # isort: THIRDPARTY
+import requests
 from github import Github
+
+
+def _get_stratisd_version(manifest_abs_path):
+    """
+    Extract the version string from Cargo.toml and return it.
+
+    :param str manifest_path: absolute path to a Cargo.toml file
+    :returns: stratisd version string
+    :rtype: str
+    """
+    assert os.path.isabs(manifest_abs_path)
+
+    command = [
+        "cargo",
+        "metadata",
+        "--format-version=1",
+        "--no-deps",
+        "--manifest-path=%s" % manifest_abs_path,
+    ]
+
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        metadata_str = proc.stdout.readline()
+
+    metadata = json.loads(metadata_str)
+    packages = metadata["packages"]
+    assert len(packages) == 1
+    package = packages[0]
+    assert package["name"] == "stratisd"
+    return package["version"]
+
+
+def _verify_tag(tag):
+    """
+    Verify that the designated tag exists.
+
+    :param str tag: the tag to check
+    :returns: true if the tag exists, otherwise false
+    :rtype: bool
+    """
+    command = ["git", "tag", "--list", tag]
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        tag_str = proc.stdout.readline()
+    return tag_str.decode("utf-8").rstrip() == tag
+
+
+def _get_branch():
+    """
+    Get the current git branch as a string.
+
+    :rtype: str
+    """
+    command = ["git", "branch", "--show-current"]
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        branch_str = proc.stdout.readline()
+    return branch_str.decode("utf-8").rstrip()
 
 
 def main():
@@ -32,14 +90,81 @@ def main():
     Main function
     """
 
-    if len(sys.argv) < 2:
-        print("USAGE: %s <RELEASE_VERSION>" % sys.argv[0])
-        print("\tRELEASE_VERSION: MAJOR.MINOR.PATCH")
-        raise RuntimeError("One positional argument is required")
+    parser = argparse.ArgumentParser(
+        description=(
+            "Prepare a stratisd release for GitHub and upload it. Essentially "
+            "cargo-publish but for a GitHub release not a cargo registry. The "
+            "manifest path is mandatory, as the manifest path determines the "
+            "location of the 'package' directory."
+        )
+    )
 
-    release_version = sys.argv[1]
-    if re.match(r"^[0-9]+\.[0-9]+\.[0-9]$", release_version) is None:
-        raise RuntimeError("Invalid release version %s provided" % release_version)
+    parser.add_argument(
+        "manifest_path",
+        action="store",
+        help="path to Cargo.toml",
+    )
+
+    parser.add_argument(
+        "vendor_dir", action="store", help="path to cargo-vendor output directory"
+    )
+
+    parser.add_argument(
+        "--no-release",
+        action="store_true",
+        default=False,
+        dest="no_release",
+        help="only create artifacts, do not upload to GitHub",
+    )
+
+    args = parser.parse_args()
+
+    manifest_abs_path = os.path.abspath(args.manifest_path)
+    vendor_abs_path = os.path.abspath(args.vendor_dir)
+
+    release_version = _get_stratisd_version(manifest_abs_path)
+
+    subprocess.run(
+        ["cargo", "package", "--manifest-path=%s" % manifest_abs_path], check=True
+    )
+
+    package_manifest = os.path.join(
+        os.path.dirname(manifest_abs_path),
+        "target/package",
+        "stratisd-%s" % release_version,
+        "Cargo.toml",
+    )
+
+    subprocess.run(
+        ["cargo", "vendor", "--manifest-path=%s" % package_manifest, vendor_abs_path],
+        check=True,
+    )
+
+    vendor_tarfile_name = "stratisd-%s-vendor.tar.gz" % release_version
+
+    subprocess.run(
+        ["tar", "-czvf", vendor_tarfile_name, vendor_abs_path],
+        check=True,
+    )
+
+    if args.no_release:
+        return
+
+    changelog_url = (
+        "https://github.com/stratis-storage/stratisd/blob/%s/CHANGES.txt"
+        % _get_branch()
+    )
+
+    requests_var = requests.get(changelog_url)
+    if requests_var.status_code != 200:
+        raise RuntimeError("Page at URL %s not found" % changelog_url)
+
+    tag = "v%s" % release_version
+    if not _verify_tag(tag):
+        raise RuntimeError(
+            "Unable to make release for tag %s which is not present in your "
+            "local copy of the stratisd repo" % tag
+        )
 
     api_key = os.environ.get("GITHUB_API_KEY")
     if api_key is None:
@@ -50,14 +175,13 @@ def main():
     repo = git.get_repo("stratis-storage/stratisd")
 
     release = repo.create_git_release(
-        "v%s" % release_version,
+        tag,
         "Version %s" % release_version,
-        "See changelog here: https://github.com/stratis-storage/stratisd/blob/master/CHANGES.txt",
+        "See %s" % changelog_url,
         draft=True,
     )
 
-    label = "stratisd-%s-vendor.tar.gz" % release_version
-    release.upload_asset(label, label)
+    release.upload_asset(vendor_tarfile_name, label=vendor_tarfile_name)
 
 
 if __name__ == "__main__":
