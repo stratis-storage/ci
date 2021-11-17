@@ -34,16 +34,6 @@ jobs:
               shfmt
             image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: fmt-travis
-          # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
-          - dependencies: >
-              pylint
-              python3-dbus
-              python3-dbus-python-client-gen
-              python3-matplotlib
-              python3-numpy
-              python3-semantic_version
-            image: fedora:29  # LOWEST DEVELOPMENT ENVIRONMENT
-            task: lint-non-pygithub
 
           # VERIFICATION OF TEST INFRASTRUCTURE
           - dependencies: >
