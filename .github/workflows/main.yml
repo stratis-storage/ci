@@ -26,53 +26,21 @@ jobs:
               python3-pygithub
               python3-requests
               python3-semantic_version
-            image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: lint
           - dependencies: >
               black
               python3-isort
               shfmt
-            image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: fmt-travis
-          # MANDATORY CHECKS USING LOWEST SUPPORTED INTERPRETER
-          - dependencies: >
-              pylint
-              python3-dbus
-              python3-dbus-python-client-gen
-              python3-matplotlib
-              python3-numpy
-              python3-semantic_version
-            image: fedora:29  # LOWEST DEVELOPMENT ENVIRONMENT
-            task: lint-non-pygithub
-
-          # VERIFICATION OF TEST INFRASTRUCTURE
           - dependencies: >
               yamllint
-            image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: yamllint
-    runs-on: ubuntu-18.04
-    container: ${{ matrix.image }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: >
-          dnf install -y
-          make
-          python-unversioned-command
-          ${{ matrix.dependencies }}
-      - name: Run test
-        run: make -f Makefile ${{ matrix.task }}
-  shell-check:
-    strategy:
-      matrix:
-        include:
           - dependencies: >
               findutils
               ShellCheck
-            image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: shellcheck
     runs-on: ubuntu-18.04
-    container: ${{ matrix.image }}
+    container: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies

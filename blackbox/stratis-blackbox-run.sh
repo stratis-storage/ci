@@ -11,8 +11,6 @@ if [ ! -e /etc/stratis/test_config.json ]; then
 fi
 
 # Create an array of test devices from the test_config.json file.
-# This is a naive search for device paths starting with "/dev", then
-# stripping out the quote and comma characters.
 TESTDEVS_RESULT=$(./parse_json.py /etc/stratis/test_config.json)
 IFS="," read -a TESTDEVS <<<"$(echo $TESTDEVS_RESULT)"
 
