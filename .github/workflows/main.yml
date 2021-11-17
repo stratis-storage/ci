@@ -40,22 +40,7 @@ jobs:
               yamllint
             image: fedora:34  # CURRENT DEVELOPMENT ENVIRONMENT
             task: yamllint
-    runs-on: ubuntu-18.04
-    container: ${{ matrix.image }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install dependencies
-        run: >
-          dnf install -y
-          make
-          python-unversioned-command
-          ${{ matrix.dependencies }}
-      - name: Run test
-        run: make -f Makefile ${{ matrix.task }}
-  shell-check:
-    strategy:
-      matrix:
-        include:
+
           - dependencies: >
               findutils
               ShellCheck
@@ -69,6 +54,7 @@ jobs:
         run: >
           dnf install -y
           make
+          python-unversioned-command
           ${{ matrix.dependencies }}
       - name: Run test
         run: make -f Makefile ${{ matrix.task }}
