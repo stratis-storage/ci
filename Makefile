@@ -13,7 +13,7 @@ fmt:
 	black ./dependency_management/
 	black ./dependency_management/compare_fedora_versions
 	black ./dependency_management/set_lower_bounds
-	black ./misc_scripts/*
+	black ./misc_scripts/*.py
 	shfmt -l -w .
 
 .PHONY: fmt-travis
@@ -25,7 +25,7 @@ fmt-travis:
 	black ./dependency_management/ --check
 	black ./dependency_management/compare_fedora_versions --check
 	black ./dependency_management/set_lower_bounds --check
-	black ./misc_scripts/* --check
+	black ./misc_scripts/*.py --check
 	shfmt -d .
 
 .PHONY: yamllint
