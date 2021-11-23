@@ -2,7 +2,7 @@
 lint:
 	pylint ./blackbox/parse_json.py
 	pylint ./dependency_management/* --disable=R0801
-	pylint ./misc_scripts/* --disable=R0801
+	pylint ./misc_scripts/*.py --disable=R0801
 
 .PHONY: fmt
 fmt:
