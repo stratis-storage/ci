@@ -1,0 +1,35 @@
+Testing libblkid for invalid udev data when initializing a device
+
+
+
+1. Add a udev rule, saved as
+"/etc/udev/rules.d/<testdevice>_phantom_uninit.rules":
+
+ENV{DEVNAME}=="/dev/loop0", ENV{ID_FS_USAGE}="", ENV{ID_FS_TYPE}="", ENV{ID_PART_TABLE_TYPE}=""
+
+(NOTE: change the device name to the path of the desired test device, which
+will be overwritten during this test.)
+
+
+2. Initialize the test device as LUKS2:
+
+cryptsetup luksFormat /dev/loop0
+
+
+3. Attempt a stratis pool create with the device:
+
+stratis pool create testpool /dev/loop0
+
+
+RESULT:
+
+The "stratis pool create" command should fail with the following error:
+
+stratisd failed to perform the operation that you requested. It returned the
+following information via the D-Bus: ERROR: At least one of the devices
+specified was unsuitable for initialization: Device /dev/loop0 was reported to
+be unowned by udev but actually contains existing partitions or superblock;
+partitions: None, superblock: Some("crypto_LUKS").
+
+NOTE: the error message should indicate that the device is "reported to be
+unowned by udev", but appears to contain existing partitions or a superblock.
