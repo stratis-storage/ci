@@ -26,8 +26,10 @@ from enum import Enum
 
 # isort: THIRDPARTY
 import dbus
-from dbus_python_client_gen import make_class
 from semantic_version import Version
+
+# isort: FIRSTPARTY
+from dbus_python_client_gen import make_class
 
 
 class ProxyType(Enum):
