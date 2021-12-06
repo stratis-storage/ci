@@ -35,6 +35,7 @@ dnf -y install git \
 	python3-coverage \
 	python3-dateutil \
 	python3-justbytes \
+	python3-packaging \
 	python3-psutil \
 	python3-pyparsing \
 	python3-pyudev \
