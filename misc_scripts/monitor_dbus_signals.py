@@ -234,6 +234,9 @@ def _check():
     # pylint: disable=global-statement
     global _MO
 
+    if _MO is None:
+        return []
+
     mos = _OBJECT_MANAGER.Methods.GetManagedObjects(_TOP_OBJECT, {})
 
     diffs = []
