@@ -133,7 +133,7 @@ def main():
     args = parser.parse_args()
 
     manifest_abs_path = os.path.abspath(args.manifest_path)
-    vendor_abs_path = os.path.abspath(args.vendor_dir)
+    vendor_dir = args.vendor_dir
 
     release_version = _get_stratisd_version(manifest_abs_path)
 
@@ -149,14 +149,14 @@ def main():
     )
 
     subprocess.run(
-        ["cargo", "vendor", "--manifest-path=%s" % package_manifest, vendor_abs_path],
+        ["cargo", "vendor", "--manifest-path=%s" % package_manifest, vendor_dir],
         check=True,
     )
 
     vendor_tarfile_name = "stratisd-%s-vendor.tar.gz" % release_version
 
     subprocess.run(
-        ["tar", "-czvf", vendor_tarfile_name, vendor_abs_path],
+        ["tar", "-czvf", vendor_tarfile_name, vendor_dir],
         check=True,
     )
 
