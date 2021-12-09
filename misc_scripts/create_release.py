@@ -29,6 +29,9 @@ from getpass import getpass
 import requests
 from github import Github
 
+_PROJECT = "stratis-storage/stratisd"
+_REPO = "https://github.com/%s" % _PROJECT
+
 
 def _get_stratisd_version(manifest_abs_path):
     """
@@ -95,7 +98,9 @@ def main():
             "Prepare a stratisd release for GitHub and upload it. Essentially "
             "cargo-publish but for a GitHub release not a cargo registry. The "
             "manifest path is mandatory, as the manifest path determines the "
-            "location of the 'package' directory."
+            "location of the 'package' directory. If a tag does not exist for "
+            "the release specified in Cargo.toml, tag the current commit. "
+            "Push the specified tag and create a draft release on GitHub."
         )
     )
 
@@ -110,17 +115,25 @@ def main():
     )
 
     parser.add_argument(
+        "--no-tag",
+        action="store_true",
+        default=False,
+        dest="no_tag",
+        help="only create artifacts",
+    )
+
+    parser.add_argument(
         "--no-release",
         action="store_true",
         default=False,
         dest="no_release",
-        help="only create artifacts, do not upload to GitHub",
+        help="stop before pushing any changes to GitHub repo",
     )
 
     args = parser.parse_args()
 
     manifest_abs_path = os.path.abspath(args.manifest_path)
-    vendor_abs_path = os.path.abspath(args.vendor_dir)
+    vendor_dir = args.vendor_dir
 
     release_version = _get_stratisd_version(manifest_abs_path)
 
@@ -136,35 +149,42 @@ def main():
     )
 
     subprocess.run(
-        ["cargo", "vendor", "--manifest-path=%s" % package_manifest, vendor_abs_path],
+        ["cargo", "vendor", "--manifest-path=%s" % package_manifest, vendor_dir],
         check=True,
     )
 
     vendor_tarfile_name = "stratisd-%s-vendor.tar.gz" % release_version
 
     subprocess.run(
-        ["tar", "-czvf", vendor_tarfile_name, vendor_abs_path],
+        ["tar", "-czvf", vendor_tarfile_name, vendor_dir],
         check=True,
     )
 
-    if args.no_release:
-        return
-
-    changelog_url = (
-        "https://github.com/stratis-storage/stratisd/blob/%s/CHANGES.txt"
-        % _get_branch()
-    )
+    changelog_url = "%s/blob/%s/CHANGES.txt" % (_REPO, _get_branch())
 
     requests_var = requests.get(changelog_url)
     if requests_var.status_code != 200:
         raise RuntimeError("Page at URL %s not found" % changelog_url)
 
+    if args.no_tag:
+        return
+
     tag = "v%s" % release_version
+
     if not _verify_tag(tag):
-        raise RuntimeError(
-            "Unable to make release for tag %s which is not present in your "
-            "local copy of the stratisd repo" % tag
+        message = "version %s" % release_version
+        subprocess.run(
+            ["git", "tag", "--annotate", tag, '--message="%s"' % message],
+            check=True,
         )
+
+    if args.no_release:
+        return
+
+    subprocess.run(
+        ["git", "push", _REPO, tag],
+        check=True,
+    )
 
     api_key = os.environ.get("GITHUB_API_KEY")
     if api_key is None:
@@ -172,7 +192,7 @@ def main():
 
     git = Github(api_key)
 
-    repo = git.get_repo("stratis-storage/stratisd")
+    repo = git.get_repo(_PROJECT)
 
     release = repo.create_git_release(
         tag,
