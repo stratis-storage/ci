@@ -19,7 +19,6 @@ jobs:
               pylint
               python3-dbus
               python3-dbus-python-client-gen
-              python3-gobject
               python3-matplotlib
               python3-numpy
               python3-pygithub
