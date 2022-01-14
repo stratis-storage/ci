@@ -24,22 +24,20 @@ import os
 import subprocess
 import sys
 from getpass import getpass
+from urllib.parse import urlparse
 
 # isort: THIRDPARTY
 import requests
 from github import Github
 
-_PROJECT = "stratis-storage/stratisd"
-_REPO = "https://github.com/%s" % _PROJECT
 
-
-def _get_stratisd_version(manifest_abs_path):
+def _get_stratisd_info(manifest_abs_path):
     """
-    Extract the version string from Cargo.toml and return it.
+    Extract the version string and repo URL from Cargo.toml and return it.
 
     :param str manifest_path: absolute path to a Cargo.toml file
-    :returns: stratisd version string
-    :rtype: str
+    :returns: stratisd version string and repository URL
+    :rtype: str * ParseResult
     """
     assert os.path.isabs(manifest_abs_path)
 
@@ -59,7 +57,9 @@ def _get_stratisd_version(manifest_abs_path):
     assert len(packages) == 1
     package = packages[0]
     assert package["name"] == "stratisd"
-    return package["version"]
+    github_repo = urlparse(package["repository"].rstrip("/"))
+    assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
+    return (package["version"], github_repo)
 
 
 def _verify_tag(tag):
@@ -88,7 +88,7 @@ def _get_branch():
     return branch_str.decode("utf-8").rstrip()
 
 
-def main():
+def main():  # pylint: disable=too-many-locals
     """
     Main function
     """
@@ -135,7 +135,7 @@ def main():
     manifest_abs_path = os.path.abspath(args.manifest_path)
     vendor_dir = args.vendor_dir
 
-    release_version = _get_stratisd_version(manifest_abs_path)
+    (release_version, repository) = _get_stratisd_info(manifest_abs_path)
 
     subprocess.run(
         ["cargo", "package", "--manifest-path=%s" % manifest_abs_path], check=True
@@ -160,7 +160,7 @@ def main():
         check=True,
     )
 
-    changelog_url = "%s/blob/%s/CHANGES.txt" % (_REPO, _get_branch())
+    changelog_url = "%s/blob/%s/CHANGES.txt" % (repository.geturl(), _get_branch())
 
     requests_var = requests.get(changelog_url)
     if requests_var.status_code != 200:
@@ -182,7 +182,7 @@ def main():
         return
 
     subprocess.run(
-        ["git", "push", _REPO, tag],
+        ["git", "push", repository.geturl(), tag],
         check=True,
     )
 
@@ -192,7 +192,7 @@ def main():
 
     git = Github(api_key)
 
-    repo = git.get_repo(_PROJECT)
+    repo = git.get_repo(repository.path.strip("/"))
 
     release = repo.create_git_release(
         tag,
