@@ -19,73 +19,17 @@ Uploads the vendored dependency tarball as a release asset.
 
 # isort: STDLIB
 import argparse
-import json
 import os
 import subprocess
 import sys
 from getpass import getpass
-from urllib.parse import urlparse
 
 # isort: THIRDPARTY
 import requests
 from github import Github
 
-
-def _get_stratisd_info(manifest_abs_path):
-    """
-    Extract the version string and repo URL from Cargo.toml and return it.
-
-    :param str manifest_path: absolute path to a Cargo.toml file
-    :returns: stratisd version string and repository URL
-    :rtype: str * ParseResult
-    """
-    assert os.path.isabs(manifest_abs_path)
-
-    command = [
-        "cargo",
-        "metadata",
-        "--format-version=1",
-        "--no-deps",
-        "--manifest-path=%s" % manifest_abs_path,
-    ]
-
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        metadata_str = proc.stdout.readline()
-
-    metadata = json.loads(metadata_str)
-    packages = metadata["packages"]
-    assert len(packages) == 1
-    package = packages[0]
-    assert package["name"] == "stratisd"
-    github_repo = urlparse(package["repository"].rstrip("/"))
-    assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
-    return (package["version"], github_repo)
-
-
-def _verify_tag(tag):
-    """
-    Verify that the designated tag exists.
-
-    :param str tag: the tag to check
-    :returns: true if the tag exists, otherwise false
-    :rtype: bool
-    """
-    command = ["git", "tag", "--list", tag]
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        tag_str = proc.stdout.readline()
-    return tag_str.decode("utf-8").rstrip() == tag
-
-
-def _get_branch():
-    """
-    Get the current git branch as a string.
-
-    :rtype: str
-    """
-    command = ["git", "branch", "--show-current"]
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        branch_str = proc.stdout.readline()
-    return branch_str.decode("utf-8").rstrip()
+# isort: LOCAL
+from _utils import get_branch, get_package_info, verify_tag
 
 
 def _create_release(
@@ -165,7 +109,7 @@ def main():
     manifest_abs_path = os.path.abspath(args.manifest_path)
     vendor_dir = args.vendor_dir
 
-    (release_version, repository) = _get_stratisd_info(manifest_abs_path)
+    (release_version, repository) = get_package_info(manifest_abs_path, "stratisd")
 
     subprocess.run(
         ["cargo", "package", "--manifest-path=%s" % manifest_abs_path], check=True
@@ -190,7 +134,7 @@ def main():
         check=True,
     )
 
-    changelog_url = "%s/blob/%s/CHANGES.txt" % (repository.geturl(), _get_branch())
+    changelog_url = "%s/blob/%s/CHANGES.txt" % (repository.geturl(), get_branch())
 
     requests_var = requests.get(changelog_url)
     if requests_var.status_code != 200:
@@ -201,7 +145,7 @@ def main():
 
     tag = "v%s" % release_version
 
-    if not _verify_tag(tag):
+    if not verify_tag(tag):
         message = "version %s" % release_version
         subprocess.run(
             ["git", "tag", "--annotate", tag, '--message="%s"' % message],
