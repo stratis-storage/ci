@@ -14,7 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Uploads the vendored dependency tarball as a release asset.
+Manage the stratisd GitHub release.
+
+Assumes that the stratisd version number in Cargo.toml is the correct one.
+
+Will tag the release and push the tag if the correct tag does not exist.
+
+Creates a GitHub Draft release and uploads the vendored tarball.
 """
 
 # isort: STDLIB
