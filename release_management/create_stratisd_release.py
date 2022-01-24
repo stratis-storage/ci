@@ -28,44 +28,12 @@ import argparse
 import os
 import subprocess
 import sys
-from getpass import getpass
 
 # isort: THIRDPARTY
 import requests
-from github import Github
 
 # isort: LOCAL
-from _utils import get_branch, get_package_info, verify_tag
-
-
-def _create_release(
-    repository, tag, release_version, changelog_url, vendor_tarfile_name
-):
-    """
-    Create draft release from a pre-established GitHub tag for this repository.
-
-    :param ParseResult repository: Git repository
-    :param str tag: release tag
-    :param str release_version: release version
-    :param str changelog_url: changelog URL for the release notes
-    :param str vendor_tarfle_name: the name of the tarfile of vendored sources
-    """
-    api_key = os.environ.get("GITHUB_API_KEY")
-    if api_key is None:
-        api_key = getpass("API key: ")
-
-    git = Github(api_key)
-
-    repo = git.get_repo(repository.path.strip("/"))
-
-    release = repo.create_git_release(
-        tag,
-        "Version %s" % release_version,
-        "See %s" % changelog_url,
-        draft=True,
-    )
-
-    release.upload_asset(vendor_tarfile_name, label=vendor_tarfile_name)
+from _utils import create_release, get_branch, get_package_info, verify_tag
 
 
 def main():
@@ -166,9 +134,9 @@ def main():
         check=True,
     )
 
-    _create_release(
-        repository, tag, release_version, changelog_url, vendor_tarfile_name
-    )
+    release = create_release(repository, tag, release_version, changelog_url)
+
+    release.upload_asset(vendor_tarfile_name, label=vendor_tarfile_name)
 
 
 if __name__ == "__main__":

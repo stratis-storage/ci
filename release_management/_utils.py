@@ -21,7 +21,11 @@ Calculates values useful for making a release.
 import json
 import os
 import subprocess
+from getpass import getpass
 from urllib.parse import urlparse
+
+# isort: THIRDPARTY
+from github import Github
 
 
 def get_package_info(manifest_abs_path, package_name):
@@ -80,3 +84,31 @@ def get_branch():
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         branch_str = proc.stdout.readline()
     return branch_str.decode("utf-8").rstrip()
+
+
+def create_release(repository, tag, release_version, changelog_url):
+    """
+    Create draft release from a pre-established GitHub tag for this repository.
+
+    :param ParseResult repository: Git repository
+    :param str tag: release tag
+    :param str release_version: release version
+    :param str changelog_url: changelog URL for the release notes
+    :return: GitHub release object
+    """
+    api_key = os.environ.get("GITHUB_API_KEY")
+    if api_key is None:
+        api_key = getpass("API key: ")
+
+    git = Github(api_key)
+
+    repo = git.get_repo(repository.path.strip("/"))
+
+    release = repo.create_git_release(
+        tag,
+        "Version %s" % release_version,
+        "See %s" % changelog_url,
+        draft=True,
+    )
+
+    return release
