@@ -29,11 +29,15 @@ import os
 import subprocess
 import sys
 
-# isort: THIRDPARTY
-import requests
-
 # isort: LOCAL
-from _utils import create_release, get_branch, get_package_info, verify_tag
+from _utils import (
+    MANIFEST_PATH,
+    create_release,
+    get_branch,
+    get_changelog_url,
+    get_package_info,
+    verify_tag,
+)
 
 
 def main():
@@ -44,18 +48,11 @@ def main():
     parser = argparse.ArgumentParser(
         description=(
             "Prepare a stratisd release for GitHub and upload it. Essentially "
-            "cargo-publish but for a GitHub release not a cargo registry. The "
-            "manifest path is mandatory, as the manifest path determines the "
-            "location of the 'package' directory. If a tag does not exist for "
-            "the release specified in Cargo.toml, tag the current commit. "
-            "Push the specified tag and create a draft release on GitHub."
+            "cargo-publish but for a GitHub release not a cargo registry. If a "
+            "tag does not exist for the release specified in Cargo.toml, tag "
+            "the current commit. Push the specified tag and create a draft "
+            "release on GitHub."
         )
-    )
-
-    parser.add_argument(
-        "manifest_path",
-        action="store",
-        help="path to Cargo.toml",
     )
 
     parser.add_argument(
@@ -80,7 +77,12 @@ def main():
 
     args = parser.parse_args()
 
-    manifest_abs_path = os.path.abspath(args.manifest_path)
+    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
+    if not os.path.exists(manifest_abs_path):
+        raise RuntimeError(
+            "Need script to run at top-level of package, in same directory as Cargo.toml"
+        )
+
     vendor_dir = args.vendor_dir
 
     (release_version, repository) = get_package_info(manifest_abs_path, "stratisd")
@@ -108,12 +110,6 @@ def main():
         check=True,
     )
 
-    changelog_url = "%s/blob/%s/CHANGES.txt" % (repository.geturl(), get_branch())
-
-    requests_var = requests.get(changelog_url)
-    if requests_var.status_code != 200:
-        raise RuntimeError("Page at URL %s not found" % changelog_url)
-
     if args.no_tag:
         return
 
@@ -133,6 +129,8 @@ def main():
         ["git", "push", repository.geturl(), tag],
         check=True,
     )
+
+    changelog_url = get_changelog_url(repository.geturl(), get_branch())
 
     release = create_release(repository, tag, release_version, changelog_url)
 

@@ -25,7 +25,10 @@ from getpass import getpass
 from urllib.parse import urlparse
 
 # isort: THIRDPARTY
+import requests
 from github import Github
+
+MANIFEST_PATH = "./Cargo.toml"
 
 
 def get_package_info(manifest_abs_path, package_name):
@@ -112,3 +115,18 @@ def create_release(repository, tag, release_version, changelog_url):
     )
 
     return release
+
+
+def get_changelog_url(repository_url, branch):
+    """
+    Get the URL for the changelog in the release message.
+
+    :param str repository_url: object representing the GitHub repo
+    :param str branch: the git branch
+    """
+    changelog_url = "%s/blob/%s/CHANGES.txt" % (repository_url, branch)
+    requests_var = requests.get(changelog_url)
+    if requests_var.status_code != 200:
+        raise RuntimeError("Page at URL %s not found" % changelog_url)
+
+    return changelog_url
