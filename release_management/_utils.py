@@ -31,6 +31,22 @@ from github import Github
 MANIFEST_PATH = "./Cargo.toml"
 
 
+def get_python_package_info(github_url):
+    """
+    Get info about the python package.
+
+    :param str github_url: the github URL
+    :returns: str * ParseResult
+    """
+    command = ["python", "setup.py", "--version"]
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        release_version = proc.stdout.readline().strip().decode("utf-8")
+
+    github_repo = urlparse(github_url)
+    assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
+    return (release_version, github_repo)
+
+
 def get_package_info(manifest_abs_path, package_name):
     """
     Extract the version string and repo URL from Cargo.toml and return it.
