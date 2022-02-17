@@ -36,6 +36,10 @@ cd ${STRATISD_N}-${STRATISD_V}/
 cargo vendor && tar czvf ../${STRATISD_N}-${STRATISD_V}-vendor.tar.gz vendor/
 cd ..
 cp ${STRATISD_N}-${STRATISD_V}-vendor.tar.gz ~/rpmbuild/SOURCES
+
+# Copy any patches that the spec file needs to apply to the source
+cp 000*.patch ~/rpmbuild/SOURCES
+
 echo "Executing rpmbuild for stratisd..."
 rpmbuild -bb stratisd.spec
 

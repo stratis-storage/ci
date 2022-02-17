@@ -15,6 +15,7 @@ License:        MPLv2.0
 URL:            https://github.com/stratis-storage/stratisd
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{url}/releases/download/v%{version}/%{name}-%{version}-vendor.tar.gz
+Patch0:         0001-stratisd-adjust-crate-dependencies.patch
 
 
 ExclusiveArch:  %{rust_arches}
@@ -40,6 +41,7 @@ Stratisd test build.  This package should not be used in production
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1
 
 # Source1 is vendored dependencies
 %cargo_prep -V 1
