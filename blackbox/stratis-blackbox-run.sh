@@ -24,6 +24,7 @@ BASEDEPPKGS=(
 	python3-dbus-python-client-gen
 	python3-justbytes
 	python3-psutil
+	python3-pygithub
 	rpm-build
 	rpmdevtools
 	asciidoc

@@ -53,7 +53,7 @@ def _vendor(manifest_abs_path, release_version):
     vendor_dir = "vendor"
 
     subprocess.run(
-        ["cargo", "package", "--manifest-path=%s" % manifest_abs_path], check=True
+        ["cargo", "package", "--allow-dirty", "--manifest-path=%s" % manifest_abs_path], check=True
     )
 
     package_manifest = os.path.join(
