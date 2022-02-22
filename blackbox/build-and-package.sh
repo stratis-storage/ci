@@ -33,9 +33,14 @@ fi
 
 tar czvf ~/rpmbuild/SOURCES/${STRATISD_N}-${STRATISD_V}.tar.gz ${TAR_CREATE_OPTS} ${STRATISD_N}-${STRATISD_V}
 cd ${STRATISD_N}-${STRATISD_V}/
-cargo vendor && tar czvf ../${STRATISD_N}-${STRATISD_V}-vendor.tar.gz vendor/
-cd ..
+../../release_management/create_stratisd_release.py --no-tag --no-release
+mv stratisd-*-vendor.tar.gz ${STRATISD_N}-${STRATISD_V}-vendor.tar.gz
 cp ${STRATISD_N}-${STRATISD_V}-vendor.tar.gz ~/rpmbuild/SOURCES
+cd ..
+
+# Copy any patches that the spec file needs to apply to the source
+cp 000*.patch ~/rpmbuild/SOURCES
+
 echo "Executing rpmbuild for stratisd..."
 rpmbuild -bb stratisd.spec
 
