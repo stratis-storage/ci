@@ -32,21 +32,31 @@ Requires:       device-mapper-persistent-data
 Requires:       systemd-libs
 Requires:       dbus-libs
 
-Recommends:     dracut >= 051
 Recommends:     clevis-luks >= 15
 
 %description
 Stratisd test build.  This package should not be used in production
 
+%package dracut
+Summary: Dracut modules for use with stratisd
+
+ExclusiveArch:  %{rust_arches}
+
+Requires:     stratisd
+Requires:     dracut >= 051
+Requires:     plymouth
+
+%description dracut
+Stratisd dracut test build. This package should not be used in production.
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q
 tar --strip-components=1 -xvf %{SOURCE2}
 # Source1 is vendored dependencies
 %cargo_prep -V 1
 
 %build
-%cargo_build
+%{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
 a2x -f manpage docs/stratisd.txt
 
@@ -72,27 +82,30 @@ a2x -f manpage docs/stratisd.txt
 %doc README.md
 %{_libexecdir}/stratisd
 %dir %{_datadir}/dbus-1
+%dir %{_datadir}/dbus-1/system.d
 %{_datadir}/dbus-1/system.d/stratisd.conf
 %{_mandir}/man8/stratisd.8*
 %{_unitdir}/stratisd.service
-%config %{_udevrulesdir}/61-stratisd.rules
+%{_udevrulesdir}/61-stratisd.rules
 %{udevdir}/stratis-str-cmp
 %{udevdir}/stratis-base32-decode
+%{_unitdir}/stratisd-min-postinitrd.service
+%{_unitdir}/stratis-fstab-setup@.service
+%{_bindir}/stratis-min
+%{_libexecdir}/stratisd-min
+%{_systemd_util_dir}/stratis-fstab-setup
+
+
+%files dracut
+%license LICENSE
 %{dracutdir}/modules.d/90stratis-clevis/module-setup.sh
 %{dracutdir}/modules.d/90stratis-clevis/stratis-clevis-rootfs-setup
 %{dracutdir}/modules.d/90stratis/61-stratisd.rules
 %{dracutdir}/modules.d/90stratis/module-setup.sh
 %{dracutdir}/modules.d/90stratis/stratis-rootfs-setup
 %{dracutdir}/modules.d/90stratis/stratisd-min.service
-%{_unitdir}/stratisd-min-postinitrd.service
-%{_unitdir}/stratis-fstab-setup@.service
 %{_systemd_util_dir}/system-generators/stratis-clevis-setup-generator
 %{_systemd_util_dir}/system-generators/stratis-setup-generator
-%{_bindir}/stratis-min
-%{_libexecdir}/stratisd-min
-%{_usr}/lib/systemd/stratis-fstab-setup
-
-
 
 %changelog
 * Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
