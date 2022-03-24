@@ -62,7 +62,7 @@ a2x -f manpage docs/stratisd.txt
 
 %if %{with check}
 %check
-%cargo_test -- --skip real_ --skip loop_ --skip travis_
+%cargo_test --no-run
 %endif
 
 %post
