@@ -1,8 +1,5 @@
 %bcond_without check
 
-# Not interested in packaging lib
-# stratisd is supposed to be daemon used through dbus
-%global __cargo_is_lib() false
 %global udevdir %(pkg-config --variable=udevdir udev)
 %global dracutdir %(pkg-config --variable=dracutdir dracut)
 
