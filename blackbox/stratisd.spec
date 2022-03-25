@@ -17,12 +17,17 @@ Source2:	%{crates_source}
 
 ExclusiveArch:  %{rust_arches}
 
+BuildRequires:  rust-toolset
 BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libblkid-devel
 BuildRequires:  cryptsetup-devel
 BuildRequires:  clang
 BuildRequires:  %{_bindir}/a2x
+
+# Required to calculate install directories
+BuildRequires:  systemd
+BuildRequires:  dracut
 
 Requires:       xfsprogs
 Requires:       device-mapper-persistent-data
