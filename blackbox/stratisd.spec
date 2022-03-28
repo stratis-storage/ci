@@ -33,8 +33,10 @@ Requires:       xfsprogs
 Requires:       device-mapper-persistent-data
 Requires:       systemd-libs
 Requires:       dbus-libs
+Requires:       cryptetup-libs
+Requires:       libblkid
 
-Recommends:     clevis-luks >= 15
+Recommends:     clevis-luks >= 18
 
 %description
 Stratisd test build.  This package should not be used in production
@@ -58,8 +60,8 @@ tar --strip-components=1 -xvf %{SOURCE2}
 %cargo_prep -V 1
 
 %build
-%{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
-%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
+%{cargo_build} --release --bin=stratisd
+%{cargo_build} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
 a2x -f manpage docs/stratisd.txt
 
 %install
