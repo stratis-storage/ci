@@ -133,6 +133,44 @@ def create_release(repository, tag, release_version, changelog_url):
     return release
 
 
+def vendor(manifest_abs_path, release_version):
+    """
+    Makes a vendor tarfile, suitable for uploading.
+
+    ;param str manifest_abs_path: manifest path (absolute)
+    :param str release_version: the release version
+    :return name of vendored tarfile:
+    :rtype: str
+    """
+
+    vendor_dir = "vendor"
+
+    subprocess.run(
+        ["cargo", "package", "--manifest-path=%s" % manifest_abs_path], check=True
+    )
+
+    package_manifest = os.path.join(
+        os.path.dirname(manifest_abs_path),
+        "target/package",
+        "stratisd-%s" % release_version,
+        "Cargo.toml",
+    )
+
+    subprocess.run(
+        ["cargo", "vendor", "--manifest-path=%s" % package_manifest, vendor_dir],
+        check=True,
+    )
+
+    vendor_tarfile_name = "stratisd-%s-vendor.tar.gz" % release_version
+
+    subprocess.run(
+        ["tar", "-czvf", vendor_tarfile_name, vendor_dir],
+        check=True,
+    )
+
+    return vendor_tarfile_name
+
+
 def get_changelog_url(repository_url, branch):
     """
     Get the URL for the changelog in the release message.
