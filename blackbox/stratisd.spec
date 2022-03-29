@@ -17,6 +17,11 @@ Source2:	%{crates_source}
 
 ExclusiveArch:  %{rust_arches}
 
+%if 0%{?rhel} && !0%{?eln}
+BuildRequires:  rust-toolset
+%else
+BuildRequires:  rust-packaging
+%endif
 BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libblkid-devel
@@ -24,15 +29,21 @@ BuildRequires:  cryptsetup-devel
 BuildRequires:  clang
 BuildRequires:  %{_bindir}/a2x
 
+# Required to calculate install directories
+BuildRequires:  systemd
+BuildRequires:  dracut
+
 Requires:       xfsprogs
 Requires:       device-mapper-persistent-data
 Requires:       systemd-libs
 Requires:       dbus-libs
+Requires:       cryptsetup-libs
+Requires:       libblkid
 
-Recommends:     clevis-luks >= 15
+Recommends:     clevis-luks >= 18
 
 %description
-Stratisd test build.  This package should not be used in production
+%{summary}. This package should not be used in production.
 
 %package dracut
 Summary: Dracut modules for use with stratisd
@@ -44,17 +55,29 @@ Requires:     dracut >= 051
 Requires:     plymouth
 
 %description dracut
-Stratisd dracut test build. This package should not be used in production.
+%{summary}. This package should not be used in production.
 
 %prep
 %setup -q
-tar --strip-components=1 -xvf %{SOURCE2}
+tar --strip-components=1 --extract --verbose --file %{SOURCE2}
+# Patches must be applied after the upstream package is extracted.
+%if 0%{?rhel} && !0%{?eln}
 # Source1 is vendored dependencies
 %cargo_prep -V 1
+%else
+%cargo_prep
+%generate_buildrequires
+%cargo_generate_buildrequires -f dbus_enabled,min,systemd_compat
+%endif
 
 %build
+%if 0%{?rhel} && !0%{?eln}
+%{cargo_build} --bin=stratisd
+%{cargo_build} --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
+%else
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
+%endif
 a2x -f manpage docs/stratisd.txt
 
 %install
@@ -62,7 +85,11 @@ a2x -f manpage docs/stratisd.txt
 
 %if %{with check}
 %check
+%if 0%{?rhel} && !0%{?eln}
 %cargo_test --no-run
+%else
+%cargo_test -- --no-run
+%endif
 %endif
 
 %post
