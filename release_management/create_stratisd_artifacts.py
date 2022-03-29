@@ -23,32 +23,9 @@ Assumes that the stratisd version number in Cargo.toml is the correct one.
 import argparse
 import os
 import sys
-import tarfile
 
 # isort: LOCAL
-from _utils import MANIFEST_PATH, get_package_info, vendor
-
-
-def _make_stratisd_tarball(release_version, output_dir):
-    """
-    Make the stratisd tarball and place it in the output dir.
-
-    Immitate what GitHub does on a tag to the best of our ability.
-    """
-    output_file = os.path.join(output_dir, "stratisd-%s.tar.gz" % release_version)
-    prefix = "stratisd-%s" % release_version
-
-    with tarfile.open(output_file, "w:gz") as tar:
-        for root, _, files in os.walk("."):
-            for filename in files:
-                name = os.path.normpath(os.path.join(root, filename))
-                if name.startswith(".git"):
-                    continue
-                tar.add(
-                    name,
-                    arcname=os.path.normpath(os.path.join(prefix, name)),
-                    recursive=False,
-                )
+from _utils import MANIFEST_PATH, get_package_info, make_source_tarball, vendor
 
 
 def main():
@@ -79,7 +56,7 @@ def main():
 
     (release_version, _) = get_package_info(manifest_abs_path, "stratisd")
 
-    _make_stratisd_tarball(release_version, output_abs_path)
+    make_source_tarball("stratisd", release_version, output_abs_path)
 
     vendor_tarfile_name = vendor(manifest_abs_path, release_version)
 

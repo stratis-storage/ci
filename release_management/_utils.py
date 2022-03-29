@@ -21,6 +21,7 @@ Calculates values useful for making a release.
 import json
 import os
 import subprocess
+import tarfile
 from getpass import getpass
 from urllib.parse import urlparse
 
@@ -169,6 +170,29 @@ def vendor(manifest_abs_path, release_version):
     )
 
     return vendor_tarfile_name
+
+
+def make_source_tarball(package_name, release_version, output_dir):
+    """
+    Make the source tarball and place it in the output dir.
+
+    Immitate what GitHub does on a tag to the best of our ability.
+    """
+    prefix = "%s-%s" % (package_name, release_version)
+
+    output_file = os.path.join(output_dir, "%s.tar.gz" % prefix)
+
+    with tarfile.open(output_file, "w:gz") as tar:
+        for root, _, files in os.walk("."):
+            for filename in files:
+                name = os.path.normpath(os.path.join(root, filename))
+                if name.startswith(".git"):
+                    continue
+                tar.add(
+                    name,
+                    arcname=os.path.normpath(os.path.join(prefix, name)),
+                    recursive=False,
+                )
 
 
 def get_changelog_url(repository_url, branch):
