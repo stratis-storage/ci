@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Create stratisd artifacts for packaging tests.
+Create stratis-cli artifacts for packaging tests.
 
-Assumes that the stratisd version number in Cargo.toml is the correct one.
+Assumes that the stratis-cli version number in setup.py is the correct one.
 """
 
 # isort: STDLIB
@@ -25,7 +25,9 @@ import os
 import sys
 
 # isort: LOCAL
-from _utils import MANIFEST_PATH, get_package_info, make_source_tarball, vendor
+from _utils import get_python_package_info, make_source_tarball
+
+GITHUB_URL = "https://github.com/stratis-storage/stratis-cli"
 
 
 def main():
@@ -35,9 +37,9 @@ def main():
 
     parser = argparse.ArgumentParser(
         description=(
-            "Generate artifacts for a stratisd release. Expects to be run in "
-            "clean stratisd top-level directory. Makes output dir if it does "
-            "not already exist, but does not clean it."
+            "Generate artifacts for a stratis-cli release. Expects to be run "
+            "in clean stratis-cli top-level directory. Makes output dir if it "
+            "does not already exist, but does not clean it."
         )
     )
 
@@ -45,26 +47,12 @@ def main():
 
     args = parser.parse_args()
 
-    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
-    if not os.path.exists(manifest_abs_path):
-        raise RuntimeError(
-            "Need script to run at top-level of package, in same directory as Cargo.toml"
-        )
-
     output_abs_path = os.path.abspath(args.output_dir)
     os.makedirs(output_abs_path, exist_ok=True)
 
-    (release_version, _) = get_package_info(manifest_abs_path, "stratisd")
+    (release_version, _) = get_python_package_info(GITHUB_URL)
 
-    make_source_tarball("stratisd", release_version, output_abs_path)
-
-    vendor_tarfile_name = vendor(manifest_abs_path, release_version)
-
-    os.rename(vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name))
-
-    crate_name = "stratisd-%s.crate" % release_version
-    crate_path = os.path.join("target", "package", crate_name)
-    os.rename(crate_path, os.path.join(output_abs_path, crate_name))
+    make_source_tarball("stratis-cli", release_version, output_abs_path)
 
 
 if __name__ == "__main__":
