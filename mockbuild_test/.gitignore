@@ -1,0 +1,11 @@
+# Input directories
+RPMS
+SOURCES
+SPECS
+SRPMS
+
+# output directory
+output
+
+# upstream source clone directory
+upstream
