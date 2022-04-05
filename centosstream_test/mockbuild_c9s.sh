@@ -47,5 +47,5 @@ mock --buildsrpm -r /etc/mock/centos-stream-9-x86_64.cfg --spec SPECS/stratis-cl
 mock --rebuild -r /etc/mock/centos-stream-9-x86_64.cfg SRPMS/stratisd/stratisd-3.1.0-77.el9.src.rpm --resultdir=RPMS/stratisd/
 mock --rebuild -r /etc/mock/centos-stream-9-x86_64.cfg SRPMS/stratis-cli/stratis-cli-3.1.0-77.el9.src.rpm --resultdir=RPMS/stratis-cli/
 
-find RPMS -name '*.rpm' -exec cp -v -t {} +
-find SRPMS -name '*.rpm' -exec cp -v -t {} +
+find RPMS -name '*.rpm' -exec cp -v -t output {} +
+find SRPMS -name '*.rpm' -exec cp -v -t output {} +
