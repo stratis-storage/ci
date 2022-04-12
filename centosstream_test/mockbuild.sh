@@ -8,14 +8,14 @@ if ! groups | grep mock; then
 	exit 1
 fi
 
-TARGET=$1
+DIST_RELEASE=$1
 
-if [ -z $TARGET ]; then
+if [ -z $DIST_RELEASE ]; then
 	echo "Usage: $0 centos-stream | fedora-rawhide"
 	exit 1
 fi
 
-case $TARGET in
+case $DIST_RELEASE in
 "centos-stream")
 	DIST="el9"
 	MOCKCONFIG="/etc/mock/centos-stream-9-x86_64.cfg"
