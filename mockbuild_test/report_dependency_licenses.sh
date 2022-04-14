@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 
 if ! groups | grep mock; then
 	echo 'No mock group membership; be sure to install mock'
@@ -36,5 +35,9 @@ cd ../..
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
 mock --rebuild --without=check -r $MOCKCONFIG SRPMS/stratisd/stratisd-3.1.0-77.$DIST.src.rpm
-mock shell --no-clean -r $MOCKCONFIG 'for j in $(rpm -qa | grep "rust-.*-devel"); do rpm -q $j --qf "%{LICENSE}\n"; done | sort | uniq -c'
-mock shell --no-clean -r $MOCKCONFIG 'for j in $(rpm -qa | grep "rust-.*-devel"); do rpm -q $j --qf "%{NAME} -- %{LICENSE}\n"; done'
+
+echo ''
+echo 'Dependency license report:'
+mock shell --no-clean -r $MOCKCONFIG 'for j in $(rpm -qa | grep "rust-.*-devel"); do rpm -q $j --qf "%{LICENSE}\n"; done | sort | uniq -c' 2>/dev/null
+echo ''
+mock shell --no-clean -r $MOCKCONFIG 'for j in $(rpm -qa | grep "rust-.*-devel"); do rpm -q $j --qf "%{NAME} -- %{LICENSE}\n"; done' 2>/dev/null
