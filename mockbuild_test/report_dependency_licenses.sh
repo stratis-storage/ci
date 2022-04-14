@@ -3,19 +3,19 @@ set -e
 set -x
 
 if ! groups | grep mock; then
-        echo 'No mock group membership; be sure to install mock'
-        echo 'and add the current user to the "mock" group'
-        exit 1
+	echo 'No mock group membership; be sure to install mock'
+	echo 'and add the current user to the "mock" group'
+	exit 1
 fi
 
 DIST="fc37"
 MOCKCONFIG="/etc/mock/fedora-rawhide-x86_64.cfg"
 
 for mockdir in SOURCES SPECS SRPMS RPMS; do
-        if [ -d $mockdir ]; then
-                echo 'Clearing old mock rpm directories...'
-                rm -rf $mockdir
-        fi
+	if [ -d $mockdir ]; then
+		echo 'Clearing old mock rpm directories...'
+		rm -rf $mockdir
+	fi
 done
 
 mkdir {SOURCES,SPECS,SRPMS,RPMS}
@@ -24,7 +24,7 @@ mkdir {SRPMS,RPMS}/stratisd
 cp stratisd.spec SPECS
 
 if [ -d upstream ]; then
-        rm -rf upstream
+	rm -rf upstream
 fi
 
 mkdir upstream
