@@ -35,6 +35,6 @@ cd stratisd
 cd ../..
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
-mock --rebuild --without=check -r $MOCKCONFIG SRPMS/stratisd/stratisd-3.1.0-77.$DIST.src.rpm 
+mock --rebuild --without=check -r $MOCKCONFIG SRPMS/stratisd/stratisd-3.1.0-77.$DIST.src.rpm
 mock shell --no-clean -r $MOCKCONFIG 'for j in $(rpm -qa | grep "rust-.*-devel"); do rpm -q $j --qf "%{LICENSE}\n"; done | sort | uniq -c'
 mock shell --no-clean -r $MOCKCONFIG 'for j in $(rpm -qa | grep "rust-.*-devel"); do rpm -q $j --qf "%{NAME} -- %{LICENSE}\n"; done'
