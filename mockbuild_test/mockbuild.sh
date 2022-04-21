@@ -47,6 +47,7 @@ done
 mkdir {SOURCES,SPECS,SRPMS,RPMS}
 mkdir {SRPMS,RPMS}/{stratisd,stratis-cli}
 mkdir output
+mkdir output/{stratisd,stratis-cli}
 
 cp stratisd.spec SPECS
 cp stratis-cli.spec SPECS
@@ -71,5 +72,7 @@ mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratis-cli.spec --sources SOURCES/
 mock --rebuild -r $MOCKCONFIG SRPMS/stratisd/stratisd-3.1.0-77.$DIST.src.rpm --resultdir=RPMS/stratisd/
 mock --rebuild -r $MOCKCONFIG SRPMS/stratis-cli/stratis-cli-3.1.0-77.$DIST.src.rpm --resultdir=RPMS/stratis-cli/
 
-find RPMS -name '*.rpm' -exec cp -v -t output {} +
-find SRPMS -name '*.rpm' -exec cp -v -t output {} +
+for package in stratisd stratis-cli; do
+	find RPMS -name "$package*.rpm" -exec cp -v -t output/$package {} +
+	find SRPMS -name "$package*.rpm" -exec cp -v -t output/$package {} +
+done
