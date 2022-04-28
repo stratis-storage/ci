@@ -1,0 +1,19 @@
+---
+metadata:
+  buildhost_subdomain:
+    - .redhat.com
+    - .localdomain
+inspections:
+  # none of our compiled code has an ABI
+  abidiff: off
+  # at present the wrong debuginfo files are being used to run this check
+  annocheck: off
+  # the project does not use .desktop files
+  desktop: off
+  # the project uses no Java
+  javabytecode: off
+
+rpmdeps:
+  # ignore auto dependencies like: (crate(bindgen/default) >= 0.59.0 with crate(bindgen/default) < 0.60.0~)'
+  ignore:
+    requires: ^\(crate\(.*\)$
