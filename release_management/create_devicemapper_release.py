@@ -87,10 +87,10 @@ def make_patch_branch(release_version, manifest_abs_path, repository_url):
 
     subprocess.run(["git", "clean", "-xdf"], check=True)
 
-    with open(PATCH_FILE, "r") as dm_file:
+    with open(PATCH_FILE, "r", encoding="utf-8") as dm_file:
         lines = dm_file.readlines()
 
-    with open(PATCH_FILE, "w") as dm_file:
+    with open(PATCH_FILE, "w", encoding="utf-8") as dm_file:
         for line in lines:
             line = line.rstrip(os.linesep)
             if line == LINE1_MATCH:

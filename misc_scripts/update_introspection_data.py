@@ -319,7 +319,7 @@ def _print_docs_spec(specs, namespace):
 
     for proxy_type, introspection_data in specs.items():
         file_path = os.path.join(abs_output_dir, _proxy_type_to_filename(proxy_type))
-        with open(file_path, "w") as file:
+        with open(file_path, "w", encoding="utf-8") as file:
             print(introspection_data, file=file)
 
 
