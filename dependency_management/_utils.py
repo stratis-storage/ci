@@ -50,9 +50,7 @@ def version_from_spec(spec):
     spec_str = str(spec)
 
     if spec_str[0] != "^":
-        raise RuntimeError(
-            "Expected specification format %s to begin with a '^'" % spec
-        )
+        raise RuntimeError(f"Expected specification format {spec} to begin with a '^'")
 
     return Version(spec_str[1:])
 
@@ -69,7 +67,7 @@ def build_cargo_tree_dict(manifest_path):
     """
     command = ["cargo", "tree", "--charset=ascii", "--all-features"]
     if manifest_path is not None:
-        command.append("--manifest-path=%s" % manifest_path)
+        command.append(f"--manifest-path={manifest_path}")
 
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         stream = proc.stdout
@@ -103,29 +101,29 @@ def build_koji_repo_dict(crates, release):
         try:
             if release[0] != "f":
                 raise RuntimeError(
-                    'release argument must be "rawhide" or f<n> where n is an integer, was "%s"'
-                    % release
+                    f'release argument must be "rawhide" or f<n> '
+                    f'where n is an integer, was "{release}"'
                 )
 
             release_number = int(release[1:])
 
             if release_number < 34:
                 raise RuntimeError(
-                    "release number must be at least 34, was %d" % release_number
+                    f"release number must be at least 34, was {release_number}"
                 )
         except (IndexError, ValueError) as err:
             raise RuntimeError(
-                'release must be "rawhide" or f<n> where n is an integer, was "%s"'
-                % release
+                f'release must be "rawhide" or f<n> where n is an integer, was "{release}"'
             ) from err
 
-    url = "https://kojipkgs.fedoraproject.org/repos/%s/latest/x86_64/pkglist" % (
-        release if release == "rawhide" else "%s-build" % release
+    url = (
+        "https://kojipkgs.fedoraproject.org/repos/"
+        f"{release if release == 'rawhide' else f'{release}-build'}/latest/x86_64/pkglist"
     )
 
     requests_var = requests.get(url)
     if requests_var.status_code != 200:
-        raise RuntimeError("Page at URL %s not found" % url)
+        raise RuntimeError(f"Page at URL {url} not found")
 
     packages = requests_var.text
 
@@ -165,7 +163,7 @@ def build_cargo_metadata(manifest_path):
         "--all-features",
     ]
     if manifest_path is not None:
-        command.append("--manifest-path=%s" % manifest_path)
+        command.append(f"--manifest-path={manifest_path}")
 
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         metadata_str = proc.stdout.readline()

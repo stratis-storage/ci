@@ -60,20 +60,20 @@ def make_patch_branch(release_version, manifest_abs_path, repository_url):
     :param str manifest_abs_path: Cargo.toml absolute path
     :param str repository_url: the URL of the GitHub repository
     """
-    patch_branch = "crates-io-patch-%s" % release_version
+    patch_branch = f"crates-io-patch-{release_version}"
     subprocess.run(  # pylint: disable=subprocess-run-check
         ["git", "branch", "-D", patch_branch]
     )
     subprocess.run(["git", "checkout", "-b", patch_branch], check=True)
 
     subprocess.run(
-        ["cargo", "package", "--manifest-path=%s" % manifest_abs_path], check=True
+        ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
     )
 
     package_manifest = os.path.join(
         os.path.dirname(manifest_abs_path),
         "target/package",
-        "%s-%s" % (PACKAGE_NAME, release_version),
+        f"{PACKAGE_NAME}-{release_version}",
         "Cargo.toml",
     )
 
@@ -116,7 +116,7 @@ def make_patch_branch(release_version, manifest_abs_path, repository_url):
             "-f",
             "-u",
             repository_url,
-            "%s:%s" % (patch_branch, patch_branch),
+            f"{patch_branch}:{patch_branch}",
         ],
         check=True,
     )
@@ -176,12 +176,12 @@ def main():
     if args.no_tag:
         return
 
-    tag = "v%s" % release_version
+    tag = f"v{release_version}"
 
     if not verify_tag(tag):
-        message = "version %s" % release_version
+        message = f"version {release_version}"
         subprocess.run(
-            ["git", "tag", "--annotate", tag, '--message="%s"' % message],
+            ["git", "tag", "--annotate", tag, f'--message="{message}"'],
             check=True,
         )
 

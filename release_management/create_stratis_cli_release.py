@@ -73,12 +73,12 @@ def main():
     if args.no_tag:
         return
 
-    tag = "v%s" % release_version
+    tag = f"v{release_version}"
 
     if not verify_tag(tag):
-        message = "version %s" % release_version
+        message = f"version {release_version}"
         subprocess.run(
-            ["git", "tag", "--annotate", tag, '--message="%s"' % message],
+            ["git", "tag", "--annotate", tag, f'--message="{message}"'],
             check=True,
         )
 
