@@ -86,6 +86,7 @@ a2x -f manpage docs/stratisd.txt
 %{_udevrulesdir}/61-stratisd.rules
 %{udevdir}/stratis-str-cmp
 %{udevdir}/stratis-base32-decode
+%{_bindir}/stratis-predict-usage
 %{_unitdir}/stratisd-min-postinitrd.service
 %{_unitdir}/stratis-fstab-setup@.service
 %{_bindir}/stratis-min
