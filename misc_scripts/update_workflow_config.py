@@ -30,7 +30,7 @@ def search_file(search_key, old_verstring, new_verstring, filename):
 
     output = []
 
-    with open(filename, "r") as file:
+    with open(filename, "r", encoding="utf-8") as file:
         for line in file:
 
             if search_key in line:
@@ -87,7 +87,7 @@ def process_file(search_key, args):
 
     output = search_file(search_key, old_verstring, new_verstring, filename)
 
-    with open(outfilename, "w+") as outfile:
+    with open(outfilename, "w+", encoding="utf-8") as outfile:
         for outline in output:
             outfile.write(outline)
 
