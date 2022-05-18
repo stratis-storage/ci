@@ -74,7 +74,7 @@ def build_cargo_tree_dict(manifest_path):
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         stream = proc.stdout
 
-        version_dict = dict()
+        version_dict = {}
         line = stream.readline()
         while line != b"":
             line_str = line.decode("utf-8").rstrip()
@@ -176,7 +176,7 @@ def build_cargo_metadata(manifest_path):
     package = packages[0]
     dependencies = package["dependencies"]
 
-    result = dict()
+    result = {}
     for item in dependencies:
         result[item["name"]] = SimpleSpec(item["req"])
 
