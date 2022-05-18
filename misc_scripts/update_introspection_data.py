@@ -179,12 +179,11 @@ def _make_python_spec(proxies):
     """
 
     revision = (
-        "r%d"
-        % Version(Manager.Properties.Version.Get(proxies[ProxyType.MANAGER])).minor
+        f"r{Version(Manager.Properties.Version.Get(proxies[ProxyType.MANAGER])).minor}"
     )
 
     def get_current_interfaces(interface_prefixes):
-        return ["%s.%s" % (prefix, revision) for prefix in interface_prefixes]
+        return [f"{prefix}.{revision}" for prefix in interface_prefixes]
 
     specs = {}
 
@@ -210,7 +209,7 @@ def _make_python_spec(proxies):
                 specs[interface_name] = _xml_object_to_str(interface)
             except StopIteration as err:
                 raise RuntimeError(
-                    "interface %s not found in introspection data" % interface_name
+                    f"interface {interface_name} not found in introspection data"
                 ) from err
 
     _add_data(ProxyType.MANAGER, [OBJECT_MANAGER_INTERFACE])
@@ -247,8 +246,7 @@ def _print_python_spec(specs):
 
     print(
         ",\n".join(
-            '    "%s": """\n%s\n"""' % (key, value)
-            for (key, value) in sorted(specs.items())
+            f'    "{key}": """\n{value}\n"""' for (key, value) in sorted(specs.items())
         )
         + ","
     )
