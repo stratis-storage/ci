@@ -15,7 +15,7 @@ def parse_json(path):
     The return value is a comma-delimited string of device names.
     """
 
-    with open(path) as test_config_file:
+    with open(path, encoding="utf-8") as test_config_file:
         json_string = test_config_file.read()
 
     json_data = json.loads(json_string)
