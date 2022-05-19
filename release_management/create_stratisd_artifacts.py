@@ -62,7 +62,7 @@ def main():
 
     os.rename(vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name))
 
-    crate_name = "stratisd-%s.crate" % release_version
+    crate_name = f"stratisd-{release_version}.crate"
     crate_path = os.path.join("target", "package", crate_name)
     os.rename(crate_path, os.path.join(output_abs_path, crate_name))
 
