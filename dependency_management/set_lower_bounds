@@ -48,7 +48,7 @@ def _do_updates(explicit_dependencies, manifest_path):
         "update",
     ]
     if manifest_path is not None:
-        command_prefix.append("--manifest-path=%s" % manifest_path)
+        command_prefix.append(f"--manifest-path={manifest_path}")
 
     updatables = list(explicit_dependencies.items())[:]
 
@@ -69,9 +69,10 @@ def _do_updates(explicit_dependencies, manifest_path):
 
         assert frozenset(explicit_dependencies.keys()) == frozenset(
             cargo_tree.keys()
-        ), "in Cargo.toml but not in 'cargo tree' output: %s, vice-versa: %s" % (
-            frozenset(explicit_dependencies.keys()) - frozenset(cargo_tree.keys()),
-            frozenset(cargo_tree.keys()) - frozenset(explicit_dependencies.keys()),
+        ), (
+            f"in Cargo.toml but not in 'cargo tree' output: "
+            f"{frozenset(explicit_dependencies.keys()) - frozenset(cargo_tree.keys())}, "
+            f"vice-versa: {frozenset(cargo_tree.keys()) - frozenset(explicit_dependencies.keys())}"
         )
 
         shuffle(updatables)
@@ -87,17 +88,16 @@ def _do_updates(explicit_dependencies, manifest_path):
             except RuntimeError as err:
                 raise RuntimeError(
                     (
-                        "Specified spec %s for crate %s could not be "
-                        "converted to a version to use as an update target"
+                        f"Specified spec {spec} for crate {crate} could not be "
+                        f"converted to a version to use as an update target"
                     )
-                    % (spec, crate)
                 ) from err
 
             current_version = cargo_tree[crate]
             if current_version != version:
                 command = command_prefix + [
-                    "--package=%s:%s" % (crate, current_version),
-                    "--precise=%s" % version,
+                    f"--package={crate}:{current_version}",
+                    f"--precise={version}",
                 ]
                 try:
                     tried.append((crate, version))
@@ -190,7 +190,7 @@ def main():
         file=sys.stderr,
     )
     for (crate, version) in tried:
-        print("%s could not be updated to %s" % (crate, version), file=sys.stderr)
+        print(f"{crate} could not be updated to {version}", file=sys.stderr)
     return 1
 
 

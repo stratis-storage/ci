@@ -15,15 +15,14 @@ def parse_json(path):
     The return value is a comma-delimited string of device names.
     """
 
-    with open(path) as test_config_file:
+    with open(path, encoding="utf-8") as test_config_file:
         json_string = test_config_file.read()
 
     json_data = json.loads(json_string)
     ok_to_destroy = json_data.get("ok_to_destroy_dev_array_key")
     if ok_to_destroy is None:
         raise RuntimeError(
-            "Required JSON key 'ok_to_destroy_dev_array_key' is missing in file %s"
-            % path
+            f"Required JSON key 'ok_to_destroy_dev_array_key' is missing in file {path}"
         )
     print(",".join(ok_to_destroy))
 
@@ -39,6 +38,4 @@ if __name__ == "__main__":
     try:
         parse_json(TEST_CONFIG_PATH)
     except Exception as err:
-        raise RuntimeError(
-            "Parsing JSON in %s failed: %s" % (TEST_CONFIG_PATH, err)
-        ) from err
+        raise RuntimeError(f"Parsing JSON in {TEST_CONFIG_PATH} failed: {err}") from err

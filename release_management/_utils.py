@@ -64,7 +64,7 @@ def get_package_info(manifest_abs_path, package_name):
         "metadata",
         "--format-version=1",
         "--no-deps",
-        "--manifest-path=%s" % manifest_abs_path,
+        f"--manifest-path={manifest_abs_path}",
     ]
 
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
@@ -126,8 +126,8 @@ def create_release(repository, tag, release_version, changelog_url):
 
     release = repo.create_git_release(
         tag,
-        "Version %s" % release_version,
-        "See %s" % changelog_url,
+        f"Version {release_version}",
+        f"See {changelog_url}",
         draft=True,
     )
 
@@ -147,22 +147,22 @@ def vendor(manifest_abs_path, release_version):
     vendor_dir = "vendor"
 
     subprocess.run(
-        ["cargo", "package", "--manifest-path=%s" % manifest_abs_path], check=True
+        ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
     )
 
     package_manifest = os.path.join(
         os.path.dirname(manifest_abs_path),
         "target/package",
-        "stratisd-%s" % release_version,
+        f"stratisd-{release_version}",
         "Cargo.toml",
     )
 
     subprocess.run(
-        ["cargo", "vendor", "--manifest-path=%s" % package_manifest, vendor_dir],
+        ["cargo", "vendor", f"--manifest-path={package_manifest}", vendor_dir],
         check=True,
     )
 
-    vendor_tarfile_name = "stratisd-%s-vendor.tar.gz" % release_version
+    vendor_tarfile_name = f"stratisd-{release_version}-vendor.tar.gz"
 
     subprocess.run(
         ["tar", "-czvf", vendor_tarfile_name, vendor_dir],
@@ -178,9 +178,9 @@ def make_source_tarball(package_name, release_version, output_dir):
 
     Immitate what GitHub does on a tag to the best of our ability.
     """
-    prefix = "%s-%s" % (package_name, release_version)
+    prefix = f"{package_name}-{release_version}"
 
-    output_file = os.path.join(output_dir, "%s.tar.gz" % prefix)
+    output_file = os.path.join(output_dir, f"{prefix}.tar.gz")
 
     with tarfile.open(output_file, "w:gz") as tar:
         for root, _, files in os.walk("."):
@@ -202,9 +202,9 @@ def get_changelog_url(repository_url, branch):
     :param str repository_url: object representing the GitHub repo
     :param str branch: the git branch
     """
-    changelog_url = "%s/blob/%s/CHANGES.txt" % (repository_url, branch)
+    changelog_url = f"{repository_url}/blob/{branch}/CHANGES.txt"
     requests_var = requests.get(changelog_url)
     if requests_var.status_code != 200:
-        raise RuntimeError("Page at URL %s not found" % changelog_url)
+        raise RuntimeError("Page at URL {changelog_url} not found")
 
     return changelog_url

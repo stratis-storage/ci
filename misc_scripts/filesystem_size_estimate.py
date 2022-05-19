@@ -201,13 +201,9 @@ def _print_values(devices):
 
         (size, fs_used, pool_used_pre, pool_used_post) = _do_one(size, bus, pool_proxy)
         print(
-            "%s %s %s %s"
-            % (
-                size,
-                "ERROR" if fs_used is None else fs_used,
-                "ERROR" if pool_used_pre is None else pool_used_pre,
-                "ERROR" if pool_used_post is None else pool_used_post,
-            )
+            f'{size} {"ERROR" if fs_used is None else fs_used} '
+            f'{"ERROR" if pool_used_pre is None else pool_used_pre} '
+            f'{"ERROR" if pool_used_post is None else pool_used_post}'
         )
 
     (_, return_code, return_msg) = Manager.Methods.DestroyPool(

@@ -60,9 +60,9 @@ def build_arrays(block_size, values):
         for (pool_size, num_thins) in row:
             command = [
                 "thin_metadata_size",
-                "--block-size=%s" % block_size,
-                "--pool-size=%s" % pool_size,
-                "--max-thins=%s" % num_thins,
+                f"--block-size={block_size}",
+                f"--pool-size={pool_size}",
+                f"--max-thins={num_thins}",
                 "-n",
             ]
             with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
@@ -115,14 +115,13 @@ def main():  # pylint: disable=too-many-locals
     pool_size_step = (max_pool_size - min_pool_size) // pool_size_intervals
     if pool_size_step <= 0:
         raise RuntimeError(
-            "Pool size increment is %s which is not a positive number" % pool_size_step
+            f"Pool size increment is {pool_size_step} which is not a positive number"
         )
 
     num_thins_step = (max_num_thins - min_num_thins) // num_thins_intervals
     if num_thins_step <= 0:
         raise RuntimeError(
-            "Number of thin devices increment is %s which is not a positive number"
-            % num_thins_step
+            f"Number of thin devices increment is {num_thins_step} which is not a positive number"
         )
 
     x_values = list(

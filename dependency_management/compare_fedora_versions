@@ -55,7 +55,7 @@ def _main_engine(explicit_dependencies, koji_repo_dict):
     for crate, spec in explicit_dependencies.items():
         koji_version = koji_repo_dict.get(crate)
         if koji_version is None:
-            print("No Fedora package for crate %s found" % crate, file=sys.stderr)
+            print(f"No Fedora package for crate {crate} found", file=sys.stderr)
             missing.append(crate)
             continue
 
@@ -66,13 +66,13 @@ def _main_engine(explicit_dependencies, koji_repo_dict):
             version = version_from_spec(spec)
         except RuntimeError as err:
             raise RuntimeError(
-                "Could not parse version from specification for crate %s" % crate
+                f"Could not parse version from specification for crate {crate}"
             ) from err
 
         if koji_version < version:
             print(
-                "Version %s of crate %s higher than maximum %s that is available on Fedora"
-                % (version, crate, koji_version),
+                f"Version {version} of crate {crate} higher than maximum {koji_version} "
+                f"that is available on Fedora",
                 file=sys.stderr,
             )
             high.append(crate)
@@ -81,8 +81,8 @@ def _main_engine(explicit_dependencies, koji_repo_dict):
         # The koji version is not in the spec and it is not less than the spec
         # so it must be more.
         print(
-            "Version %s of crate %s is available in Fedora. Requires update in Cargo.toml"
-            % (koji_version, crate),
+            f"Version {koji_version} of crate {crate} is available in Fedora. "
+            f"Requires update in Cargo.toml",
             file=sys.stderr,
         )
         low.append(crate)
@@ -195,7 +195,7 @@ def main():
         )
     except RuntimeError as err:
         raise RuntimeError(
-            'Unable to parse repo page for release "%s"' % args.release
+            f'Unable to parse repo page for release "{args.release}"'
         ) from err
 
     result = _main_engine(explicit_dependencies, koji_repo_dict)

@@ -18,7 +18,7 @@ def main():
     Main function
     """
     if len(sys.argv) < 4:
-        print("USAGE: %s <GITHUB_ORG_OR_USER> <GITHUB_REPO> <PR_USER>" % sys.argv[0])
+        print(f"USAGE: {sys.argv[0]} <GITHUB_ORG_OR_USER> <GITHUB_REPO> <PR_USER>")
         print(
             "GITHUB_ORG_OR_USER: Github user or organization in which the repo is located"
         )
@@ -34,7 +34,7 @@ def main():
         api_key = getpass("Github API key: ")
 
     github = Github(api_key)
-    repo = github.get_repo("%s/%s" % (user, repo))
+    repo = github.get_repo(f"{user}/{repo}")
     runs = itertools.chain(
         repo.get_workflow_runs(actor=actions_user, status="queued"),
         repo.get_workflow_runs(actor=actions_user, status="in_progress"),
