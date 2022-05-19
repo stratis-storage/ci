@@ -117,9 +117,8 @@ def build_koji_repo_dict(crates, release):
             ) from err
 
     url = (
-        f"https://kojipkgs.fedoraproject.org/repos/{release}/latest/x86_64/pkglist"
-        if release == "rawhide"
-        else f"{release}-build"
+        "https://kojipkgs.fedoraproject.org/repos/"
+        f"{release if release == 'rawhide' else f'{release}-build'}/latest/x86_64/pkglist"
     )
 
     requests_var = requests.get(url)
