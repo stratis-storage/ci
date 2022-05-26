@@ -12,7 +12,7 @@ License:        MPLv2.0
 URL:            https://github.com/stratis-storage/stratisd
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{url}/releases/download/v%{version}/%{name}-%{version}-vendor.tar.gz
-Source2:	%{crates_source}
+Source2:        %{crates_source}
 
 
 ExclusiveArch:  %{rust_arches}
