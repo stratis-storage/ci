@@ -185,13 +185,6 @@ def main():
             check=True,
         )
 
-    repository_url = repository.geturl()
-
-    subprocess.run(
-        ["git", "push", repository_url, tag],
-        check=True,
-    )
-
     if args.no_patch_branch:
         return
 
@@ -199,6 +192,13 @@ def main():
 
     if args.no_release:
         return
+
+    repository_url = repository.geturl()
+
+    subprocess.run(
+        ["git", "push", repository_url, tag],
+        check=True,
+    )
 
     changelog_url = get_changelog_url(repository_url, get_branch())
 
