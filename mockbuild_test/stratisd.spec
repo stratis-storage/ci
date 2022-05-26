@@ -25,6 +25,9 @@ Source2:        %{crates_source}
 
 
 ExclusiveArch:  %{rust_arches}
+%if 0%{?rhel} && !0%{?eln}
+ExcludeArch:    i686
+%endif
 
 %if 0%{?rhel} && !0%{?eln}
 BuildRequires:  rust-toolset
