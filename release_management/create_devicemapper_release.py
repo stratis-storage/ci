@@ -185,20 +185,20 @@ def main():
             check=True,
         )
 
+    if args.no_patch_branch:
+        return
+
+    make_patch_branch(release_version, manifest_abs_path, repository.geturl())
+
+    if args.no_release:
+        return
+
     repository_url = repository.geturl()
 
     subprocess.run(
         ["git", "push", repository_url, tag],
         check=True,
     )
-
-    if args.no_patch_branch:
-        return
-
-    make_patch_branch(release_version, manifest_abs_path, repository_url)
-
-    if args.no_release:
-        return
 
     changelog_url = get_changelog_url(repository_url, get_branch())
 
