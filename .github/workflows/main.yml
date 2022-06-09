@@ -40,7 +40,7 @@ jobs:
               ShellCheck
             task: shellcheck
     runs-on: ubuntu-18.04
-    container: fedora:35  # CURRENT DEVELOPMENT ENVIRONMENT
+    container: fedora:36  # CURRENT DEVELOPMENT ENVIRONMENT
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
