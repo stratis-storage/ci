@@ -53,6 +53,8 @@ Requires:       dbus-libs
 Requires:       cryptsetup-libs
 Requires:       libblkid
 
+# stratisd does not require clevis; it can be used in restricted environments
+# where clevis is not available.
 Recommends:     clevis-luks >= 18
 
 %description
