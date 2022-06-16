@@ -82,16 +82,31 @@ def get_package_info(manifest_abs_path, package_name):
 
 def verify_tag(tag):
     """
-    Verify that the designated tag exists.
+    Verify that the designated tag exists and point at current HEAD.
 
     :param str tag: the tag to check
     :returns: true if the tag exists, otherwise false
     :rtype: bool
     """
-    command = ["git", "tag", "--list", tag]
+    command = ["git", "tag", "--points-at"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         tag_str = proc.stdout.readline()
     return tag_str.decode("utf-8").rstrip() == tag
+
+
+def set_tag(tag, message):
+    """
+    Set specified tag on HEAD if it does not already exist.
+
+    :param str tag: the tag to set
+    :param str message: attach message to the tag
+    :raises CalledProcessError:
+    """
+    if not verify_tag(tag):
+        subprocess.run(
+            ["git", "tag", "--annotate", tag, f'--message="{message}"'],
+            check=True,
+        )
 
 
 def get_branch():

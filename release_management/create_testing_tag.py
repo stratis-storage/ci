@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Creates a stratis-cli release
+Tags a testing release
 """
 
 # isort: STDLIB
@@ -23,17 +23,9 @@ import subprocess
 import sys
 
 # isort: LOCAL
-from _utils import (
-    create_release,
-    get_branch,
-    get_changelog_url,
-    get_python_package_info,
-    set_tag,
-)
+from _utils import set_tag
 
-PACKAGE_NAME = "stratis-cli"
-
-GITHUB_URL = "https://github.com/stratis-storage/stratis-cli"
+GITHUB_URL = "https://github.com/stratis-storage/testing"
 
 
 def main():
@@ -43,19 +35,16 @@ def main():
 
     parser = argparse.ArgumentParser(
         description=(
-            "Prepare a stratis-cli release for GitHub and upload it. If a tag "
-            "does not exist for the release specified in setup.py, tag the "
-            "current commit. Push the specified tag and create a draft release "
-            "on GitHub."
+            "Tag a testing release for GitHub and push the tag. If the "
+            "specified tag does not exist, create it. Push the tag, unless the "
+            "--no-release option is specified."
         )
     )
 
     parser.add_argument(
-        "--no-tag",
-        action="store_true",
-        default=False,
-        dest="no_tag",
-        help="only create artifacts",
+        "release",
+        action="store",
+        help="release version",
     )
 
     parser.add_argument(
@@ -68,10 +57,7 @@ def main():
 
     args = parser.parse_args()
 
-    (release_version, repository) = get_python_package_info(GITHUB_URL)
-
-    if args.no_tag:
-        return
+    release_version = args.release
 
     tag = f"v{release_version}"
 
@@ -80,16 +66,10 @@ def main():
     if args.no_release:
         return
 
-    repository_url = repository.geturl()
-
     subprocess.run(
-        ["git", "push", repository_url, tag],
+        ["git", "push", GITHUB_URL, tag],
         check=True,
     )
-
-    changelog_url = get_changelog_url(repository_url, get_branch())
-
-    create_release(repository, tag, release_version, changelog_url)
 
 
 if __name__ == "__main__":
