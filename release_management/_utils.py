@@ -94,6 +94,21 @@ def verify_tag(tag):
     return tag_str.decode("utf-8").rstrip() == tag
 
 
+def set_tag(tag, message):
+    """
+    Set specified tag on HEAD if it does not already exist.
+
+    :param str tag: the tag to set
+    :param str message: attach message to the tag
+    :raises CalledProcessError:
+    """
+    if not verify_tag(tag):
+        subprocess.run(
+            ["git", "tag", "--annotate", tag, f'--message="{message}"'],
+            check=True,
+        )
+
+
 def get_branch():
     """
     Get the current git branch as a string.

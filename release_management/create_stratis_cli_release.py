@@ -28,7 +28,7 @@ from _utils import (
     get_branch,
     get_changelog_url,
     get_python_package_info,
-    verify_tag,
+    set_tag,
 )
 
 PACKAGE_NAME = "stratis-cli"
@@ -75,12 +75,7 @@ def main():
 
     tag = f"v{release_version}"
 
-    if not verify_tag(tag):
-        message = f"version {release_version}"
-        subprocess.run(
-            ["git", "tag", "--annotate", tag, f'--message="{message}"'],
-            check=True,
-        )
+    set_tag(tag, f"version {release_version}")
 
     if args.no_release:
         return
