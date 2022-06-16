@@ -82,13 +82,13 @@ def get_package_info(manifest_abs_path, package_name):
 
 def verify_tag(tag):
     """
-    Verify that the designated tag exists.
+    Verify that the designated tag exists and point at current HEAD.
 
     :param str tag: the tag to check
     :returns: true if the tag exists, otherwise false
     :rtype: bool
     """
-    command = ["git", "tag", "--list", tag]
+    command = ["git", "tag", "--points-at"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         tag_str = proc.stdout.readline()
     return tag_str.decode("utf-8").rstrip() == tag
