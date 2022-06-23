@@ -24,7 +24,15 @@ def gen_parser():
             "devices"
         )
     )
-    parser.add_argument("block_size", help="block size in sectors")
+
+    block_size_default = "2048"
+    parser.add_argument(
+        "--block-size",
+        help=f"block size in sectors (default is {block_size_default})",
+        default=block_size_default,
+        dest="block_size",
+    )
+
     parser.add_argument(
         "pool_size",
         help=(
