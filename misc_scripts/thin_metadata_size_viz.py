@@ -63,7 +63,7 @@ def build_arrays(block_size, values):
                 f"--block-size={block_size}",
                 f"--pool-size={pool_size}",
                 f"--max-thins={num_thins}",
-                "-n",
+                f"-n",
             ]
             with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
                 result = int(proc.stdout.readline().decode("utf-8").strip())
