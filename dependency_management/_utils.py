@@ -36,13 +36,14 @@ KOJI_RE = re.compile(
 )
 
 
-def version_from_spec(spec):
+def version_from_spec(spec, *, strict_versions=True):
     """
     Return a version calculated from a spec string by stripping '^'.
 
     Precondition: Spec string must start with a '^'
 
     :param SimpleSpec spec: a spec string from "cargo metadata" output
+    :param bool strict_versions: whether or not to allow partial version strings
     :returns: the lowest version that spec could correspond to
     :rtype: Version
     :raises RuntimeError: if spec string can not be interpreted
@@ -52,7 +53,7 @@ def version_from_spec(spec):
     if spec_str[0] != "^":
         raise RuntimeError(f"Expected specification format {spec} to begin with a '^'")
 
-    return Version(spec_str[1:])
+    return Version(spec_str[1:], partial=not strict_versions)
 
 
 def build_cargo_tree_dict(manifest_path):
