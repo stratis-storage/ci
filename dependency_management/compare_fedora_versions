@@ -40,13 +40,14 @@ def get_errors(exc):
             return
 
 
-def _main_engine(explicit_dependencies, koji_repo_dict):
+def _main_engine(explicit_dependencies, koji_repo_dict, *, strict_versions=True):
     """
     Computes the information about the explicit dependencies in Cargo.toml
     based on the specified kobj repo dict.
 
     :param explciit_dependencies: the dependencies in Cargo.toml
     :param koji_repo_dict: corresponding values in the repo dict
+    :param strict_versions: require complete version specs in Cargo.toml
 
     :returns: a summary of the data found, as a dict
     :rtype: dict of str * list of str
@@ -63,7 +64,7 @@ def _main_engine(explicit_dependencies, koji_repo_dict):
             continue
 
         try:
-            version = version_from_spec(spec)
+            version = version_from_spec(spec, strict_versions=strict_versions)
         except RuntimeError as err:
             raise RuntimeError(
                 f"Could not parse version from specification for crate {crate}"
@@ -160,6 +161,15 @@ def main():
         help=help_text,
     )
 
+    help_text = "Allow partial version expressions in Cargo.toml (example 0.14)"
+    parser.add_argument(
+        "--allow-partial-versions",
+        action="store_true",
+        dest="allow_partial_versions",
+        default=False,
+        help=help_text,
+    )
+
     args = parser.parse_args()
 
     itemized_ignores = {
@@ -198,7 +208,11 @@ def main():
             f'Unable to parse repo page for release "{args.release}"'
         ) from err
 
-    result = _main_engine(explicit_dependencies, koji_repo_dict)
+    result = _main_engine(
+        explicit_dependencies,
+        koji_repo_dict,
+        strict_versions=not args.allow_partial_versions,
+    )
 
     result = {
         "missing": filter_items(result["missing"], "missing"),
