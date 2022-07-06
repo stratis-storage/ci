@@ -14,9 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Create stratisd artifacts for packaging tests.
-
-Assumes that the stratisd version number in Cargo.toml is the correct one.
+Create artifacts for packaging tests.
 """
 
 # isort: STDLIB
@@ -25,7 +23,13 @@ import os
 import sys
 
 # isort: LOCAL
-from _utils import MANIFEST_PATH, get_package_info, make_source_tarball, vendor
+from _utils import (
+    MANIFEST_PATH,
+    get_package_info,
+    get_python_package_info,
+    make_source_tarball,
+    vendor,
+)
 
 
 def main():
@@ -35,23 +39,48 @@ def main():
 
     parser = argparse.ArgumentParser(
         description=(
-            "Generate artifacts for a stratisd release. Expects to be run in "
-            "clean stratisd top-level directory. Makes output dir if it does "
+            "Generate artifacts for packaging tests. Expects to be run in "
+            "clean top-level directory. Makes output dir if it does "
             "not already exist, but does not clean it."
         )
     )
 
     parser.add_argument("output_dir", action="store", help="directory for artifacts")
 
-    args = parser.parse_args()
+    subparsers = parser.add_subparsers(title="subcommands")
 
+    stratisd_parser = subparsers.add_parser(
+        "stratisd", help="Generate artifacts for a stratisd release."
+    )
+
+    stratisd_parser.set_defaults(func=_stratisd_artifacts)
+
+    stratis_cli_parser = subparsers.add_parser(
+        "stratis-cli", help="Generate artifacts for a stratis-cli release."
+    )
+
+    stratis_cli_parser.set_defaults(func=_stratis_cli_artifacts)
+
+    parser.set_defaults(func=lambda _: parser.error("missing sub-command"))
+
+    namespace = parser.parse_args()
+
+    namespace.func(namespace)
+
+    return 0
+
+
+def _stratisd_artifacts(namespace):
+    """
+    Generate stratisd artifacts.
+    """
     manifest_abs_path = os.path.abspath(MANIFEST_PATH)
     if not os.path.exists(manifest_abs_path):
         raise RuntimeError(
             "Need script to run at top-level of package, in same directory as Cargo.toml"
         )
 
-    output_abs_path = os.path.abspath(args.output_dir)
+    output_abs_path = os.path.abspath(namespace.output_dir)
     os.makedirs(output_abs_path, exist_ok=True)
 
     (release_version, _) = get_package_info(manifest_abs_path, "stratisd")
@@ -65,6 +94,20 @@ def main():
     crate_name = f"stratisd-{release_version}.crate"
     crate_path = os.path.join("target", "package", crate_name)
     os.rename(crate_path, os.path.join(output_abs_path, crate_name))
+
+
+def _stratis_cli_artifacts(namespace):
+    """
+    Generate artifacts for stratis_cli.
+    """
+    output_abs_path = os.path.abspath(namespace.output_dir)
+    os.makedirs(output_abs_path, exist_ok=True)
+
+    (release_version, _) = get_python_package_info(
+        "https://github.com/stratis-storage/stratis-cli"
+    )
+
+    make_source_tarball("stratis-cli", release_version, output_abs_path)
 
 
 if __name__ == "__main__":

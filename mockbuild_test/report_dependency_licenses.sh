@@ -30,11 +30,11 @@ mkdir upstream
 cd upstream
 git clone https://github.com/stratis-storage/stratisd
 cd stratisd
-../../../release_management/create_stratisd_artifacts.py ../../SOURCES/
+../../../release_management/create_artifacts.py ../../SOURCES/ stratisd
 cd ../..
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
-mock --rebuild --without=check -r $MOCKCONFIG SRPMS/stratisd/stratisd-3.1.0-77.$DIST.src.rpm
+mock --rebuild --without=check -r $MOCKCONFIG SRPMS/stratisd/stratisd-3.2.0-77.$DIST.src.rpm
 
 echo ''
 echo 'Dependency license report:'
