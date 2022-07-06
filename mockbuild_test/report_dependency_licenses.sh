@@ -9,6 +9,7 @@ fi
 
 DIST="fc37"
 MOCKCONFIG="/etc/mock/fedora-rawhide-x86_64.cfg"
+STRATISD_SPEC_VERSION=$(rpmspec -q --srpm --qf "%{version}\n" stratisd.spec)
 
 for mockdir in SOURCES SPECS SRPMS RPMS; do
 	if [ -d $mockdir ]; then
@@ -34,7 +35,7 @@ cd stratisd
 cd ../..
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
-mock --rebuild --without=check -r $MOCKCONFIG SRPMS/stratisd/stratisd-3.2.0-77.$DIST.src.rpm
+mock --rebuild --without=check -r $MOCKCONFIG SRPMS/stratisd/stratisd-"$STRATISD_SPEC_VERSION"-77.$DIST.src.rpm
 
 echo ''
 echo 'Dependency license report:'
