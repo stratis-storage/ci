@@ -66,10 +66,10 @@ cd upstream
 git clone https://github.com/stratis-storage/stratisd
 git clone https://github.com/stratis-storage/stratis-cli
 cd stratisd
-../../../release_management/create_stratisd_artifacts.py ../../SOURCES/
+../../../release_management/create_artifacts.py ../../SOURCES/ stratisd
 cd ..
 cd stratis-cli
-../../../release_management/create_stratis_cli_artifacts.py ../../SOURCES/
+../../../release_management/create_artifacts.py ../../SOURCES/ stratis-cli
 cd ../..
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
