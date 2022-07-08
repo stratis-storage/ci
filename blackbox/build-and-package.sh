@@ -33,7 +33,7 @@ fi
 
 tar czvf ~/rpmbuild/SOURCES/${STRATISD_N}-${STRATISD_V}.tar.gz ${TAR_CREATE_OPTS} ${STRATISD_N}-${STRATISD_V}
 cd ${STRATISD_N}-${STRATISD_V}/
-../../release_management/create_stratisd_release.py --no-tag --no-release
+../../release_management/create_release.py --no-tag --no-release stratisd
 cp ${STRATISD_N}-${STRATISD_V}-vendor.tar.gz ~/rpmbuild/SOURCES
 cp target/package/${STRATISD_N}-${STRATISD_V}.crate ~/rpmbuild/SOURCES
 cd ..

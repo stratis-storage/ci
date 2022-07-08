@@ -14,13 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Manage the stratisd GitHub release.
-
-Assumes that the stratisd version number in Cargo.toml is the correct one.
-
-Will tag the release and push the tag if the correct tag does not exist.
-
-Creates a GitHub Draft release and uploads the vendored tarball.
+Make a GitHub Draft release.
 """
 
 # isort: STDLIB
@@ -36,6 +30,7 @@ from _utils import (
     get_branch,
     get_changelog_url,
     get_package_info,
+    get_python_package_info,
     set_tag,
     vendor,
 )
@@ -46,15 +41,7 @@ def main():
     Main function
     """
 
-    parser = argparse.ArgumentParser(
-        description=(
-            "Prepare a stratisd release for GitHub and upload it. Essentially "
-            "cargo-publish but for a GitHub release not a cargo registry. If a "
-            "tag does not exist for the release specified in Cargo.toml, tag "
-            "the current commit. Push the specified tag and create a draft "
-            "release on GitHub."
-        )
-    )
+    parser = argparse.ArgumentParser(description=("Create a GitHub Draft release."))
 
     parser.add_argument(
         "--no-tag",
@@ -72,8 +59,31 @@ def main():
         help="stop before pushing any changes to GitHub repo",
     )
 
-    args = parser.parse_args()
+    subparsers = parser.add_subparsers(title="subcommands")
 
+    stratisd_parser = subparsers.add_parser(
+        "stratisd", help="Create a stratisd release."
+    )
+
+    stratisd_parser.set_defaults(func=_stratisd_release)
+
+    stratis_cli_parser = subparsers.add_parser(
+        "stratis-cli", help="Create a stratis-cli release"
+    )
+
+    stratis_cli_parser.set_defaults(func=_stratis_cli_release)
+
+    namespace = parser.parse_args()
+
+    namespace.func(namespace)
+
+    return 0
+
+
+def _stratisd_release(namespace):
+    """
+    Create a stratisd release.
+    """
     manifest_abs_path = os.path.abspath(MANIFEST_PATH)
     if not os.path.exists(manifest_abs_path):
         raise RuntimeError(
@@ -84,14 +94,14 @@ def main():
 
     vendor_tarfile_name = vendor(manifest_abs_path, release_version)
 
-    if args.no_tag:
+    if namespace.no_tag:
         return
 
     tag = f"v{release_version}"
 
     set_tag(tag, f"version {release_version}")
 
-    if args.no_release:
+    if namespace.no_release:
         return
 
     subprocess.run(
@@ -104,6 +114,37 @@ def main():
     release = create_release(repository, tag, release_version, changelog_url)
 
     release.upload_asset(vendor_tarfile_name, label=vendor_tarfile_name)
+
+
+def _stratis_cli_release(namespace):
+    """
+    Create a stratis-cli release.
+    """
+
+    (release_version, repository) = get_python_package_info(
+        "https://github.com/stratis-storage/stratis-cli"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    repository_url = repository.geturl()
+
+    subprocess.run(
+        ["git", "push", repository_url, tag],
+        check=True,
+    )
+
+    changelog_url = get_changelog_url(repository_url, get_branch())
+
+    create_release(repository, tag, release_version, changelog_url)
 
 
 if __name__ == "__main__":
