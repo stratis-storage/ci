@@ -10,6 +10,9 @@ fi
 
 DIST_RELEASE=$1
 
+STRATISD_SPEC_VERSION=$(rpmspec -q --srpm --qf "%{version}\n" stratisd.spec)
+STRATISCLI_SPEC_VERSION=$(rpmspec -q --srpm --qf "%{version}\n" stratis-cli.spec)
+
 if [ -z $DIST_RELEASE ]; then
 	echo "Usage: $0 centos-stream | fedora-rawhide"
 	exit 1
@@ -66,16 +69,16 @@ cd upstream
 git clone https://github.com/stratis-storage/stratisd
 git clone https://github.com/stratis-storage/stratis-cli
 cd stratisd
-../../../release_management/create_artifacts.py ../../SOURCES/ stratisd
+../../../release_management/create_artifacts.py ../../SOURCES/ stratisd $STRATISD_SPEC_VERSION
 cd ..
 cd stratis-cli
-../../../release_management/create_artifacts.py ../../SOURCES/ stratis-cli
+../../../release_management/create_artifacts.py ../../SOURCES/ stratis-cli $STRATISCLI_SPEC_VERSION
 cd ../..
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratis-cli.spec --sources SOURCES/ --resultdir=SRPMS/stratis-cli/
-mock --rebuild -r $MOCKCONFIG SRPMS/stratisd/stratisd-3.2.0-77.$DIST.src.rpm --resultdir=RPMS/stratisd/
-mock --rebuild -r $MOCKCONFIG SRPMS/stratis-cli/stratis-cli-3.2.0-77.$DIST.src.rpm --resultdir=RPMS/stratis-cli/
+mock --rebuild -r $MOCKCONFIG SRPMS/stratisd/stratisd-"$STRATISD_SPEC_VERSION"-77.$DIST.src.rpm --resultdir=RPMS/stratisd/
+mock --rebuild -r $MOCKCONFIG SRPMS/stratis-cli/stratis-cli-"$STRATISCLI_SPEC_VERSION"-77.$DIST.src.rpm --resultdir=RPMS/stratis-cli/
 
 for package in stratisd stratis-cli; do
 	find RPMS -name "$package*.rpm" -exec cp -v -t output/$package {} +
