@@ -149,12 +149,13 @@ def create_release(repository, tag, release_version, changelog_url):
     return release
 
 
-def vendor(manifest_abs_path, release_version):
+def vendor(manifest_abs_path, release_version, *, suffix=None):
     """
     Makes a vendor tarfile, suitable for uploading.
 
-    ;param str manifest_abs_path: manifest path (absolute)
+    :param str manifest_abs_path: manifest path (absolute)
     :param str release_version: the release version
+    :param str suffix: the release suffix
     :return name of vendored tarfile:
     :rtype: str
     """
@@ -176,6 +177,9 @@ def vendor(manifest_abs_path, release_version):
         ["cargo", "vendor", f"--manifest-path={package_manifest}", vendor_dir],
         check=True,
     )
+
+    if suffix is not None:
+        release_version = release_version + suffix
 
     vendor_tarfile_name = f"stratisd-{release_version}-vendor.tar.gz"
 
