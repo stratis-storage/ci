@@ -53,7 +53,6 @@ for mockdir in SOURCES SPECS SRPMS RPMS; do
 	fi
 done
 
-echo $DATECODE
 mkdir {SOURCES,SPECS,SRPMS,RPMS}
 mkdir {SRPMS,RPMS}/{stratisd,stratis-cli}
 mkdir output
@@ -72,14 +71,16 @@ git clone https://github.com/stratis-storage/stratisd
 git clone https://github.com/stratis-storage/stratis-cli
 cd stratisd
 STRATISD_HEADREV=$(git rev-parse --short HEAD)
-echo $STRATISD_HEADREV
-../../../release_management/create_artifacts.py ../../SOURCES/ stratisd $STRATISD_SPEC_VERSION
+../../../release_management/create_artifacts.py ../../SOURCES/ stratisd $STRATISD_SPEC_VERSION --pre-release-suffix=~${DATECODE}git${STRATISD_HEADREV}
 cd ..
 cd stratis-cli
 STRATISCLI_HEADREV=$(git rev-parse --short HEAD)
-echo $STRATISCLI_HEADREV
-../../../release_management/create_artifacts.py ../../SOURCES/ stratis-cli $STRATISCLI_SPEC_VERSION
+../../../release_management/create_artifacts.py ../../SOURCES/ stratis-cli $STRATISCLI_SPEC_VERSION --pre-release-suffix=~${DATECODE}git${STRATISCLI_HEADREV}
 cd ../..
+
+# Before running mock, the spec versions need to be changed.
+sed --in-place -e "s/$STRATISD_SPEC_VERSION/$STRATISD_SPEC_VERSION~${DATECODE}git${STRATISD_HEADREV}/g" SPECS/stratisd.spec
+sed --in-place -e "s/$STRATISCLI_SPEC_VERSION/$STRATISCLI_SPEC_VERSION~${DATECODE}git${STRATISCLI_HEADREV}/g" SPECS/stratis-cli.spec
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratis-cli.spec --sources SOURCES/ --resultdir=SRPMS/stratis-cli/

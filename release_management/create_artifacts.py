@@ -55,6 +55,11 @@ def main():
 
     stratisd_parser.set_defaults(func=_stratisd_artifacts)
     stratisd_parser.add_argument("version", action="store", help="version")
+    stratisd_parser.add_argument(
+        "--pre-release-suffix",
+        action="store",
+        help="pre-release suffix to add to the version",
+    )
 
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Generate artifacts for a stratis-cli release."
@@ -62,6 +67,11 @@ def main():
 
     stratis_cli_parser.set_defaults(func=_stratis_cli_artifacts)
     stratis_cli_parser.add_argument("version", action="store", help="version")
+    stratis_cli_parser.add_argument(
+        "--pre-release-suffix",
+        action="store",
+        help="pre-release suffix to add to the version",
+    )
 
     parser.set_defaults(func=lambda _: parser.error("missing sub-command"))
 
@@ -90,15 +100,37 @@ def _stratisd_artifacts(namespace):
     if release_version != namespace.version:
         raise RuntimeError("Version mismatch.")
 
-    make_source_tarball("stratisd", release_version, output_abs_path)
-
-    vendor_tarfile_name = vendor(manifest_abs_path, release_version)
-
-    os.rename(vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name))
-
-    crate_name = f"stratisd-{release_version}.crate"
-    crate_path = os.path.join("target", "package", crate_name)
-    os.rename(crate_path, os.path.join(output_abs_path, crate_name))
+    if namespace.pre_release_suffix:
+        print(f"Using suffix: {namespace.pre_release_suffix}")
+        release_suffix_version = release_version + namespace.pre_release_suffix
+        make_source_tarball("stratisd", release_suffix_version, output_abs_path)
+        vendor_tarfile_name = vendor(manifest_abs_path, release_version)
+        os.rename(
+            vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name)
+        )
+        vendor_tarfile_suffix_name = f"stratisd-{release_suffix_version}-vendor.tar.gz"
+        os.rename(
+            os.path.join(output_abs_path, vendor_tarfile_name),
+            os.path.join(output_abs_path, vendor_tarfile_suffix_name),
+        )
+        crate_name = f"stratisd-{release_version}.crate"
+        crate_path = os.path.join("target", "package", crate_name)
+        os.rename(crate_path, os.path.join(output_abs_path, crate_name))
+        crate_suffix_name = f"stratisd-{release_suffix_version.replace('~','-')}.crate"
+        os.rename(
+            os.path.join(output_abs_path, crate_name),
+            os.path.join(output_abs_path, crate_suffix_name),
+        )
+    else:
+        print("Not using a release suffix.")
+        make_source_tarball("stratisd", release_version, output_abs_path)
+        vendor_tarfile_name = vendor(manifest_abs_path, release_version)
+        os.rename(
+            vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name)
+        )
+        crate_name = f"stratisd-{release_version}.crate"
+        crate_path = os.path.join("target", "package", crate_name)
+        os.rename(crate_path, os.path.join(output_abs_path, crate_name))
 
 
 def _stratis_cli_artifacts(namespace):
@@ -114,6 +146,8 @@ def _stratis_cli_artifacts(namespace):
 
     if release_version != namespace.version:
         raise RuntimeError("Version mismatch.")
+
+    release_version = release_version + namespace.pre_release_suffix
 
     make_source_tarball("stratis-cli", release_version, output_abs_path)
 
