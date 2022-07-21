@@ -67,6 +67,12 @@ def main():
 
     stratisd_parser.set_defaults(func=_stratisd_release)
 
+    devicemapper_parser = subparsers.add_parser(
+        "dm", help="Create a devicemapper-rs release."
+    )
+
+    devicemapper_parser.set_defaults(func=_devicemapper_release)
+
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Create a stratis-cli release"
     )
@@ -114,6 +120,38 @@ def _stratisd_release(namespace):
     release = create_release(repository, tag, release_version, changelog_url)
 
     release.upload_asset(vendor_tarfile_name, label=vendor_tarfile_name)
+
+
+def _devicemapper_release(namespace):
+    """
+    Create a devicemapper release.
+    """
+    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
+    if not os.path.exists(manifest_abs_path):
+        raise RuntimeError(
+            "Need script to run at top-level of package, in same directory as Cargo.toml"
+        )
+
+    (release_version, repository) = get_package_info(manifest_abs_path, "devicemapper")
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    subprocess.run(
+        ["git", "push", repository.geturl(), tag],
+        check=True,
+    )
+
+    changelog_url = get_changelog_url(repository.geturl(), get_branch())
+
+    create_release(repository, tag, release_version, changelog_url)
 
 
 def _stratis_cli_release(namespace):
