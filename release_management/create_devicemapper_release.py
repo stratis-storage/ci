@@ -20,7 +20,6 @@ Creates a devicemapper-rs release
 # isort: STDLIB
 import argparse
 import os
-import shutil
 import subprocess
 import sys
 
@@ -35,93 +34,6 @@ from _utils import (
 )
 
 PACKAGE_NAME = "devicemapper"
-
-LINE1_MATCH = "        hdr.version[0] = dmi::DM_VERSION_MAJOR;"
-LINE2_MATCH = "        hdr.version[1] = dmi::DM_VERSION_MINOR;"
-LINE3_MATCH = "        hdr.version[2] = dmi::DM_VERSION_PATCHLEVEL;"
-LINE1_REPLACE = "        hdr.version[0] = 4;"
-LINE2_REPLACE = "        hdr.version[1] = 41;"
-LINE3_REPLACE = "        hdr.version[2] = 0;"
-
-PATCH_FILE = "src/core/dm.rs"
-
-
-def make_patch_branch(release_version, manifest_abs_path, repository_url):
-    """
-    Make a special patch branch to be used during stratisd development.
-
-    This branch is identical to the released version except that its version
-    number is patched in the generated ioctl.
-
-    This patching will become unnecessary if stratisd testing stops using
-    containers.
-
-    :param str release_version:
-    :param str manifest_abs_path: Cargo.toml absolute path
-    :param str repository_url: the URL of the GitHub repository
-    """
-    patch_branch = f"crates-io-patch-{release_version}"
-    subprocess.run(  # pylint: disable=subprocess-run-check
-        ["git", "branch", "-D", patch_branch]
-    )
-    subprocess.run(["git", "checkout", "-b", patch_branch], check=True)
-
-    subprocess.run(
-        ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
-    )
-
-    package_manifest = os.path.join(
-        os.path.dirname(manifest_abs_path),
-        "target/package",
-        f"{PACKAGE_NAME}-{release_version}",
-        "Cargo.toml",
-    )
-
-    shutil.copyfile(package_manifest, manifest_abs_path)
-
-    subprocess.run(["git", "add", "Cargo.toml"], check=True)
-    subprocess.run(
-        ["git", "commit", "-s", "-m", "Use Cargo.toml from cargo-package result"],
-        check=True,
-    )
-
-    subprocess.run(["git", "clean", "-xdf"], check=True)
-
-    with open(PATCH_FILE, "r", encoding="utf-8") as dm_file:
-        lines = dm_file.readlines()
-
-    with open(PATCH_FILE, "w", encoding="utf-8") as dm_file:
-        for line in lines:
-            line = line.rstrip(os.linesep)
-            if line == LINE1_MATCH:
-                print(LINE1_REPLACE, file=dm_file)
-            elif line == LINE2_MATCH:
-                print(LINE2_REPLACE, file=dm_file)
-            elif line == LINE3_MATCH:
-                print(LINE3_REPLACE, file=dm_file)
-            else:
-                print(line, file=dm_file)
-
-    subprocess.run(["git", "add", PATCH_FILE], check=True)
-
-    subprocess.run(
-        ["git", "commit", "-s", "-m", "Patch version # in ioctl header"],
-        check=True,
-    )
-
-    subprocess.run(
-        [
-            "git",
-            "push",
-            "-f",
-            "-u",
-            repository_url,
-            f"{patch_branch}:{patch_branch}",
-        ],
-        check=True,
-    )
-
-    subprocess.run(["git", "checkout", "-"], check=True)
 
 
 def main():
@@ -148,14 +60,6 @@ def main():
     )
 
     parser.add_argument(
-        "--no-patch-branch",
-        action="store_true",
-        default=False,
-        dest="no_patch_branch",
-        help="only create artifacts and tag",
-    )
-
-    parser.add_argument(
         "--no-release",
         action="store_true",
         default=False,
@@ -179,11 +83,6 @@ def main():
     tag = f"v{release_version}"
 
     set_tag(tag, f"version {release_version}")
-
-    if args.no_patch_branch:
-        return
-
-    make_patch_branch(release_version, manifest_abs_path, repository.geturl())
 
     if args.no_release:
         return
