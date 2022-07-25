@@ -21,17 +21,14 @@ fi
 
 case $DIST_RELEASE in
 "centos-stream")
-	DIST="el9"
 	MOCKCONFIG="/etc/mock/centos-stream-9-x86_64.cfg"
 	;;
 
 "fedora-rawhide")
-	DIST="fc37"
 	MOCKCONFIG="/etc/mock/fedora-rawhide-x86_64.cfg"
 	;;
 
 "fedora-latest")
-	DIST="fc36"
 	MOCKCONFIG="/etc/mock/fedora-36-x86_64.cfg"
 	;;
 
