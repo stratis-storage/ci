@@ -71,11 +71,11 @@ git clone https://github.com/stratis-storage/stratisd
 git clone https://github.com/stratis-storage/stratis-cli
 cd stratisd
 STRATISD_HEADREV=$(git rev-parse --short HEAD)
-../../../release_management/create_artifacts.py ../../SOURCES/ stratisd $STRATISD_SPEC_VERSION --pre-release-suffix=~${DATECODE}git${STRATISD_HEADREV}
+../../../release_management/create_artifacts.py ../../SOURCES/ --pre-release-suffix=~${DATECODE}git${STRATISD_HEADREV} stratisd $STRATISD_SPEC_VERSION
 cd ..
 cd stratis-cli
 STRATISCLI_HEADREV=$(git rev-parse --short HEAD)
-../../../release_management/create_artifacts.py ../../SOURCES/ stratis-cli $STRATISCLI_SPEC_VERSION --pre-release-suffix=~${DATECODE}git${STRATISCLI_HEADREV}
+../../../release_management/create_artifacts.py ../../SOURCES/ --pre-release-suffix=~${DATECODE}git${STRATISCLI_HEADREV} stratis-cli $STRATISCLI_SPEC_VERSION
 cd ../..
 
 # Before running mock, the spec versions need to be changed.

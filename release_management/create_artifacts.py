@@ -46,6 +46,11 @@ def main():
     )
 
     parser.add_argument("output_dir", action="store", help="directory for artifacts")
+    parser.add_argument(
+        "--pre-release-suffix",
+        action="store",
+        help="pre-release suffix to add to the version",
+    )
 
     subparsers = parser.add_subparsers(title="subcommands")
 
@@ -55,11 +60,6 @@ def main():
 
     stratisd_parser.set_defaults(func=_stratisd_artifacts)
     stratisd_parser.add_argument("version", action="store", help="version")
-    stratisd_parser.add_argument(
-        "--pre-release-suffix",
-        action="store",
-        help="pre-release suffix to add to the version",
-    )
 
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Generate artifacts for a stratis-cli release."
@@ -67,11 +67,6 @@ def main():
 
     stratis_cli_parser.set_defaults(func=_stratis_cli_artifacts)
     stratis_cli_parser.add_argument("version", action="store", help="version")
-    stratis_cli_parser.add_argument(
-        "--pre-release-suffix",
-        action="store",
-        help="pre-release suffix to add to the version",
-    )
 
     parser.set_defaults(func=lambda _: parser.error("missing sub-command"))
 
