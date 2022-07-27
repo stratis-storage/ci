@@ -117,7 +117,7 @@ def _stratisd_release(namespace):
         return
 
     subprocess.run(
-        ["git", "push", repository.geturl(), tag],
+        ["git", "push", repository.geturl(), "tag", tag],
         check=True,
     )
 
@@ -151,7 +151,7 @@ def _devicemapper_release(namespace):
         return
 
     subprocess.run(
-        ["git", "push", repository.geturl(), tag],
+        ["git", "push", repository.geturl(), "tag", tag],
         check=True,
     )
 
@@ -212,7 +212,7 @@ def _stratis_cli_release(namespace):
     repository_url = repository.geturl()
 
     subprocess.run(
-        ["git", "push", repository_url, tag],
+        ["git", "push", repository_url, "tag", tag],
         check=True,
     )
 
