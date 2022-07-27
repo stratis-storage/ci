@@ -73,6 +73,12 @@ def main():
 
     devicemapper_parser.set_defaults(func=_devicemapper_release)
 
+    libcryptsetup_parser = subparsers.add_parser(
+        "libcryptsetup", help="Create a libcryptsetup-rs release."
+    )
+
+    libcryptsetup_parser.set_defaults(func=_libcryptsetup_release)
+
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Create a stratis-cli release"
     )
@@ -152,6 +158,36 @@ def _devicemapper_release(namespace):
     changelog_url = get_changelog_url(repository.geturl(), get_branch())
 
     create_release(repository, tag, release_version, changelog_url)
+
+
+def _libcryptsetup_release(namespace):
+    """
+    Create a libcryptsetup release.
+    """
+    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
+    if not os.path.exists(manifest_abs_path):
+        raise RuntimeError(
+            "Need script to run at top-level of package, in same directory as Cargo.toml"
+        )
+
+    (release_version, repository) = get_package_info(
+        manifest_abs_path, "libcryptsetup-rs"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"libcryptsetup-rs-v{release_version}"
+
+    set_tag(tag, f"libcryptsetup-rs version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    subprocess.run(
+        ["git", "push", repository.geturl(), "tag", tag],
+        check=True,
+    )
 
 
 def _stratis_cli_release(namespace):
