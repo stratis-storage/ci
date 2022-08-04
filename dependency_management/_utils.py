@@ -53,6 +53,11 @@ def version_from_spec(spec, *, strict_versions=True):
     if spec_str[0] != "^":
         raise RuntimeError(f"Expected specification format {spec} to begin with a '^'")
 
+    if len(spec_str.split(",", maxsplit=1)) > 1:
+        raise RuntimeError(
+            f"Expected specification format {spec} to be simple, not compound."
+        )
+
     return Version(spec_str[1:], partial=not strict_versions)
 
 
