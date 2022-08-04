@@ -177,6 +177,8 @@ def build_cargo_metadata(manifest_path):
 
     result = {}
     for item in dependencies:
-        result[item["name"]] = SimpleSpec(item["req"])
+        # cargo-metadata insert spaces into "req" value; SimpleSpec constructor
+        # rejects specifications that contain spaces.
+        result[item["name"]] = SimpleSpec(item["req"].replace(" ", ""))
 
     return result
