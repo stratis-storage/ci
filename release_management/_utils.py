@@ -32,6 +32,14 @@ from github import Github
 MANIFEST_PATH = "./Cargo.toml"
 
 
+class ReleaseVersion:  # pylint: disable=too-few-public-methods
+    """
+    Release version for the package.
+    """
+    base = ''
+    suffix = ''
+
+
 def get_python_package_info(github_url):
     """
     Get info about the python package.
