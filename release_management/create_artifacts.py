@@ -25,11 +25,11 @@ import sys
 # isort: LOCAL
 from _utils import (
     MANIFEST_PATH,
+    ReleaseVersion,
     get_package_info,
     get_python_package_info,
     make_source_tarball,
     vendor,
-    ReleaseVersion,
 )
 
 

@@ -36,6 +36,7 @@ class ReleaseVersion:
     """
     Release version for the package.
     """
+
     def __init__(self, base, suffix):
         self.base = base
         self.suffix = suffix
@@ -47,7 +48,7 @@ class ReleaseVersion:
         """
         Return the release version in a crates.io-friendly string.
         """
-        return (self.base + self.suffix).replace('~','-')
+        return (self.base + self.suffix).replace("~", "-")
 
 
 def get_python_package_info(github_url):
