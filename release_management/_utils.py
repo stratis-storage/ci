@@ -50,6 +50,12 @@ class ReleaseVersion:
         """
         return (self.base + self.suffix).replace("~", "-")
 
+    def base_only(self):
+        """
+        Return only the base.
+        """
+        return self.base
+
 
 def get_python_package_info(github_url):
     """
@@ -168,13 +174,12 @@ def create_release(repository, tag, release_version, changelog_url):
     return release
 
 
-def vendor(manifest_abs_path, release_version, *, suffix=None):
+def vendor(manifest_abs_path, release_version):
     """
     Makes a vendor tarfile, suitable for uploading.
 
     :param str manifest_abs_path: manifest path (absolute)
-    :param str release_version: the release version
-    :param str suffix: the release suffix
+    :param ReleaseVersion release_version: the release version
     :return name of vendored tarfile:
     :rtype: str
     """
@@ -188,7 +193,7 @@ def vendor(manifest_abs_path, release_version, *, suffix=None):
     package_manifest = os.path.join(
         os.path.dirname(manifest_abs_path),
         "target/package",
-        f"stratisd-{release_version}",
+        f"stratisd-{release_version.base_only()}",
         "Cargo.toml",
     )
 
@@ -196,9 +201,6 @@ def vendor(manifest_abs_path, release_version, *, suffix=None):
         ["cargo", "vendor", f"--manifest-path={package_manifest}", vendor_dir],
         check=True,
     )
-
-    if suffix is not None:
-        release_version = release_version + suffix
 
     vendor_tarfile_name = f"stratisd-{release_version}-vendor.tar.gz"
 

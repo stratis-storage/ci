@@ -26,6 +26,7 @@ import sys
 # isort: LOCAL
 from _utils import (
     MANIFEST_PATH,
+    ReleaseVersion,
     create_release,
     get_branch,
     get_changelog_url,
@@ -104,7 +105,8 @@ def _stratisd_release(namespace):
 
     (release_version, repository) = get_package_info(manifest_abs_path, "stratisd")
 
-    vendor_tarfile_name = vendor(manifest_abs_path, release_version)
+    r_v = ReleaseVersion(release_version, None)
+    vendor_tarfile_name = vendor(manifest_abs_path, r_v)
 
     if namespace.no_tag:
         return
