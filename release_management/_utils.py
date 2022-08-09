@@ -32,12 +32,22 @@ from github import Github
 MANIFEST_PATH = "./Cargo.toml"
 
 
-class ReleaseVersion:  # pylint: disable=too-few-public-methods
+class ReleaseVersion:
     """
     Release version for the package.
     """
-    base = ''
-    suffix = ''
+    def __init__(self, base, suffix):
+        self.base = base
+        self.suffix = suffix
+
+    def __str__(self):
+        return self.base + self.suffix
+
+    def to_crate_str(self):
+        """
+        Return the release version in a crates.io-friendly string.
+        """
+        return (self.base + self.suffix).replace('~','-')
 
 
 def get_python_package_info(github_url):
