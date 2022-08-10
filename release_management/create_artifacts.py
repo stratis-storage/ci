@@ -134,10 +134,9 @@ def _stratis_cli_artifacts(namespace):
     if release_version != namespace.version:
         raise RuntimeError("Version mismatch.")
 
-    if namespace.pre_release_suffix:
-        release_version = release_version + namespace.pre_release_suffix
+    r_v = ReleaseVersion(release_version, namespace.pre_release_suffix)
 
-    make_source_tarball("stratis-cli", release_version, output_abs_path)
+    make_source_tarball("stratis-cli", r_v, output_abs_path)
 
 
 if __name__ == "__main__":
