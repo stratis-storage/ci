@@ -38,8 +38,17 @@ class ReleaseVersion:
     """
 
     def __init__(self, base, suffix):
+        """
+        Initializer.
+        :param str base: Base version
+        :param str or NoneType: Version suffix
+        """
         self.base = base
-        self.suffix = suffix
+
+        if suffix is None:
+            self.suffix = ""
+        else:
+            self.suffix = suffix
 
     def __str__(self):
         return self.base + self.suffix
