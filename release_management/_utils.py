@@ -45,11 +45,7 @@ class ReleaseVersion:
         :type suffix: str or Nonetype
         """
         self.base = base
-
-        if suffix is None:
-            self.suffix = ""
-        else:
-            self.suffix = suffix
+        self.suffix = "" if suffix is None else suffix
 
     def __str__(self):
         return self.base + self.suffix
