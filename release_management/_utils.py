@@ -41,7 +41,8 @@ class ReleaseVersion:
         """
         Initializer.
         :param str base: Base version
-        :param str or NoneType: Version suffix
+        :param suffix: Version suffix
+        :type suffix: str or Nonetype
         """
         self.base = base
 
