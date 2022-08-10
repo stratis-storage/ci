@@ -216,7 +216,11 @@ def make_source_tarball(package_name, release_version, output_dir):
     """
     Make the source tarball and place it in the output dir.
 
-    Immitate what GitHub does on a tag to the best of our ability.
+    Imitate what GitHub does on a tag to the best of our ability.
+
+    :param str package_name: the package name
+    :param ReleaseVersion release_version: the release version
+    :param str output_dir: the output directory
     """
     prefix = f"{package_name}-{release_version}"
 

@@ -99,7 +99,7 @@ def _stratisd_artifacts(namespace):
     if namespace.pre_release_suffix:
         print(f"Using suffix: {namespace.pre_release_suffix}")
         r_v = ReleaseVersion(release_version, namespace.pre_release_suffix)
-        make_source_tarball("stratisd", str(r_v), output_abs_path)
+        make_source_tarball("stratisd", r_v, output_abs_path)
         vendor_tarfile_name = vendor(manifest_abs_path, r_v)
         os.rename(
             vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name)
@@ -110,7 +110,7 @@ def _stratisd_artifacts(namespace):
         os.rename(crate_path, os.path.join(output_abs_path, crate_suffix_name))
     else:
         print("Not using a release suffix.")
-        make_source_tarball("stratisd", release_version, output_abs_path)
+        make_source_tarball("stratisd", r_v, output_abs_path)
         vendor_tarfile_name = vendor(manifest_abs_path, r_v)
         os.rename(
             vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name)
