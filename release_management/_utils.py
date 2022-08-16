@@ -32,6 +32,37 @@ from github import Github
 MANIFEST_PATH = "./Cargo.toml"
 
 
+class ReleaseVersion:
+    """
+    Release version for the package.
+    """
+
+    def __init__(self, base, suffix):
+        """
+        Initializer.
+        :param str base: Base version
+        :param suffix: Version suffix
+        :type suffix: str or Nonetype
+        """
+        self.base = base
+        self.suffix = "" if suffix is None else suffix
+
+    def __str__(self):
+        return self.base + self.suffix
+
+    def to_crate_str(self):
+        """
+        Return the release version in a crates.io-friendly string.
+        """
+        return (self.base + self.suffix).replace("~", "-")
+
+    def base_only(self):
+        """
+        Return only the base.
+        """
+        return self.base
+
+
 def get_python_package_info(github_url):
     """
     Get info about the python package.
@@ -153,8 +184,8 @@ def vendor(manifest_abs_path, release_version):
     """
     Makes a vendor tarfile, suitable for uploading.
 
-    ;param str manifest_abs_path: manifest path (absolute)
-    :param str release_version: the release version
+    :param str manifest_abs_path: manifest path (absolute)
+    :param ReleaseVersion release_version: the release version
     :return name of vendored tarfile:
     :rtype: str
     """
@@ -168,7 +199,7 @@ def vendor(manifest_abs_path, release_version):
     package_manifest = os.path.join(
         os.path.dirname(manifest_abs_path),
         "target/package",
-        f"stratisd-{release_version}",
+        f"stratisd-{release_version.base_only()}",
         "Cargo.toml",
     )
 
@@ -191,7 +222,11 @@ def make_source_tarball(package_name, release_version, output_dir):
     """
     Make the source tarball and place it in the output dir.
 
-    Immitate what GitHub does on a tag to the best of our ability.
+    Imitate what GitHub does on a tag to the best of our ability.
+
+    :param str package_name: the package name
+    :param ReleaseVersion release_version: the release version
+    :param str output_dir: the output directory
     """
     prefix = f"{package_name}-{release_version}"
 
