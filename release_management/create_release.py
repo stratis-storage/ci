@@ -86,6 +86,10 @@ def main():
 
     stratis_cli_parser.set_defaults(func=_stratis_cli_release)
 
+    pyudev_parser = subparsers.add_parser("pyudev", help="Create a pyudev release")
+
+    pyudev_parser.set_defaults(func=_pyudev_release)
+
     namespace = parser.parse_args()
 
     namespace.func(namespace)
@@ -221,6 +225,33 @@ def _stratis_cli_release(namespace):
     changelog_url = get_changelog_url(repository_url, get_branch())
 
     create_release(repository, tag, release_version, changelog_url)
+
+
+def _pyudev_release(namespace):
+    """
+    Create a pyudev release.
+    """
+
+    (release_version, repository) = get_python_package_info(
+        "https://github.com/pyudev/pyudev"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    repository_url = repository.geturl()
+
+    subprocess.run(
+        ["git", "push", repository_url, "tag", tag],
+        check=True,
+    )
 
 
 if __name__ == "__main__":
