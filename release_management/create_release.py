@@ -80,6 +80,12 @@ def main():
 
     libcryptsetup_parser.set_defaults(func=_libcryptsetup_release)
 
+    libblkid_rs_sys_parser = subparsers.add_parser(
+        "libblkid-rs-sys", help="Create a libblkid-rs-sys release."
+    )
+
+    libblkid_rs_sys_parser.set_defaults(func=_libblkid_rs_sys_release)
+
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Create a stratis-cli release"
     )
@@ -195,6 +201,34 @@ def _libcryptsetup_release(namespace):
         check=True,
     )
 
+def _libblkid_rs_sys_release(namespace):
+    """
+    Create a libblkid-rs-sys release.
+    """
+    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
+    if not os.path.exists(manifest_abs_path):
+        raise RuntimeError(
+            "Need script to run at top-level of package, in same directory as Cargo.toml"
+        )
+
+    (release_version, repository) = get_package_info(
+        manifest_abs_path, "libblkid-rs-sys"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"libblkid-rs-sys-v{release_version}"
+
+    set_tag(tag, f"libblkid-rs-sys version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    subprocess.run(
+        ["git", "push", repository.geturl(), "tag", tag],
+        check=True,
+    )
 
 def _stratis_cli_release(namespace):
     """
