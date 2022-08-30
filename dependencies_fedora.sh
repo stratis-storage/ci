@@ -14,7 +14,6 @@ dnf -y install git \
 	glibc-devel.x86_64 \
 	llvm \
 	llvm-devel \
-	\
 	asciidoc \
 	clevis \
 	clevis-luks \
@@ -31,7 +30,6 @@ dnf -y install git \
 	systemd-devel.i686 \
 	systemd-devel.x86_64 \
 	xfsprogs \
-	\
 	python3-coverage \
 	python3-dateutil \
 	python3-justbytes \
