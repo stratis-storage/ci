@@ -80,6 +80,18 @@ def main():
 
     libcryptsetup_parser.set_defaults(func=_libcryptsetup_release)
 
+    libcryptsetup_rs_sys_parser = subparsers.add_parser(
+        "libcryptsetup-rs-sys", help="Create a libcryptsetup-rs-sys release."
+    )
+
+    libcryptsetup_rs_sys_parser.set_defaults(func=_libcryptsetup_rs_sys_release)
+
+    libblkid_rs_sys_parser = subparsers.add_parser(
+        "libblkid-rs-sys", help="Create a libblkid-rs-sys release."
+    )
+
+    libblkid_rs_sys_parser.set_defaults(func=_libblkid_rs_sys_release)
+
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Create a stratis-cli release"
     )
@@ -166,9 +178,12 @@ def _devicemapper_release(namespace):
     create_release(repository, tag, release_version, changelog_url)
 
 
-def _libcryptsetup_release(namespace):
+def _tag_rust_library(namespace, name):
     """
-    Create a libcryptsetup release.
+    Set new tag for rust library.
+
+    :param namespace: parser namespace
+    :param str name: the Rust name (as in Cargo.toml) and the GitHub repo name
     """
     manifest_abs_path = os.path.abspath(MANIFEST_PATH)
     if not os.path.exists(manifest_abs_path):
@@ -176,16 +191,14 @@ def _libcryptsetup_release(namespace):
             "Need script to run at top-level of package, in same directory as Cargo.toml"
         )
 
-    (release_version, repository) = get_package_info(
-        manifest_abs_path, "libcryptsetup-rs"
-    )
+    (release_version, repository) = get_package_info(manifest_abs_path, name)
 
     if namespace.no_tag:
         return
 
-    tag = f"libcryptsetup-rs-v{release_version}"
+    tag = f"{name}-v{release_version}"
 
-    set_tag(tag, f"libcryptsetup-rs version {release_version}")
+    set_tag(tag, f"{name} version {release_version}")
 
     if namespace.no_release:
         return
@@ -194,6 +207,27 @@ def _libcryptsetup_release(namespace):
         ["git", "push", repository.geturl(), "tag", tag],
         check=True,
     )
+
+
+def _libcryptsetup_release(namespace):
+    """
+    Create a libcryptsetup release.
+    """
+    return _tag_rust_library(namespace, "libcryptsetup-rs")
+
+
+def _libcryptsetup_rs_sys_release(namespace):
+    """
+    Create a libcryptsetup release.
+    """
+    return _tag_rust_library(namespace, "libcryptsetup-rs-sys")
+
+
+def _libblkid_rs_sys_release(namespace):
+    """
+    Create a libblkid-rs-sys release.
+    """
+    return _tag_rust_library(namespace, "libblkid-rs-sys")
 
 
 def _stratis_cli_release(namespace):
