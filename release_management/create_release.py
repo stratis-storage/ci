@@ -178,9 +178,12 @@ def _devicemapper_release(namespace):
     create_release(repository, tag, release_version, changelog_url)
 
 
-def _libcryptsetup_release(namespace):
+def _tag_rust_library(namespace, name):
     """
-    Create a libcryptsetup release.
+    Set new tag for rust library.
+
+    :param namespace: parser namespace
+    :param str name: the Rust name (as in Cargo.toml) and the GitHub repo name
     """
     manifest_abs_path = os.path.abspath(MANIFEST_PATH)
     if not os.path.exists(manifest_abs_path):
@@ -188,16 +191,14 @@ def _libcryptsetup_release(namespace):
             "Need script to run at top-level of package, in same directory as Cargo.toml"
         )
 
-    (release_version, repository) = get_package_info(
-        manifest_abs_path, "libcryptsetup-rs"
-    )
+    (release_version, repository) = get_package_info(manifest_abs_path, name)
 
     if namespace.no_tag:
         return
 
-    tag = f"libcryptsetup-rs-v{release_version}"
+    tag = f"{name}-v{release_version}"
 
-    set_tag(tag, f"libcryptsetup-rs version {release_version}")
+    set_tag(tag, f"{name} version {release_version}")
 
     if namespace.no_release:
         return
@@ -206,64 +207,28 @@ def _libcryptsetup_release(namespace):
         ["git", "push", repository.geturl(), "tag", tag],
         check=True,
     )
+
+
+def _libcryptsetup_release(namespace):
+    """
+    Create a libcryptsetup release.
+    """
+    return _tag_rust_library(namespace, "libcryptsetup-rs")
+
 
 def _libcryptsetup_rs_sys_release(namespace):
     """
     Create a libcryptsetup release.
     """
-    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
-    if not os.path.exists(manifest_abs_path):
-        raise RuntimeError(
-            "Need script to run at top-level of package, in same directory as Cargo.toml"
-        )
+    return _tag_rust_library(namespace, "libcryptsetup-rs-sys")
 
-    (release_version, repository) = get_package_info(
-        manifest_abs_path, "libcryptsetup-rs-sys"
-    )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"libcryptsetup-rs-sys-v{release_version}"
-
-    set_tag(tag, f"libcryptsetup-rs-sys version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    subprocess.run(
-        ["git", "push", repository.geturl(), "tag", tag],
-        check=True,
-    )
 
 def _libblkid_rs_sys_release(namespace):
     """
     Create a libblkid-rs-sys release.
     """
-    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
-    if not os.path.exists(manifest_abs_path):
-        raise RuntimeError(
-            "Need script to run at top-level of package, in same directory as Cargo.toml"
-        )
+    return _tag_rust_library(namespace, "libblkid-rs-sys")
 
-    (release_version, repository) = get_package_info(
-        manifest_abs_path, "libblkid-rs-sys"
-    )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"libblkid-rs-sys-v{release_version}"
-
-    set_tag(tag, f"libblkid-rs-sys version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    subprocess.run(
-        ["git", "push", repository.geturl(), "tag", tag],
-        check=True,
-    )
 
 def _stratis_cli_release(namespace):
     """
