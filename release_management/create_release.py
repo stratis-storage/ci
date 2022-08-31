@@ -37,6 +37,19 @@ from _utils import (
 )
 
 
+def _push_tag(repository_url, tag):
+    """
+    Push a tag.
+
+    :param str repository_url: the repo to push to
+    :param str tag: the tag to push
+    """
+    subprocess.run(
+        ["git", "push", repository_url, "tag", tag],
+        check=True,
+    )
+
+
 def main():
     """
     Main function
@@ -139,10 +152,7 @@ def _stratisd_release(namespace):
     if namespace.no_release:
         return
 
-    subprocess.run(
-        ["git", "push", repository.geturl(), "tag", tag],
-        check=True,
-    )
+    _push_tag(repository.geturl(), tag)
 
     changelog_url = get_changelog_url(repository.geturl(), get_branch())
 
@@ -173,10 +183,7 @@ def _devicemapper_release(namespace):
     if namespace.no_release:
         return
 
-    subprocess.run(
-        ["git", "push", repository.geturl(), "tag", tag],
-        check=True,
-    )
+    _push_tag(repository.geturl(), tag)
 
     changelog_url = get_changelog_url(repository.geturl(), get_branch())
 
@@ -208,10 +215,7 @@ def _tag_rust_library(namespace, name):
     if namespace.no_release:
         return
 
-    subprocess.run(
-        ["git", "push", repository.geturl(), "tag", tag],
-        check=True,
-    )
+    _push_tag(repository.geturl(), tag)
 
 
 def _libcryptsetup_release(namespace):
@@ -256,10 +260,7 @@ def _stratis_cli_release(namespace):
 
     repository_url = repository.geturl()
 
-    subprocess.run(
-        ["git", "push", repository_url, "tag", tag],
-        check=True,
-    )
+    _push_tag(repository_url, tag)
 
     changelog_url = get_changelog_url(repository_url, get_branch())
 
@@ -285,12 +286,7 @@ def _pyudev_release(namespace):
     if namespace.no_release:
         return
 
-    repository_url = repository.geturl()
-
-    subprocess.run(
-        ["git", "push", repository_url, "tag", tag],
-        check=True,
-    )
+    _push_tag(repository.geturl(), tag)
 
 
 def _testing_release(namespace):
@@ -310,12 +306,7 @@ def _testing_release(namespace):
     if namespace.no_release:
         return
 
-    repository_url = "https://github.com/stratis-storage/testing"
-
-    subprocess.run(
-        ["git", "push", repository_url, "tag", tag],
-        check=True,
-    )
+    _push_tag("https://github.com/stratis-storage/testing", tag)
 
 
 if __name__ == "__main__":
