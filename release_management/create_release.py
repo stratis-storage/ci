@@ -102,6 +102,11 @@ def main():
 
     pyudev_parser.set_defaults(func=_pyudev_release)
 
+    testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
+    testing_parser.add_argument("release", action="store", help="release_version")
+
+    testing_parser.set_defaults(func=_testing_release)
+
     namespace = parser.parse_args()
 
     namespace.func(namespace)
@@ -281,6 +286,31 @@ def _pyudev_release(namespace):
         return
 
     repository_url = repository.geturl()
+
+    subprocess.run(
+        ["git", "push", repository_url, "tag", tag],
+        check=True,
+    )
+
+
+def _testing_release(namespace):
+    """
+    Tag a testing release.
+    """
+
+    release_version = namespace.release
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    repository_url = "https://github.com/stratis-storage/testing"
 
     subprocess.run(
         ["git", "push", repository_url, "tag", tag],
