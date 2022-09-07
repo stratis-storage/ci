@@ -72,6 +72,18 @@ Requires:     plymouth
 %description dracut
 %{summary}. This package should not be used in production.
 
+%if !0%{?rhel} || 0%{?eln}
+%package stratis-tools
+Summary: Tools that support Stratis operation
+
+ExclusiveArch:  %{rust_arches}
+
+Requires:     stratisd
+
+%description stratis-tools
+%{summary}. This package should not be used in production.
+%endif
+
 %prep
 %setup -q
 tar --strip-components=1 --extract --verbose --file %{SOURCE2}
@@ -82,7 +94,7 @@ tar --strip-components=1 --extract --verbose --file %{SOURCE2}
 %else
 %cargo_prep
 %generate_buildrequires
-%cargo_generate_buildrequires -f dbus_enabled,min,systemd_compat
+%cargo_generate_buildrequires -f dbus_enabled,min,systemd_compat,extras
 %endif
 
 %build
@@ -92,6 +104,8 @@ tar --strip-components=1 --extract --verbose --file %{SOURCE2}
 %else
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
+%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-dumpmetadata --no-default-features --features extras
+a2x -f manpage docs/stratis_dumpmetadata.txt
 %endif
 a2x -f manpage docs/stratisd.txt
 
@@ -146,6 +160,13 @@ a2x -f manpage docs/stratisd.txt
 %{dracutdir}/modules.d/90stratis/stratisd-min.service
 %{_systemd_util_dir}/system-generators/stratis-clevis-setup-generator
 %{_systemd_util_dir}/system-generators/stratis-setup-generator
+
+%if !0%{?rhel} || 0%{?eln}
+%files stratis-tools
+%license LICENSE
+%{_bindir}/stratis-dumpmetadata
+%{_mandir}/man8/stratis_dumpmetadata.8*
+%endif
 
 %changelog
 * Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
