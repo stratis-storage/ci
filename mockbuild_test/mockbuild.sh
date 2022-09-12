@@ -39,6 +39,11 @@ case $DIST_RELEASE in
 	MOCKCONFIG="/etc/mock/fedora-36-x86_64.cfg"
 	;;
 
+"fedora-previous")
+	DIST="fc35"
+	MOCKCONFIG="/etc/mock/fedora-35-x86_64.cfg"
+	;;
+
 *)
 	echo "Usage: $0 centos-stream | fedora-rawhide | fedora-latest"
 	exit 1
