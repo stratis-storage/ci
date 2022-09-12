@@ -52,6 +52,6 @@ fi
 
 make clean
 cargo clean
-make install-debug
+PROFILEDIR=debug make build-and-install
 make clean-primary
 make $TARGET
