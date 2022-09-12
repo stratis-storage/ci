@@ -45,7 +45,7 @@ case $DIST_RELEASE in
 	;;
 
 *)
-	echo "Usage: $0 centos-stream | fedora-rawhide | fedora-latest"
+	echo "Usage: $0 centos-stream | fedora-rawhide | fedora-next | fedora-latest | fedora-previous"
 	exit 1
 	;;
 esac
