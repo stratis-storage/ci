@@ -13,7 +13,7 @@ DIST_RELEASE=$1
 STRATISD_SPEC_VERSION=$(rpmspec -q --srpm --qf "%{version}\n" stratisd.spec)
 STRATISCLI_SPEC_VERSION=$(rpmspec -q --srpm --qf "%{version}\n" stratis-cli.spec)
 
-if [ -z $DIST_RELEASE ]; then
+if [ -z "$DIST_RELEASE" ]; then
 	echo "Usage: $0 centos-stream | fedora-rawhide"
 	exit 1
 fi
@@ -31,7 +31,7 @@ case $DIST_RELEASE in
 
 "fedora-next")
 	DIST="fc37"
-	MOCKCONFIG="/etc/mock/fedora-rawhide-x86_64.cfg"
+	MOCKCONFIG="/etc/mock/fedora-37-x86_64.cfg"
 	;;
 
 "fedora-latest")
@@ -39,8 +39,13 @@ case $DIST_RELEASE in
 	MOCKCONFIG="/etc/mock/fedora-36-x86_64.cfg"
 	;;
 
+"fedora-previous")
+	DIST="fc35"
+	MOCKCONFIG="/etc/mock/fedora-35-x86_64.cfg"
+	;;
+
 *)
-	echo "Usage: $0 centos-stream | fedora-rawhide | fedora-latest"
+	echo "Usage: $0 centos-stream | fedora-rawhide | fedora-next | fedora-latest | fedora-previous"
 	exit 1
 	;;
 esac
@@ -74,10 +79,10 @@ cd upstream
 git clone https://github.com/stratis-storage/stratisd
 git clone https://github.com/stratis-storage/stratis-cli
 cd stratisd
-../../../release_management/create_artifacts.py ../../SOURCES/ stratisd $STRATISD_SPEC_VERSION
+../../../release_management/create_artifacts.py ../../SOURCES/ stratisd "$STRATISD_SPEC_VERSION"
 cd ..
 cd stratis-cli
-../../../release_management/create_artifacts.py ../../SOURCES/ stratis-cli $STRATISCLI_SPEC_VERSION
+../../../release_management/create_artifacts.py ../../SOURCES/ stratis-cli "$STRATISCLI_SPEC_VERSION"
 cd ../..
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
