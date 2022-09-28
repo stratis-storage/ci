@@ -82,8 +82,8 @@ def process_file(search_key, args):
     """
     filename = args.file
     outfilename = args.outfile
-    old_verstring = args.old_version + r"  " + search_key
-    new_verstring = args.new_version + r"  " + search_key
+    old_verstring = args.old_version
+    new_verstring = args.new_version
 
     output = search_file(search_key, old_verstring, new_verstring, filename)
 
