@@ -82,8 +82,12 @@ def process_file(search_key, args):
     """
     filename = args.file
     outfilename = args.outfile
-    old_verstring = args.old_version + r"  " + search_key
-    new_verstring = args.new_version + r"  " + search_key
+    if ".toml" in filename:
+        old_verstring = r'"' + args.old_version + r'"' + r"  " + search_key
+        new_verstring = r'"' + args.new_version + r'"' + r"  " + search_key
+    else:
+        old_verstring = args.old_version + r"  " + search_key
+        new_verstring = args.new_version + r"  " + search_key
 
     output = search_file(search_key, old_verstring, new_verstring, filename)
 
