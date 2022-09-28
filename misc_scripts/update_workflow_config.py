@@ -36,7 +36,7 @@ def search_file(search_key, old_verstring, new_verstring, filename):
             if search_key in line:
                 templine = line.replace(old_verstring, new_verstring)
                 if new_verstring not in templine:
-                    raise RuntimeError("Old version not in file")
+                    raise RuntimeError(f'Old version "{old_verstring}" not in file')
                 output.append(templine)
             else:
                 output.append(line)
@@ -82,8 +82,8 @@ def process_file(search_key, args):
     """
     filename = args.file
     outfilename = args.outfile
-    old_verstring = args.old_version + r"  " + search_key
-    new_verstring = args.new_version + r"  " + search_key
+    old_verstring = args.old_version
+    new_verstring = args.new_version
 
     output = search_file(search_key, old_verstring, new_verstring, filename)
 
