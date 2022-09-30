@@ -216,6 +216,8 @@ def vendor(manifest_abs_path, release_version):
             "--owner=0",
             "--group=0",
             "--numeric-owner",
+            "--sort=name",
+            "--pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime",
             "-czvf",
             vendor_tarfile_name,
             vendor_dir,
