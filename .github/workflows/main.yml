@@ -39,7 +39,7 @@ jobs:
               findutils
               ShellCheck
             task: shellcheck
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     container: fedora:36  # CURRENT DEVELOPMENT ENVIRONMENT
     steps:
       - uses: actions/checkout@v2
