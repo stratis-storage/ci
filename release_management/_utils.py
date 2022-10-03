@@ -211,7 +211,17 @@ def vendor(manifest_abs_path, release_version):
     vendor_tarfile_name = f"stratisd-{release_version}-vendor.tar.gz"
 
     subprocess.run(
-        ["tar", "-czvf", vendor_tarfile_name, vendor_dir],
+        [
+            "tar",
+            "--owner=0",
+            "--group=0",
+            "--numeric-owner",
+            "--sort=name",
+            "--pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime",
+            "-czvf",
+            vendor_tarfile_name,
+            vendor_dir,
+        ],
         check=True,
     )
 
