@@ -1,6 +1,6 @@
 
 Name:           stratis-cli
-Version:        3.3.0
+Version:        3.4.0
 Release:        77%{?dist}
 Summary:        Command-line tool for interacting with the Stratis daemon
 
