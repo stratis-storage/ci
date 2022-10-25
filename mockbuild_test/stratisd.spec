@@ -105,7 +105,7 @@ tar --strip-components=1 --extract --verbose --file %{SOURCE2}
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-dumpmetadata --no-default-features --features extras
-a2x -f manpage docs/stratis_dumpmetadata.txt
+a2x -f manpage docs/stratis-dumpmetadata.txt
 %endif
 a2x -f manpage docs/stratisd.txt
 
@@ -165,7 +165,7 @@ a2x -f manpage docs/stratisd.txt
 %files stratis-tools
 %license LICENSE
 %{_bindir}/stratis-dumpmetadata
-%{_mandir}/man8/stratis_dumpmetadata.8*
+%{_mandir}/man8/stratis-dumpmetadata.8*
 %endif
 
 %changelog
