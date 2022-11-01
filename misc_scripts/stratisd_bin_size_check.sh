@@ -12,7 +12,7 @@ urls=(
 	https://kojipkgs.fedoraproject.org/packages/stratisd/2.4.3/1.fc34/x86_64/stratisd-2.4.3-1.fc34.x86_64.rpm
 )
 
-for url in ${urls[*]}; do
+for url in "${urls[@]}"; do
 	echo "$url"
 	curl -O $url
 done
