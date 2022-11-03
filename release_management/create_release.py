@@ -23,6 +23,9 @@ import os
 import subprocess
 import sys
 
+# isort: THIRDPARTY
+from semantic_version import Version
+
 # isort: LOCAL
 from _utils import (
     MANIFEST_PATH,
@@ -116,7 +119,9 @@ def main():
     pyudev_parser.set_defaults(func=_pyudev_release)
 
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
-    testing_parser.add_argument("release", action="store", help="release_version")
+    testing_parser.add_argument(
+        "release", action="store", type=Version, help="release_version"
+    )
 
     testing_parser.set_defaults(func=_testing_release)
 
