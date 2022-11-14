@@ -77,9 +77,12 @@ STRATISCLI_SUFFIX="~${DATECODE}git${STRATISCLI_HEADREV}"
 ../../../release_management/create_artifacts.py ../../SOURCES/ --pre-release-suffix="${STRATISCLI_SUFFIX}" stratis-cli "$STRATISCLI_SPEC_VERSION"
 cd ../..
 
+# Fix the "Requires: stratisd" line in stratis-cli.spec.
+sed --in-place -E "s/(^Requires.*stratisd.*)${STRATISD_SPEC_VERSION}/\1${STRATISD_SPEC_VERSION}${STRATISD_SUFFIX}/g" SPECS/stratis-cli.spec
+
 # Before running mock, the spec versions need to be changed.
-sed --in-place -e "s/$STRATISD_SPEC_VERSION/$STRATISD_SPEC_VERSION$STRATISD_SUFFIX/g" SPECS/stratisd.spec
-sed --in-place -e "s/$STRATISCLI_SPEC_VERSION/$STRATISCLI_SPEC_VERSION$STRATISCLI_SUFFIX/g" SPECS/stratis-cli.spec
+sed --in-place -E "s/(^Version.*)${STRATISD_SPEC_VERSION}/\1${STRATISD_SPEC_VERSION}${STRATISD_SUFFIX}/g" SPECS/stratisd.spec
+sed --in-place -E "s/(^Version.*)${STRATISCLI_SPEC_VERSION}/\1${STRATISCLI_SPEC_VERSION}${STRATISCLI_SUFFIX}/g" SPECS/stratis-cli.spec
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratis-cli.spec --sources SOURCES/ --resultdir=SRPMS/stratis-cli/
