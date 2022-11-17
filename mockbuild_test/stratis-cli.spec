@@ -15,6 +15,9 @@ Requires:       (stratisd >= 3.4.0 with stratisd < 4.0.0)
 
 # stratisd only available on certain arches
 ExclusiveArch:  %{rust_arches} noarch
+%if 0%{?rhel} && !0%{?eln}
+ExcludeArch:    i686
+%endif
 BuildArch:      noarch
 
 %description
