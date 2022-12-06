@@ -84,6 +84,14 @@ def main():
 
     stratisd_parser.set_defaults(func=_stratisd_release)
 
+    stratisd_parser.add_argument(
+        "--no-publish",
+        action="store_true",
+        default=False,
+        dest="no_publish",
+        help="Do not publish to crates.io",
+    )
+
     devicemapper_parser = subparsers.add_parser(
         "dm", help="Create a devicemapper-rs release."
     )
@@ -164,6 +172,13 @@ def _stratisd_release(namespace):
     release = create_release(repository, tag, release_version, changelog_url)
 
     release.upload_asset(vendor_tarfile_name, label=vendor_tarfile_name)
+
+    if namespace.no_publish:
+        return
+
+    subprocess.run(["git", "clean", "-xdf"], check=True)
+    subprocess.run(["cargo", "clean"], check=True)
+    subprocess.run(["cargo", "publish"], check=True)
 
 
 def _devicemapper_release(namespace):
