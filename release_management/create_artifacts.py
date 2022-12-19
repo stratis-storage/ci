@@ -61,6 +61,13 @@ def main():
 
     stratisd_parser.set_defaults(func=_stratisd_artifacts)
     stratisd_parser.add_argument("version", action="store", help="version")
+    stratisd_parser.add_argument(
+        "--omit-packaging",
+        action="store_true",
+        default=False,
+        dest="omit_packaging",
+        help="Do not package crate; use source Cargo.toml for vendoring.",
+    )
 
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Generate artifacts for a stratis-cli release."
@@ -99,12 +106,16 @@ def _stratisd_artifacts(namespace):
     r_v = ReleaseVersion(release_version, namespace.pre_release_suffix)
 
     make_source_tarball("stratisd", r_v, output_abs_path)
-    vendor_tarfile_name = vendor(manifest_abs_path, r_v)
+    vendor_tarfile_name = vendor(
+        manifest_abs_path, r_v, omit_packaging=namespace.omit_packaging
+    )
     os.rename(vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name))
-    crate_name = f"stratisd-{r_v.base_only()}.crate"
-    crate_path = os.path.join("target", "package", crate_name)
-    crate_suffix_name = f"stratisd-{r_v.to_crate_str()}.crate"
-    os.rename(crate_path, os.path.join(output_abs_path, crate_suffix_name))
+
+    if not namespace.omit_packaging:
+        crate_name = f"stratisd-{r_v.base_only()}.crate"
+        crate_path = os.path.join("target", "package", crate_name)
+        crate_suffix_name = f"stratisd-{r_v.to_crate_str()}.crate"
+        os.rename(crate_path, os.path.join(output_abs_path, crate_suffix_name))
 
 
 def _stratis_cli_artifacts(namespace):

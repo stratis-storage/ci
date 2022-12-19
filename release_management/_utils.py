@@ -180,28 +180,32 @@ def create_release(repository, tag, release_version, changelog_url):
     return release
 
 
-def vendor(manifest_abs_path, release_version):
+def vendor(manifest_abs_path, release_version, *, omit_packaging=False):
     """
     Makes a vendor tarfile, suitable for uploading.
 
     :param str manifest_abs_path: manifest path (absolute)
     :param ReleaseVersion release_version: the release version
+    :param bool omit_packaging. do not vendor packaged project
     :return name of vendored tarfile:
     :rtype: str
     """
 
     vendor_dir = "vendor"
 
-    subprocess.run(
-        ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
-    )
+    if omit_packaging:
+        package_manifest = manifest_abs_path
+    else:
+        subprocess.run(
+            ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
+        )
 
-    package_manifest = os.path.join(
-        os.path.dirname(manifest_abs_path),
-        "target/package",
-        f"stratisd-{release_version.base_only()}",
-        "Cargo.toml",
-    )
+        package_manifest = os.path.join(
+            os.path.dirname(manifest_abs_path),
+            "target/package",
+            f"stratisd-{release_version.base_only()}",
+            "Cargo.toml",
+        )
 
     subprocess.run(
         ["cargo", "vendor", f"--manifest-path={package_manifest}", vendor_dir],
