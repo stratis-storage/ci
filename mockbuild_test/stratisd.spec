@@ -82,16 +82,18 @@ tar --strip-components=1 --extract --verbose --file %{SOURCE2}
 %else
 %cargo_prep
 %generate_buildrequires
-%cargo_generate_buildrequires -f dbus_enabled,min,systemd_compat
+%cargo_generate_buildrequires -f engine,dbus_enabled,min,systemd_compat
 %endif
 
 %build
 %if 0%{?rhel} && !0%{?eln}
 %{cargo_build} --bin=stratisd
-%{cargo_build} --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
+%{cargo_build} --bin=stratis-min --bin=stratisd-min --no-default-features --features engine,min,systemd_compat
+%{cargo_build} --bin=stratis-utils --no-default-features --features engine
 %else
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
-%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
+%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --no-default-features --features engine,min,systemd_compat
+%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-utils --no-default-features --features engine
 %endif
 a2x -f manpage docs/stratisd.txt
 
