@@ -8,15 +8,28 @@ Version:        3.5.0
 Release:        77%{?dist}
 Summary:        Daemon that manages block devices to create filesystems
 
+# ASL 2.0
+# ASL 2.0 or Boost
+# ASL 2.0 or MIT
+# BSD
+# ISC
+# MIT
+# MIT or ASL 2.0
+# MPLv2.0
+# Unlicense or MIT
 License:        MPLv2.0
 URL:            https://github.com/stratis-storage/stratisd
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{url}/releases/download/v%{version}/%{name}-%{version}-vendor.tar.gz
-Source2:	%{crates_source}
+Source2:        %{crates_source}
 
 
 ExclusiveArch:  %{rust_arches}
+%if 0%{?rhel} && !0%{?eln}
+ExcludeArch:    i686
+%endif
 
+BuildRequires:  rust-srpm-macros
 BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libblkid-devel
@@ -24,15 +37,23 @@ BuildRequires:  cryptsetup-devel
 BuildRequires:  clang
 BuildRequires:  %{_bindir}/a2x
 
+# Required to calculate install directories
+BuildRequires:  systemd
+BuildRequires:  dracut
+
 Requires:       xfsprogs
 Requires:       device-mapper-persistent-data
 Requires:       systemd-libs
 Requires:       dbus-libs
+Requires:       cryptsetup-libs
+Requires:       libblkid
 
-Recommends:     clevis-luks >= 15
+# stratisd does not require clevis; it can be used in restricted environments
+# where clevis is not available.
+Recommends:     clevis-luks >= 18
 
 %description
-Stratisd test build.  This package should not be used in production
+%{summary}. This package should not be used in production.
 
 %package dracut
 Summary: Dracut modules for use with stratisd
@@ -44,17 +65,22 @@ Requires:     dracut >= 051
 Requires:     plymouth
 
 %description dracut
-Stratisd dracut test build. This package should not be used in production.
+%{summary}. This package should not be used in production.
 
 %prep
 %setup -q
-tar --strip-components=1 -xvf %{SOURCE2}
-# Source1 is vendored dependencies
+tar --strip-components=1 --extract --verbose --file %{SOURCE2}
+# Patches must be applied after the upstream package is extracted.
 %cargo_prep -V 1
 
 %build
+%if 0%{?rhel} && !0%{?eln}
+%{cargo_build} --bin=stratisd
+%{cargo_build} --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features engine,min,systemd_compat
+%else
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
-%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features min,systemd_compat
+%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features engine,min,systemd_compat
+%endif
 a2x -f manpage docs/stratisd.txt
 
 %install
