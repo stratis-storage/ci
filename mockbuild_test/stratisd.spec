@@ -24,8 +24,8 @@ Source1:        %{url}/releases/download/v%{version}/%{name}-%{version}-vendor.t
 Source2:        %{crates_source}
 
 
-ExclusiveArch:  %{rust_arches}
 %if 0%{?rhel} && !0%{?eln}
+ExclusiveArch:  %{rust_arches}
 ExcludeArch:    i686
 %endif
 
@@ -63,7 +63,9 @@ Recommends:     clevis-luks >= 18
 %package dracut
 Summary: Dracut modules for use with stratisd
 
+%if 0%{?rhel} && !0%{?eln}
 ExclusiveArch:  %{rust_arches}
+%endif
 
 Requires:     stratisd
 Requires:     dracut >= 051
