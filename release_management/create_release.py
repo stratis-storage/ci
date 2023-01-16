@@ -116,6 +116,12 @@ def main():
 
     libblkid_rs_sys_parser.set_defaults(func=_libblkid_rs_sys_release)
 
+    stratisd_proc_macros_parser = subparsers.add_parser(
+        "stratisd_proc_macros", help="Create a stratisd_proc_macros release."
+    )
+
+    stratisd_proc_macros_parser.set_defaults(func=_stratisd_proc_macros_release)
+
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Create a stratis-cli release"
     )
@@ -257,6 +263,13 @@ def _libblkid_rs_sys_release(namespace):
     Create a libblkid-rs-sys release.
     """
     return _tag_rust_library(namespace, "libblkid-rs-sys")
+
+
+def _stratisd_proc_macros_release(namespace):
+    """
+    Create a stratisd_proc_macros release.
+    """
+    return _tag_rust_library(namespace, "stratisd_proc_macros")
 
 
 def _stratis_cli_release(namespace):
