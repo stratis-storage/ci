@@ -12,6 +12,7 @@ dnf -y install git \
 	gcc \
 	glibc-devel.i686 \
 	glibc-devel.x86_64 \
+	glibc-static \
 	llvm \
 	llvm-devel \
 	asciidoc \
