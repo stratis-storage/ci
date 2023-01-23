@@ -110,6 +110,12 @@ def main():
 
     libcryptsetup_rs_sys_parser.set_defaults(func=_libcryptsetup_rs_sys_release)
 
+    libblkid_parser = subparsers.add_parser(
+        "libblkid", help="Create a libblkid-rs release."
+    )
+
+    libblkid_parser.set_defaults(func=_libblkid_release)
+
     libblkid_rs_sys_parser = subparsers.add_parser(
         "libblkid-rs-sys", help="Create a libblkid-rs-sys release."
     )
@@ -256,6 +262,13 @@ def _libcryptsetup_rs_sys_release(namespace):
     Create a libcryptsetup release.
     """
     return _tag_rust_library(namespace, "libcryptsetup-rs-sys")
+
+
+def _libblkid_release(namespace):
+    """
+    Create a libblkid release.
+    """
+    return _tag_rust_library(namespace, "libblkid-rs")
 
 
 def _libblkid_rs_sys_release(namespace):
