@@ -244,8 +244,12 @@ def make_source_tarball(package_name, release_version, output_dir):
     :param str package_name: the package name
     :param ReleaseVersion release_version: the release version
     :param str output_dir: the output directory
+    :return absolute path of source tarball:
+    :rtype: str
     """
     prefix = f"{package_name}-{release_version}"
+
+    assert os.path.isabs(output_dir), f"{output_dir} is not an absolute path"
 
     output_file = os.path.join(output_dir, f"{prefix}.tar.gz")
 
@@ -260,6 +264,8 @@ def make_source_tarball(package_name, release_version, output_dir):
                     arcname=os.path.normpath(os.path.join(prefix, name)),
                     recursive=False,
                 )
+
+    return output_file
 
 
 def get_changelog_url(repository_url, branch):

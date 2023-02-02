@@ -20,6 +20,7 @@ Create artifacts for packaging tests.
 # isort: STDLIB
 import argparse
 import os
+import subprocess
 import sys
 
 # isort: LOCAL
@@ -46,7 +47,12 @@ def main():
         )
     )
 
-    parser.add_argument("output_dir", action="store", help="directory for artifacts")
+    parser.add_argument(
+        "output_dir",
+        action="store",
+        help="directory for artifacts",
+        type=os.path.abspath,
+    )
     parser.add_argument(
         "--pre-release-suffix",
         action="store",
@@ -95,8 +101,8 @@ def _stratisd_artifacts(namespace):
             "Need script to run at top-level of package, in same directory as Cargo.toml"
         )
 
-    output_abs_path = os.path.abspath(namespace.output_dir)
-    os.makedirs(output_abs_path, exist_ok=True)
+    output_path = namespace.output_dir
+    os.makedirs(output_path, exist_ok=True)
 
     (release_version, _) = get_package_info(manifest_abs_path, "stratisd")
 
@@ -105,25 +111,33 @@ def _stratisd_artifacts(namespace):
 
     r_v = ReleaseVersion(release_version, namespace.pre_release_suffix)
 
-    make_source_tarball("stratisd", r_v, output_abs_path)
+    source_tarfile = make_source_tarball("stratisd", r_v, output_path)
     vendor_tarfile_name = vendor(
         manifest_abs_path, r_v, omit_packaging=namespace.omit_packaging
     )
-    os.rename(vendor_tarfile_name, os.path.join(output_abs_path, vendor_tarfile_name))
+    os.rename(vendor_tarfile_name, os.path.join(output_path, vendor_tarfile_name))
+
+    source_vendor_tarfile = os.path.join(output_path, vendor_tarfile_name)
 
     if not namespace.omit_packaging:
         crate_name = f"stratisd-{r_v.base_only()}.crate"
         crate_path = os.path.join("target", "package", crate_name)
         crate_suffix_name = f"stratisd-{r_v.to_crate_str()}.crate"
-        os.rename(crate_path, os.path.join(output_abs_path, crate_suffix_name))
+        os.rename(crate_path, os.path.join(output_path, crate_suffix_name))
+
+    source_crate = os.path.join(output_path, crate_suffix_name)
+
+    subprocess.run(["sha512sum", source_tarfile], check=True)
+    subprocess.run(["sha512sum", source_vendor_tarfile], check=True)
+    subprocess.run(["sha512sum", source_crate], check=True)
 
 
 def _stratis_cli_artifacts(namespace):
     """
     Generate artifacts for stratis_cli.
     """
-    output_abs_path = os.path.abspath(namespace.output_dir)
-    os.makedirs(output_abs_path, exist_ok=True)
+    output_path = namespace.output_dir
+    os.makedirs(output_path, exist_ok=True)
 
     (release_version, _) = get_python_package_info(
         "https://github.com/stratis-storage/stratis-cli"
@@ -134,7 +148,7 @@ def _stratis_cli_artifacts(namespace):
 
     r_v = ReleaseVersion(release_version, namespace.pre_release_suffix)
 
-    make_source_tarball("stratis-cli", r_v, output_abs_path)
+    make_source_tarball("stratis-cli", r_v, output_path)
 
 
 if __name__ == "__main__":
