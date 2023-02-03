@@ -103,9 +103,12 @@ def get_package_info(manifest_abs_path, package_name):
 
     metadata = json.loads(metadata_str)
     packages = metadata["packages"]
-    assert len(packages) == 1
+    assert len(packages) == 1, "Unexpected Cargo metadata format"
     package = packages[0]
-    assert package["name"] == package_name
+    assert package["name"] == package_name, (
+        f'crate name in Cargo.toml ({package["name"]}) != specified'
+        "package name ({package_name})"
+    )
     github_repo = urlparse(package["repository"].rstrip("/"))
     assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
     return (package["version"], github_repo)
