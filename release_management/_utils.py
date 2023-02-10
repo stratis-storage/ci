@@ -107,7 +107,7 @@ def get_package_info(manifest_abs_path, package_name):
     package = packages[0]
     assert package["name"] == package_name, (
         f'crate name in Cargo.toml ({package["name"]}) != specified'
-        "package name ({package_name})"
+        f"package name ({package_name})"
     )
     github_repo = urlparse(package["repository"].rstrip("/"))
     assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
