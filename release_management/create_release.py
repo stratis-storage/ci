@@ -98,6 +98,12 @@ def main():
 
     devicemapper_parser.set_defaults(func=_devicemapper_release)
 
+    devicemapper_sys_parser = subparsers.add_parser(
+        "devicemapper-sys", help="Create a devicemapper-sys release."
+    )
+
+    devicemapper_sys_parser.set_defaults(func=_devicemapper_sys_release)
+
     libcryptsetup_parser = subparsers.add_parser(
         "libcryptsetup", help="Create a libcryptsetup-rs release."
     )
@@ -248,6 +254,13 @@ def _tag_rust_library(namespace, name):
         return
 
     _push_tag(repository.geturl(), tag)
+
+
+def _devicemapper_sys_release(namespace):
+    """
+    Create a devicemapper-rs-sys release.
+    """
+    return _tag_rust_library(namespace, "devicemapper-sys")
 
 
 def _libcryptsetup_release(namespace):
