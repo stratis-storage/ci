@@ -68,6 +68,16 @@ Requires:     plymouth
 %description dracut
 %{summary}. This package should not be used in production.
 
+%package tools
+Summary: Tools that support Stratis operation
+
+ExclusiveArch:  %{rust_arches}
+
+Requires:     stratisd
+
+%description tools
+%{summary}. This package should not be used in production.
+
 %prep
 %setup -q
 tar --strip-components=1 --extract --verbose --file %{SOURCE2}
@@ -80,13 +90,16 @@ tar --strip-components=1 --extract --verbose --file %{SOURCE2}
 %{__cargo} build %{?_smp_mflags} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features engine,min,systemd_compat
 %{__cargo} rustc %{?_smp_mflags} --release --bin=stratis-str-cmp --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
 %{__cargo} rustc %{?_smp_mflags} --release --bin=stratis-base32-decode --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
+%{__cargo} build %{?_smp_mflags} --release --bin=stratis-dumpmetadata --no-default-features --features engine,extras,min
 %else
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features engine,min,systemd_compat
 %{__cargo} rustc %{?__cargo_common_opts} --release --bin=stratis-str-cmp --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
 %{__cargo} rustc %{?__cargo_common_opts} --release --bin=stratis-base32-decode --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
+%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-dumpmetadata --no-default-features --features engine,extras,min
 %endif
 a2x -f manpage docs/stratisd.txt
+a2x -f manpage docs/stratis-dumpmetadata.txt
 
 %install
 %make_install DRACUTDIR=%{dracutdir} PROFILEDIR=release
@@ -135,6 +148,11 @@ a2x -f manpage docs/stratisd.txt
 %{dracutdir}/modules.d/90stratis/stratisd-min.service
 %{_systemd_util_dir}/system-generators/stratis-clevis-setup-generator
 %{_systemd_util_dir}/system-generators/stratis-setup-generator
+
+%files tools
+%license LICENSE
+%{_bindir}/stratis-dumpmetadata
+%{_mandir}/man8/stratis-dumpmetadata.8*
 
 %changelog
 * Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
