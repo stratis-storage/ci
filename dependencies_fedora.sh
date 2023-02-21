@@ -24,6 +24,7 @@ dnf -y install git \
 	dbus-devel.x86_64 \
 	dbus-glib-devel \
 	dbus-python-devel \
+	device-mapper-devel \
 	device-mapper-persistent-data \
 	openssl-devel \
 	python3-dbus \
