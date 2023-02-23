@@ -144,6 +144,12 @@ def main():
 
     pyudev_parser.set_defaults(func=_pyudev_release)
 
+    dbus_python_client_gen_parser = subparsers.add_parser(
+        "dbus-python-client-gen", help="Create a dbus-python-client-gen release"
+    )
+
+    dbus_python_client_gen_parser.set_defaults(func=_dbus_python_client_gen_release)
+
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
     testing_parser.add_argument(
         "release", action="store", type=Version, help="release_version"
@@ -324,6 +330,27 @@ def _stratis_cli_release(namespace):
     changelog_url = get_changelog_url(repository_url, get_branch())
 
     create_release(repository, tag, release_version, changelog_url)
+
+
+def _dbus_python_client_gen_release(namespace):
+    """
+    Create a dbus_python_clietn_gen release.
+    """
+    (release_version, repository) = get_python_package_info(
+        "https://github.com/stratis-storage/dbus-python-client-gen"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    _push_tag(repository.geturl(), tag)
 
 
 def _pyudev_release(namespace):
