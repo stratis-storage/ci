@@ -178,6 +178,8 @@ def _stratisd_release(namespace):
 
     r_v = ReleaseVersion(release_version, None)
     vendor_tarfile_name = vendor(manifest_abs_path, r_v)
+    vendor_tarfile_abs_path = os.path.abspath(vendor_tarfile_name)
+    subprocess.run(["sha512sum", vendor_tarfile_abs_path], check=True)
 
     if namespace.no_tag:
         return
