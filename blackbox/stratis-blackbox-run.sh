@@ -54,13 +54,14 @@ STRATIS_CLI_V=$(rpmspec -P stratis-cli.spec | grep ^Version | awk '{print $2}')
 STRATIS_CLI_R=$(rpmspec -P stratis-cli.spec | grep ^Release | awk '{print $2}')
 STRATIS_CLI_RPMBASENAME="${STRATIS_CLI_N}-${STRATIS_CLI_V}-${STRATIS_CLI_R}"
 echo "stratis-cli package target: $STRATIS_CLI_RPMBASENAME"
+STRATISD_TOOLS_RPMBASENAME="${STRATISD_N}-tools-${STRATISD_V}-${STRATISD_R}"
 
 ./reset-upstream-stratis-repos.sh
 
 echo "Starting build and package process..."
 ./build-and-package.sh
 
-dnf -y install output_rpms/$STRATISD_RPMBASENAME*.rpm output_rpms/$STRATIS_CLI_RPMBASENAME*.rpm
+dnf -y install output_rpms/$STRATISD_RPMBASENAME*.rpm output_rpms/$STRATIS_CLI_RPMBASENAME*.rpm output_rpms/$STRATISD_TOOLS_RPMBASENAME*.rpm
 
 # Start running blackbox tests.
 RC_BLACKBOX_STRATISD=0
