@@ -58,6 +58,17 @@ Requires:       libblkid
 # where clevis is not available.
 Recommends:     clevis-luks >= 18
 
+
+# If dictcheck does not equal 0 in /etc/security/pwquality.conf, clevis may
+# make use of this packages. clevis itself Recommends this package, and so it
+# should be installed by default if clevis is installed. However, due to a bug
+# in dnf, sometimes transitive Recommends packages are not installed. This
+# redundant Recommends is included in this spec file in order to encourage dnf
+# to install the cracklib-dicts package, and should be removed when the bug is
+# fixed.
+# See: https://github.com/stratis-storage/project/issues/581
+Recommends:     cracklib-dicts
+
 %description
 %{summary}. This package should not be used in production.
 
