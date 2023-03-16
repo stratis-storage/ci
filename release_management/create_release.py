@@ -53,6 +53,15 @@ def _push_tag(repository_url, tag):
     )
 
 
+def _publish():
+    """
+    Run git commands to publish a crate to crates.io.
+    """
+    subprocess.run(["git", "clean", "-xdf"], check=True)
+    subprocess.run(["cargo", "clean"], check=True)
+    subprocess.run(["cargo", "publish"], check=True)
+
+
 def main():
     """
     Main function
@@ -210,9 +219,7 @@ def _stratisd_release(namespace):
     if namespace.no_publish:
         return
 
-    subprocess.run(["git", "clean", "-xdf"], check=True)
-    subprocess.run(["cargo", "clean"], check=True)
-    subprocess.run(["cargo", "publish"], check=True)
+    _publish()
 
 
 def _devicemapper_release(namespace):
@@ -246,9 +253,7 @@ def _devicemapper_release(namespace):
     if namespace.no_publish:
         return
 
-    subprocess.run(["git", "clean", "-xdf"], check=True)
-    subprocess.run(["cargo", "clean"], check=True)
-    subprocess.run(["cargo", "publish"], check=True)
+    _publish()
 
 
 def _tag_rust_library(namespace, name):
