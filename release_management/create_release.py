@@ -98,6 +98,14 @@ def main():
 
     devicemapper_parser.set_defaults(func=_devicemapper_release)
 
+    devicemapper_parser.add_argument(
+        "--no-publish",
+        action="store_true",
+        default=False,
+        dest="no_publish",
+        help="Do not publish to crates.io",
+    )
+
     devicemapper_sys_parser = subparsers.add_parser(
         "devicemapper-sys", help="Create a devicemapper-sys release."
     )
@@ -234,6 +242,13 @@ def _devicemapper_release(namespace):
     changelog_url = get_changelog_url(repository.geturl(), get_branch())
 
     create_release(repository, tag, release_version, changelog_url)
+
+    if namespace.no_publish:
+        return
+
+    subprocess.run(["git", "clean", "-xdf"], check=True)
+    subprocess.run(["cargo", "clean"], check=True)
+    subprocess.run(["cargo", "publish"], check=True)
 
 
 def _tag_rust_library(namespace, name):
