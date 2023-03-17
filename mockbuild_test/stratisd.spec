@@ -41,6 +41,7 @@ BuildRequires:  libblkid-devel
 BuildRequires:  cryptsetup-devel
 BuildRequires:  clang
 BuildRequires:  glibc-static
+BuildRequires:  device-mapper-devel
 BuildRequires:  %{_bindir}/a2x
 
 # Required to calculate install directories
