@@ -4,7 +4,7 @@
 %global dracutdir %(pkg-config --variable=dracutdir dracut)
 
 Name:           stratisd
-Version:        3.5.1
+Version:        3.5.2
 Release:        77%{?dist}
 Summary:        Daemon that manages block devices to create filesystems
 
