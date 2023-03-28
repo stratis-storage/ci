@@ -6,8 +6,6 @@ metadata:
 inspections:
   # none of our compiled code has an ABI
   abidiff: off
-  # at present the wrong debuginfo files are being used to run this check
-  annocheck: off
   # the project does not use .desktop files
   desktop: off
   # the project uses no Java
@@ -22,5 +20,14 @@ debuginfo:
   # rpminspect error: "Contains .symtab"
   # ignoring because this appears to be a bug in rpmbuild or further down the toolchain
   # https://bugzilla.redhat.com/show_bug.cgi?id=2166149
+  ignore:
+    - /usr/lib/udev/stratis*
+
+annocheck:
+  # annocheck error:
+  # Hardened: <path>: FAIL: stack-prot test because stack protection
+  # deliberately disabled (function: call_fini)
+  # Seems to be a consequence of including glibc-static when fully static
+  # compilation occurs.
   ignore:
     - /usr/lib/udev/stratis*
