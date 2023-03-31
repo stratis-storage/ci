@@ -276,7 +276,7 @@ def get_changelog_url(repository_url, branch):
     :param str branch: the git branch
     """
     changelog_url = f"{repository_url}/blob/{branch}/CHANGES.txt"
-    requests_var = requests.get(changelog_url)
+    requests_var = requests.get(changelog_url, timeout=30)
     if requests_var.status_code != 200:
         raise RuntimeError("Page at URL {changelog_url} not found")
 
