@@ -67,7 +67,7 @@ def main():
     Main function
     """
 
-    parser = argparse.ArgumentParser(description=("Create a GitHub Draft release."))
+    parser = argparse.ArgumentParser(description="Create a GitHub Draft release.")
 
     parser.add_argument(
         "--no-tag",

@@ -127,7 +127,7 @@ def build_koji_repo_dict(crates, release):
         f"{release if release == 'rawhide' else f'{release}-build'}/latest/x86_64/pkglist"
     )
 
-    requests_var = requests.get(url)
+    requests_var = requests.get(url, timeout=30)
     if requests_var.status_code != 200:
         raise RuntimeError(f"Page at URL {url} not found")
 
