@@ -112,24 +112,21 @@ def _stratisd_artifacts(namespace):
     r_v = ReleaseVersion(release_version, namespace.pre_release_suffix)
 
     source_tarfile = make_source_tarball("stratisd", r_v, output_path)
-    vendor_tarfile_name = vendor(
+    (vendor_tarfile_name, crate_path) = vendor(
         manifest_abs_path, r_v, omit_packaging=namespace.omit_packaging
     )
     os.rename(vendor_tarfile_name, os.path.join(output_path, vendor_tarfile_name))
 
     source_vendor_tarfile = os.path.join(output_path, vendor_tarfile_name)
 
-    if not namespace.omit_packaging:
-        crate_name = f"stratisd-{r_v.base_only()}.crate"
-        crate_path = os.path.join("target", "package", crate_name)
+    if crate_path is not None:
         crate_suffix_name = f"stratisd-{r_v.to_crate_str()}.crate"
-        os.rename(crate_path, os.path.join(output_path, crate_suffix_name))
-
-    source_crate = os.path.join(output_path, crate_suffix_name)
+        source_crate = os.path.join(output_path, crate_suffix_name)
+        os.rename(crate_path, source_crate)
+        subprocess.run(["sha512sum", source_crate], check=True)
 
     subprocess.run(["sha512sum", source_tarfile], check=True)
     subprocess.run(["sha512sum", source_vendor_tarfile], check=True)
-    subprocess.run(["sha512sum", source_crate], check=True)
 
 
 def _stratis_cli_artifacts(namespace):
