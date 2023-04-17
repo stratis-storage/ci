@@ -190,11 +190,13 @@ def vendor(manifest_abs_path, release_version, *, omit_packaging=False):
     :param str manifest_abs_path: manifest path (absolute)
     :param ReleaseVersion release_version: the release version
     :param bool omit_packaging. do not vendor packaged project
-    :return name of vendored tarfile:
-    :rtype: str
+    :return: name of vendored tarfile and path of crate relative to manifest
+    :rtype: str * (str or NoneType)
     """
 
     vendor_dir = "vendor"
+
+    crate_path = None
 
     if omit_packaging:
         package_manifest = manifest_abs_path
@@ -203,10 +205,14 @@ def vendor(manifest_abs_path, release_version, *, omit_packaging=False):
             ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
         )
 
+        crate_subdir = os.path.join("target", "package")
+        crate_name = f"stratisd-{release_version.base_only()}"
+        crate_path = os.path.join(crate_subdir, crate_name)
+
         package_manifest = os.path.join(
             os.path.dirname(manifest_abs_path),
-            "target/package",
-            f"stratisd-{release_version.base_only()}",
+            crate_subdir,
+            crate_name,
             "Cargo.toml",
         )
 
@@ -232,7 +238,7 @@ def vendor(manifest_abs_path, release_version, *, omit_packaging=False):
         check=True,
     )
 
-    return vendor_tarfile_name
+    return (vendor_tarfile_name, crate_path)
 
 
 def make_source_tarball(package_name, release_version, output_dir):

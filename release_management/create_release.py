@@ -194,7 +194,7 @@ def _stratisd_release(namespace):
     (release_version, repository) = get_package_info(manifest_abs_path, "stratisd")
 
     r_v = ReleaseVersion(release_version, None)
-    vendor_tarfile_name = vendor(manifest_abs_path, r_v)
+    (vendor_tarfile_name, _) = vendor(manifest_abs_path, r_v)
     vendor_tarfile_abs_path = os.path.abspath(vendor_tarfile_name)
     subprocess.run(["sha512sum", vendor_tarfile_abs_path], check=True)
 
