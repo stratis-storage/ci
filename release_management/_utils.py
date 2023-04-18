@@ -205,14 +205,17 @@ def vendor(manifest_abs_path, release_version, *, omit_packaging=False):
             ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
         )
 
-        crate_subdir = os.path.join("target", "package")
-        crate_name = f"stratisd-{release_version.base_only()}"
-        crate_path = os.path.join(crate_subdir, crate_name)
+        crate_subdir = os.path.join(
+            "target", "package", f"stratisd-{release_version.base_only()}"
+        )
+
+        crate_path = os.path.join(
+            "target", "package", f"stratisd-{release_version.base_only()}.crate"
+        )
 
         package_manifest = os.path.join(
             os.path.dirname(manifest_abs_path),
             crate_subdir,
-            crate_name,
             "Cargo.toml",
         )
 
