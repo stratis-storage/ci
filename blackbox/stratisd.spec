@@ -4,7 +4,7 @@
 %global dracutdir %(pkg-config --variable=dracutdir dracut)
 
 Name:           stratisd
-Version:        3.5.3
+Version:        3.5.4
 Release:        77%{?dist}
 Summary:        Daemon that manages block devices to create filesystems
 
@@ -36,6 +36,7 @@ BuildRequires:  libblkid-devel
 BuildRequires:  cryptsetup-devel
 BuildRequires:  clang
 BuildRequires:  glibc-static
+BuildRequires:  device-mapper-devel
 BuildRequires:  %{_bindir}/a2x
 
 # Required to calculate install directories
@@ -51,6 +52,8 @@ Requires:       libblkid
 
 # stratisd does not require clevis; it can be used in restricted environments
 # where clevis is not available.
+# If using encryption via clevis, stratisd requires the instance of clevis
+# that it uses to have been built in an environment with cryptsetup >= 2.6.0.
 Recommends:     clevis-luks >= 18
 
 %description
