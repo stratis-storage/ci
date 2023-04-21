@@ -57,6 +57,8 @@ Requires:       libblkid
 
 # stratisd does not require clevis; it can be used in restricted environments
 # where clevis is not available.
+# If using encryption via clevis, stratisd requires the instance of clevis
+# that it uses to have been built in an environment with cryptsetup >= 2.6.0.
 Recommends:     clevis-luks >= 18
 
 %description
