@@ -1,4 +1,4 @@
-FEDORA_RELEASE=37
+FEDORA_RELEASE=38
 build:
 	podman build . \
         --file Containerfile-tang \
