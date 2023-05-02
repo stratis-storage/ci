@@ -115,7 +115,7 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 
 %if %{with check}
 %check
-%cargo_test --no-run
+# Temporarily suspend execution of "%cargo_test --no-run" until loopdev-0.4.0 fix
 %endif
 
 %post
