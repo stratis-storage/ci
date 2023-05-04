@@ -173,6 +173,12 @@ def main():  # pylint: disable=too-many-locals
 
     dbus_client_gen_parser.set_defaults(func=_dbus_client_gen_release)
 
+    into_dbus_python_parser = subparsers.add_parser(
+        "into-dbus-python", help="Create a into-dbus-python release"
+    )
+
+    into_dbus_python_parser.set_defaults(func=_into_dbus_python_release)
+
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
     testing_parser.add_argument(
         "release", action="store", type=Version, help="release_version"
@@ -387,6 +393,27 @@ def _dbus_client_gen_release(namespace):
     """
     (release_version, repository) = get_python_package_info(
         "https://github.com/stratis-storage/dbus-client-gen"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    _push_tag(repository.geturl(), tag)
+
+
+def _into_dbus_python_release(namespace):
+    """
+    Create a into_dbus_python release.
+    """
+    (release_version, repository) = get_python_package_info(
+        "https://github.com/stratis-storage/into-dbus-python"
     )
 
     if namespace.no_tag:
