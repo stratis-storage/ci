@@ -62,11 +62,10 @@ def _publish():
     subprocess.run(["cargo", "publish"], check=True)
 
 
-def main():  # pylint: disable=too-many-locals
+def _get_parser():  # pylint: disable=too-many-locals
     """
-    Main function
+    Build parser
     """
-
     parser = argparse.ArgumentParser(description="Create a GitHub Draft release.")
 
     parser.add_argument(
@@ -185,6 +184,16 @@ def main():  # pylint: disable=too-many-locals
     )
 
     testing_parser.set_defaults(func=_testing_release)
+
+    return parser
+
+
+def main():
+    """
+    Main function
+    """
+
+    parser = _get_parser()
 
     namespace = parser.parse_args()
 
