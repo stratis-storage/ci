@@ -178,6 +178,12 @@ def _get_parser():  # pylint: disable=too-many-locals
 
     into_dbus_python_parser.set_defaults(func=_into_dbus_python_release)
 
+    dbus_signature_pyparsing_parser = subparsers.add_parser(
+        "dbus-signature-pyparsing", help="Create a dbus-signature-pyparsing release"
+    )
+
+    dbus_signature_pyparsing_parser.set_defaults(func=_dbus_signature_pyparsing_release)
+
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
     testing_parser.add_argument(
         "release", action="store", type=Version, help="release_version"
@@ -423,6 +429,27 @@ def _into_dbus_python_release(namespace):
     """
     (release_version, repository) = get_python_package_info(
         "https://github.com/stratis-storage/into-dbus-python"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    _push_tag(repository.geturl(), tag)
+
+
+def _dbus_signature_pyparsing_release(namespace):
+    """
+    Create a into_dbus_python release.
+    """
+    (release_version, repository) = get_python_package_info(
+        "https://github.com/stratis-storage/dbus-signature-pyparsing"
     )
 
     if namespace.no_tag:
