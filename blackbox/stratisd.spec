@@ -17,7 +17,7 @@ Summary:        Daemon that manages block devices to create filesystems
 # MIT or ASL 2.0
 # MPLv2.0
 # Unlicense or MIT
-License:        MPLv2.0
+License:        MPL-2.0
 URL:            https://github.com/stratis-storage/stratisd
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 Source1:        %{url}/releases/download/v%{version}/%{name}-%{version}-vendor.tar.gz
