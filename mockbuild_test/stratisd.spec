@@ -102,7 +102,7 @@ tar --strip-components=1 --extract --verbose --file %{SOURCE2}
 %else
 %cargo_prep
 %generate_buildrequires
-%cargo_generate_buildrequires -f engine,dbus_enabled,min,systemd_compat,extras
+%cargo_generate_buildrequires -f engine,dbus_enabled,min,systemd_compat,extras,udev_scripts
 %endif
 
 %build
