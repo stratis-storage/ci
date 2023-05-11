@@ -25,7 +25,6 @@ BuildRequires:  rust-toolset
 %else
 BuildRequires:  rust-packaging
 %endif
-BuildRequires:  rust-srpm-macros
 BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libblkid-devel

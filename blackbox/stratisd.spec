@@ -20,7 +20,6 @@ ExclusiveArch:  %{rust_arches}
 ExcludeArch:    i686
 %endif
 
-BuildRequires:  rust-srpm-macros
 BuildRequires:  systemd-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libblkid-devel
