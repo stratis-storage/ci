@@ -190,6 +190,12 @@ def _get_parser():  # pylint: disable=too-many-locals
 
     justbases_parser.set_defaults(func=_justbases_release)
 
+    justbytes_parser = subparsers.add_parser(
+        "justbytes", help="Create a into-dbus-python release"
+    )
+
+    justbytes_parser.set_defaults(func=_justbytes_release)
+
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
     testing_parser.add_argument(
         "release", action="store", type=Version, help="release_version"
@@ -477,6 +483,27 @@ def _justbases_release(namespace):
     """
     (release_version, repository) = get_python_package_info(
         "https://github.com/mulkieran/justbases"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    _push_tag(repository.geturl(), tag)
+
+
+def _justbytes_release(namespace):
+    """
+    Create a justbytes release.
+    """
+    (release_version, repository) = get_python_package_info(
+        "https://github.com/mulkieran/justbytes"
     )
 
     if namespace.no_tag:
