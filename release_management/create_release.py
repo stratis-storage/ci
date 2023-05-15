@@ -184,6 +184,12 @@ def _get_parser():  # pylint: disable=too-many-locals
 
     dbus_signature_pyparsing_parser.set_defaults(func=_dbus_signature_pyparsing_release)
 
+    justbases_parser = subparsers.add_parser(
+        "justbases", help="Create a into-dbus-python release"
+    )
+
+    justbases_parser.set_defaults(func=_justbases_release)
+
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
     testing_parser.add_argument(
         "release", action="store", type=Version, help="release_version"
@@ -450,6 +456,27 @@ def _dbus_signature_pyparsing_release(namespace):
     """
     (release_version, repository) = get_python_package_info(
         "https://github.com/stratis-storage/dbus-signature-pyparsing"
+    )
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    _push_tag(repository.geturl(), tag)
+
+
+def _justbases_release(namespace):
+    """
+    Create a justbases release.
+    """
+    (release_version, repository) = get_python_package_info(
+        "https://github.com/mulkieran/justbases"
     )
 
     if namespace.no_tag:
