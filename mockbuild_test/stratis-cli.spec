@@ -3,7 +3,7 @@ Version:        3.6.0
 Release:        77%{?dist}
 Summary:        Command-line tool for interacting with the Stratis daemon
 
-License:        ASL 2.0
+License:        Apache-2.0
 URL:            https://github.com/stratis-storage/stratis-cli
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
