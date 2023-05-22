@@ -68,7 +68,15 @@ mkdir output
 mkdir output/{stratisd,stratis-cli}
 
 cp stratisd.spec SPECS
-cp stratis-cli.spec SPECS
+
+case $DIST_RELEASE in
+"centos-stream")
+	cp stratis-cli-centosstream.spec SPECS/stratis-cli.spec
+	;;
+*)
+	cp stratis-cli.spec SPECS
+	;;
+esac
 
 if [ -d upstream ]; then
 	rm -rf upstream
