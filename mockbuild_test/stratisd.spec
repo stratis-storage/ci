@@ -125,7 +125,8 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 # 0.4.0 failing to build properly in some situations due to a failure of
 # bindgen 0.59.0.
 # See https://github.com/stratis-storage/project/issues/607
-%if !0%{?rhel}
+%if 0%{?rhel}
+%else
 %cargo_test -- --no-run
 %endif
 %endif
