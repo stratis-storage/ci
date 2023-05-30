@@ -10,6 +10,15 @@ Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 BuildRequires:  python3-devel
 BuildRequires:  python3-setuptools
 BuildRequires:  %{_bindir}/a2x
+%if 0%{?rhel}
+BuildRequires:  python3-dateutil
+BuildRequires:  python3-dbus-client-gen
+BuildRequires:  python3-dbus-python-client-gen
+BuildRequires:  python3-justbytes
+BuildRequires:  python3-packaging
+BuildRequires:  python3-psutil
+BuildRequires:  python3-wcwidth
+%endif
 # It runs without, but totally useless
 Requires:       (stratisd >= 3.6.0 with stratisd < 4.0.0)
 
