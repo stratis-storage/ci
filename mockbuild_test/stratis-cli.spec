@@ -22,9 +22,9 @@ BuildRequires:  python3-wcwidth
 # It runs without, but totally useless
 Requires:       (stratisd >= 3.6.0 with stratisd < 4.0.0)
 
-# stratisd only available on certain arches
+# Exclude the same arches for stratis-cli as are excluded for stratisd
 ExclusiveArch:  %{rust_arches} noarch
-%if 0%{?rhel} && !0%{?eln}
+%if 0%{?rhel}
 ExcludeArch:    i686
 %endif
 BuildArch:      noarch
