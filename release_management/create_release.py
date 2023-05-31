@@ -323,6 +323,28 @@ def _tag_rust_library(namespace, name):
     _push_tag(repository.geturl(), tag)
 
 
+def _tag_python_library(namespace, git_url):
+    """
+    Tag a Python library.
+
+    :param namespace: parser namespace
+    :param str git_url: git URL
+    """
+    (release_version, repository) = get_python_package_info(git_url)
+
+    if namespace.no_tag:
+        return
+
+    tag = f"v{release_version}"
+
+    set_tag(tag, f"version {release_version}")
+
+    if namespace.no_release:
+        return
+
+    _push_tag(repository.geturl(), tag)
+
+
 def _devicemapper_sys_release(namespace):
     """
     Create a devicemapper-rs-sys release.
@@ -397,126 +419,48 @@ def _dbus_python_client_gen_release(namespace):
     """
     Create a dbus_python_clietn_gen release.
     """
-    (release_version, repository) = get_python_package_info(
-        "https://github.com/stratis-storage/dbus-python-client-gen"
+    _tag_python_library(
+        namespace, "https://github.com/stratis-storage/dbus-python-client-gen"
     )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
 
 
 def _dbus_client_gen_release(namespace):
     """
     Create a dbus_client_gen release.
     """
-    (release_version, repository) = get_python_package_info(
-        "https://github.com/stratis-storage/dbus-client-gen"
-    )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
+    _tag_python_library(namespace, "https://github.com/stratis-storage/dbus-client-gen")
 
 
 def _into_dbus_python_release(namespace):
     """
     Create a into_dbus_python release.
     """
-    (release_version, repository) = get_python_package_info(
-        "https://github.com/stratis-storage/into-dbus-python"
+    _tag_python_library(
+        namespace, "https://github.com/stratis-storage/into-dbus-python"
     )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
 
 
 def _dbus_signature_pyparsing_release(namespace):
     """
     Create a into_dbus_python release.
     """
-    (release_version, repository) = get_python_package_info(
-        "https://github.com/stratis-storage/dbus-signature-pyparsing"
+    _tag_python_library(
+        namespace, "https://github.com/stratis-storage/dbus-signature-pyparsing"
     )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
 
 
 def _justbases_release(namespace):
     """
     Create a justbases release.
     """
-    (release_version, repository) = get_python_package_info(
-        "https://github.com/mulkieran/justbases"
-    )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
+    _tag_python_library(namespace, "https://github.com/mulkieran/justbases")
 
 
 def _justbytes_release(namespace):
     """
     Create a justbytes release.
     """
-    (release_version, repository) = get_python_package_info(
-        "https://github.com/mulkieran/justbytes"
-    )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
+    _tag_python_library(namespace, "https://github.com/mulkieran/justbytes")
 
 
 def _pyudev_release(namespace):
@@ -524,21 +468,7 @@ def _pyudev_release(namespace):
     Create a pyudev release.
     """
 
-    (release_version, repository) = get_python_package_info(
-        "https://github.com/pyudev/pyudev"
-    )
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
+    _tag_python_library(namespace, "https://github.com/pyudev/pyudev")
 
 
 def _testing_release(namespace):
