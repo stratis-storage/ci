@@ -141,7 +141,7 @@ def _get_parser():
         _libcryptsetup_rs_sys_release,
     )
 
-    _set_up_subcommand("libblkid", subparsers, _libblkid_release)
+    _set_up_subcommand("libblkid-rs", subparsers, _libblkid_rs_release)
 
     _set_up_subcommand(
         "libblkid-rs-sys",
@@ -369,9 +369,9 @@ def _libcryptsetup_rs_sys_release(namespace):
     return _tag_rust_library(namespace, "libcryptsetup-rs-sys")
 
 
-def _libblkid_release(namespace):
+def _libblkid_rs_release(namespace):
     """
-    Create a libblkid release.
+    Create a libblkid-rs release.
     """
     return _tag_rust_library(namespace, "libblkid-rs")
 
