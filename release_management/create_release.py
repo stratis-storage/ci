@@ -62,7 +62,20 @@ def _publish():
     subprocess.run(["cargo", "publish"], check=True)
 
 
-def _get_parser():  # pylint: disable=too-many-locals
+def _set_up_subcommand(subcmd, subparsers, target_func):
+    """
+    Set up subcommand parsers
+    :param str subcmd: the name of the subcommand
+    :param argparse subparsers: the subparsers variable
+    :param function target_func: the target function to call
+    """
+    new_subparser = subparsers.add_parser(
+        subcmd, help=f"Create a release for {subcmd}."
+    )
+    new_subparser.set_defaults(func=target_func)
+
+
+def _get_parser():
     """
     Build parser
     """
@@ -114,41 +127,31 @@ def _get_parser():  # pylint: disable=too-many-locals
         help="Do not publish to crates.io",
     )
 
-    devicemapper_sys_parser = subparsers.add_parser(
-        "devicemapper-sys", help="Create a devicemapper-sys release."
+    _set_up_subcommand("devicemapper-rs-sys", subparsers, _devicemapper_sys_release)
+
+    _set_up_subcommand(
+        "libcryptsetup-rs",
+        subparsers,
+        _libcryptsetup_rs_release,
     )
 
-    devicemapper_sys_parser.set_defaults(func=_devicemapper_sys_release)
-
-    libcryptsetup_parser = subparsers.add_parser(
-        "libcryptsetup", help="Create a libcryptsetup-rs release."
+    _set_up_subcommand(
+        "libcryptsetup-rs-sys",
+        subparsers,
+        _libcryptsetup_rs_sys_release,
     )
 
-    libcryptsetup_parser.set_defaults(func=_libcryptsetup_release)
+    _set_up_subcommand("libblkid-rs", subparsers, _libblkid_rs_release)
 
-    libcryptsetup_rs_sys_parser = subparsers.add_parser(
-        "libcryptsetup-rs-sys", help="Create a libcryptsetup-rs-sys release."
+    _set_up_subcommand(
+        "libblkid-rs-sys",
+        subparsers,
+        _libblkid_rs_sys_release,
     )
 
-    libcryptsetup_rs_sys_parser.set_defaults(func=_libcryptsetup_rs_sys_release)
-
-    libblkid_parser = subparsers.add_parser(
-        "libblkid", help="Create a libblkid-rs release."
+    _set_up_subcommand(
+        "stratisd_proc_macros", subparsers, _stratisd_proc_macros_release
     )
-
-    libblkid_parser.set_defaults(func=_libblkid_release)
-
-    libblkid_rs_sys_parser = subparsers.add_parser(
-        "libblkid-rs-sys", help="Create a libblkid-rs-sys release."
-    )
-
-    libblkid_rs_sys_parser.set_defaults(func=_libblkid_rs_sys_release)
-
-    stratisd_proc_macros_parser = subparsers.add_parser(
-        "stratisd_proc_macros", help="Create a stratisd_proc_macros release."
-    )
-
-    stratisd_proc_macros_parser.set_defaults(func=_stratisd_proc_macros_release)
 
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Create a stratis-cli release"
@@ -352,23 +355,23 @@ def _devicemapper_sys_release(namespace):
     return _tag_rust_library(namespace, "devicemapper-sys")
 
 
-def _libcryptsetup_release(namespace):
+def _libcryptsetup_rs_release(namespace):
     """
-    Create a libcryptsetup release.
+    Create a libcryptsetup-rs release.
     """
     return _tag_rust_library(namespace, "libcryptsetup-rs")
 
 
 def _libcryptsetup_rs_sys_release(namespace):
     """
-    Create a libcryptsetup release.
+    Create a libcryptsetup-rs-sys release.
     """
     return _tag_rust_library(namespace, "libcryptsetup-rs-sys")
 
 
-def _libblkid_release(namespace):
+def _libblkid_rs_release(namespace):
     """
-    Create a libblkid release.
+    Create a libblkid-rs release.
     """
     return _tag_rust_library(namespace, "libblkid-rs")
 
