@@ -75,7 +75,7 @@ def _set_up_subcommand(subcmd, subparsers, target_func):
     new_subparser.set_defaults(func=target_func)
 
 
-def _get_parser():  # pylint: disable=too-many-locals
+def _get_parser():
     """
     Build parser
     """
