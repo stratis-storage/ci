@@ -130,9 +130,9 @@ def _get_parser():
     _set_up_subcommand("devicemapper-rs-sys", subparsers, _devicemapper_sys_release)
 
     _set_up_subcommand(
-        "libcryptsetup",
+        "libcryptsetup-rs",
         subparsers,
-        _libcryptsetup_release,
+        _libcryptsetup_rs_release,
     )
 
     _set_up_subcommand(
@@ -355,16 +355,16 @@ def _devicemapper_sys_release(namespace):
     return _tag_rust_library(namespace, "devicemapper-sys")
 
 
-def _libcryptsetup_release(namespace):
+def _libcryptsetup_rs_release(namespace):
     """
-    Create a libcryptsetup release.
+    Create a libcryptsetup-rs release.
     """
     return _tag_rust_library(namespace, "libcryptsetup-rs")
 
 
 def _libcryptsetup_rs_sys_release(namespace):
     """
-    Create a libcryptsetup release.
+    Create a libcryptsetup-rs-sys release.
     """
     return _tag_rust_library(namespace, "libcryptsetup-rs-sys")
 
