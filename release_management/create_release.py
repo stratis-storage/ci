@@ -313,13 +313,13 @@ def _tag_rust_library(namespace, name):
 
     (release_version, repository) = get_package_info(manifest_abs_path, name)
 
-    package_rc = subprocess.run(
-        ["cargo", "package", "--all-features", "--manifest-path", MANIFEST_PATH],
-        check=True,
-    )
-    subprocess.run(["cargo", "clean"], check=True)
-    if not package_rc:
-        return
+    try:
+        subprocess.run(
+            ["cargo", "package", "--all-features", "--manifest-path", MANIFEST_PATH],
+            check=True,
+        )
+    finally:
+        subprocess.run(["cargo", "clean"], check=True)
 
     if namespace.no_tag:
         return
