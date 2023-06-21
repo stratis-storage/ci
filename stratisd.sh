@@ -47,7 +47,7 @@ RC_WHICHRUSTUP=$?
 set -e
 
 if [ $RC_WHICHRUSTUP -eq 0 ]; then
-	rustup default 1.66.1
+	rustup default 1.69.0
 fi
 
 make clean
