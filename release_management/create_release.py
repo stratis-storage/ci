@@ -131,6 +131,11 @@ class RustCrates:
 
         _push_tag(repository.geturl(), tag)
 
+        if namespace.no_publish:
+            return
+
+        _publish()
+
 
 def _get_parser():
     """
