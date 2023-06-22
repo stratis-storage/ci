@@ -78,7 +78,16 @@ class RustCrates:
         new_subparser = subparsers.add_parser(
             subcmd, help=f"Create a release for {subcmd}."
         )
+
         new_subparser.set_defaults(func=target_func)
+
+        new_subparser.add_argument(
+            "--no-publish",
+            action="store_true",
+            default=False,
+            dest="no_publish",
+            help="Do not publish to crates.io",
+        )
 
     @staticmethod
     def tag_rust_library(namespace, name):
@@ -121,6 +130,11 @@ class RustCrates:
             return
 
         _push_tag(repository.geturl(), tag)
+
+        if namespace.no_publish:
+            return
+
+        _publish()
 
 
 def _get_parser():
@@ -176,7 +190,7 @@ def _get_parser():
     )
 
     RustCrates.set_up_subcommand(
-        "devicemapper-rs-sys", subparsers, _devicemapper_sys_release
+        "devicemapper-rs-sys", subparsers, _devicemapper_rs_sys_release
     )
 
     RustCrates.set_up_subcommand(
@@ -370,7 +384,7 @@ def _tag_python_library(namespace, git_url):
     _push_tag(repository.geturl(), tag)
 
 
-def _devicemapper_sys_release(namespace):
+def _devicemapper_rs_sys_release(namespace):
     """
     Create a devicemapper-rs-sys release.
     """
