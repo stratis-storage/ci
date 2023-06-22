@@ -62,17 +62,65 @@ def _publish():
     subprocess.run(["cargo", "publish"], check=True)
 
 
-def _set_up_subcommand(subcmd, subparsers, target_func):
+class RustCrates:
     """
-    Set up subcommand parsers
-    :param str subcmd: the name of the subcommand
-    :param argparse subparsers: the subparsers variable
-    :param function target_func: the target function to call
+    Methods for assisting in building and releasing Rust crates.
     """
-    new_subparser = subparsers.add_parser(
-        subcmd, help=f"Create a release for {subcmd}."
-    )
-    new_subparser.set_defaults(func=target_func)
+
+    @staticmethod
+    def set_up_subcommand(subcmd, subparsers, target_func):
+        """
+        Set up subcommand parsers
+        :param str subcmd: the name of the subcommand
+        :param argparse subparsers: the subparsers variable
+        :param function target_func: the target function to call
+        """
+        new_subparser = subparsers.add_parser(
+            subcmd, help=f"Create a release for {subcmd}."
+        )
+        new_subparser.set_defaults(func=target_func)
+
+    @staticmethod
+    def tag_rust_library(namespace, name):
+        """
+        Set new tag for rust library.
+
+        :param namespace: parser namespace
+        :param str name: the Rust name (as in Cargo.toml) and the GitHub repo name
+        """
+        manifest_abs_path = os.path.abspath(MANIFEST_PATH)
+        if not os.path.exists(manifest_abs_path):
+            raise RuntimeError(
+                "Need script to run at top-level of package, in same directory as Cargo.toml"
+            )
+
+        (release_version, repository) = get_package_info(manifest_abs_path, name)
+
+        try:
+            subprocess.run(
+                [
+                    "cargo",
+                    "package",
+                    "--all-features",
+                    "--manifest-path",
+                    MANIFEST_PATH,
+                ],
+                check=True,
+            )
+        finally:
+            subprocess.run(["cargo", "clean"], check=True)
+
+        if namespace.no_tag:
+            return
+
+        tag = f"{name}-v{release_version}"
+
+        set_tag(tag, f"{name} version {release_version}")
+
+        if namespace.no_release:
+            return
+
+        _push_tag(repository.geturl(), tag)
 
 
 def _get_parser():
@@ -127,29 +175,31 @@ def _get_parser():
         help="Do not publish to crates.io",
     )
 
-    _set_up_subcommand("devicemapper-rs-sys", subparsers, _devicemapper_sys_release)
+    RustCrates.set_up_subcommand(
+        "devicemapper-rs-sys", subparsers, _devicemapper_sys_release
+    )
 
-    _set_up_subcommand(
+    RustCrates.set_up_subcommand(
         "libcryptsetup-rs",
         subparsers,
         _libcryptsetup_rs_release,
     )
 
-    _set_up_subcommand(
+    RustCrates.set_up_subcommand(
         "libcryptsetup-rs-sys",
         subparsers,
         _libcryptsetup_rs_sys_release,
     )
 
-    _set_up_subcommand("libblkid-rs", subparsers, _libblkid_rs_release)
+    RustCrates.set_up_subcommand("libblkid-rs", subparsers, _libblkid_rs_release)
 
-    _set_up_subcommand(
+    RustCrates.set_up_subcommand(
         "libblkid-rs-sys",
         subparsers,
         _libblkid_rs_sys_release,
     )
 
-    _set_up_subcommand(
+    RustCrates.set_up_subcommand(
         "stratisd_proc_macros", subparsers, _stratisd_proc_macros_release
     )
 
@@ -298,42 +348,6 @@ def _devicemapper_release(namespace):
     _publish()
 
 
-def _tag_rust_library(namespace, name):
-    """
-    Set new tag for rust library.
-
-    :param namespace: parser namespace
-    :param str name: the Rust name (as in Cargo.toml) and the GitHub repo name
-    """
-    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
-    if not os.path.exists(manifest_abs_path):
-        raise RuntimeError(
-            "Need script to run at top-level of package, in same directory as Cargo.toml"
-        )
-
-    (release_version, repository) = get_package_info(manifest_abs_path, name)
-
-    try:
-        subprocess.run(
-            ["cargo", "package", "--all-features", "--manifest-path", MANIFEST_PATH],
-            check=True,
-        )
-    finally:
-        subprocess.run(["cargo", "clean"], check=True)
-
-    if namespace.no_tag:
-        return
-
-    tag = f"{name}-v{release_version}"
-
-    set_tag(tag, f"{name} version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
-
-
 def _tag_python_library(namespace, git_url):
     """
     Tag a Python library.
@@ -360,42 +374,42 @@ def _devicemapper_sys_release(namespace):
     """
     Create a devicemapper-rs-sys release.
     """
-    return _tag_rust_library(namespace, "devicemapper-sys")
+    return RustCrates.tag_rust_library(namespace, "devicemapper-sys")
 
 
 def _libcryptsetup_rs_release(namespace):
     """
     Create a libcryptsetup-rs release.
     """
-    return _tag_rust_library(namespace, "libcryptsetup-rs")
+    return RustCrates.tag_rust_library(namespace, "libcryptsetup-rs")
 
 
 def _libcryptsetup_rs_sys_release(namespace):
     """
     Create a libcryptsetup-rs-sys release.
     """
-    return _tag_rust_library(namespace, "libcryptsetup-rs-sys")
+    return RustCrates.tag_rust_library(namespace, "libcryptsetup-rs-sys")
 
 
 def _libblkid_rs_release(namespace):
     """
     Create a libblkid-rs release.
     """
-    return _tag_rust_library(namespace, "libblkid-rs")
+    return RustCrates.tag_rust_library(namespace, "libblkid-rs")
 
 
 def _libblkid_rs_sys_release(namespace):
     """
     Create a libblkid-rs-sys release.
     """
-    return _tag_rust_library(namespace, "libblkid-rs-sys")
+    return RustCrates.tag_rust_library(namespace, "libblkid-rs-sys")
 
 
 def _stratisd_proc_macros_release(namespace):
     """
     Create a stratisd_proc_macros release.
     """
-    return _tag_rust_library(namespace, "stratisd_proc_macros")
+    return RustCrates.tag_rust_library(namespace, "stratisd_proc_macros")
 
 
 def _stratis_cli_release(namespace):
