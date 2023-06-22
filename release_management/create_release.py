@@ -175,7 +175,9 @@ def _get_parser():
         help="Do not publish to crates.io",
     )
 
-    RustCrates.set_up_subcommand("devicemapper-rs", subparsers, _devicemapper_release)
+    RustCrates.set_up_subcommand(
+        "devicemapper-rs", subparsers, _devicemapper_rs_release
+    )
 
     RustCrates.set_up_subcommand(
         "devicemapper-rs-sys", subparsers, _devicemapper_rs_sys_release
@@ -316,7 +318,7 @@ def _stratisd_release(namespace):
     _publish()
 
 
-def _devicemapper_release(namespace):
+def _devicemapper_rs_release(namespace):
     """
     Create a devicemapper release.
     """
