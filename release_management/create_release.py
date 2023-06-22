@@ -175,19 +175,7 @@ def _get_parser():
         help="Do not publish to crates.io",
     )
 
-    devicemapper_parser = subparsers.add_parser(
-        "dm", help="Create a devicemapper-rs release."
-    )
-
-    devicemapper_parser.set_defaults(func=_devicemapper_release)
-
-    devicemapper_parser.add_argument(
-        "--no-publish",
-        action="store_true",
-        default=False,
-        dest="no_publish",
-        help="Do not publish to crates.io",
-    )
+    RustCrates.set_up_subcommand("devicemapper-rs", subparsers, _devicemapper_release)
 
     RustCrates.set_up_subcommand(
         "devicemapper-rs-sys", subparsers, _devicemapper_rs_sys_release
