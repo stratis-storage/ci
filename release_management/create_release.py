@@ -78,7 +78,16 @@ class RustCrates:
         new_subparser = subparsers.add_parser(
             subcmd, help=f"Create a release for {subcmd}."
         )
+
         new_subparser.set_defaults(func=target_func)
+
+        new_subparser.add_argument(
+            "--no-publish",
+            action="store_true",
+            default=False,
+            dest="no_publish",
+            help="Do not publish to crates.io",
+        )
 
     @staticmethod
     def tag_rust_library(namespace, name):
