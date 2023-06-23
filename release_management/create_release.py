@@ -161,32 +161,10 @@ def _get_parser():
 
     subparsers = parser.add_subparsers(title="subcommands")
 
-    stratisd_parser = subparsers.add_parser(
-        "stratisd", help="Create a stratisd release."
-    )
+    RustCrates.set_up_subcommand("stratisd", subparsers, _stratisd_release)
 
-    stratisd_parser.set_defaults(func=_stratisd_release)
-
-    stratisd_parser.add_argument(
-        "--no-publish",
-        action="store_true",
-        default=False,
-        dest="no_publish",
-        help="Do not publish to crates.io",
-    )
-
-    devicemapper_parser = subparsers.add_parser(
-        "dm", help="Create a devicemapper-rs release."
-    )
-
-    devicemapper_parser.set_defaults(func=_devicemapper_release)
-
-    devicemapper_parser.add_argument(
-        "--no-publish",
-        action="store_true",
-        default=False,
-        dest="no_publish",
-        help="Do not publish to crates.io",
+    RustCrates.set_up_subcommand(
+        "devicemapper-rs", subparsers, _devicemapper_rs_release
     )
 
     RustCrates.set_up_subcommand(
@@ -328,7 +306,7 @@ def _stratisd_release(namespace):
     _publish()
 
 
-def _devicemapper_release(namespace):
+def _devicemapper_rs_release(namespace):
     """
     Create a devicemapper release.
     """
