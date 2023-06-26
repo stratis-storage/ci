@@ -68,12 +68,15 @@ class RustCrates:
     """
 
     @staticmethod
-    def set_up_subcommand(subcmd, subparsers, target_func):
+    def set_up_subcommand(
+        subcmd, subparsers, target_func, *, add_github_release_option=False
+    ):
         """
         Set up subcommand parsers
         :param str subcmd: the name of the subcommand
         :param argparse subparsers: the subparsers variable
         :param function target_func: the target function to call
+        :param bool add_github_release_option: whether to pass no-github-release option
         """
         new_subparser = subparsers.add_parser(
             subcmd, help=f"Create a release for {subcmd}."
@@ -88,6 +91,17 @@ class RustCrates:
             dest="no_publish",
             help="Do not publish to crates.io",
         )
+
+        if add_github_release_option:
+            new_subparser.add_argument(
+                "--no-github-release",
+                action="store_true",
+                default=False,
+                dest="no_github_release",
+                help="Do not release to GitHub",
+            )
+        else:
+            new_subparser.set_defaults(no_github_release=True)
 
     @staticmethod
     def tag_rust_library(namespace, name):
@@ -131,6 +145,13 @@ class RustCrates:
 
         _push_tag(repository.geturl(), tag)
 
+        changelog_url = get_changelog_url(repository.geturl(), get_branch())
+
+        if namespace.no_github_release:
+            return
+
+        create_release(repository, tag, release_version, changelog_url)
+
         if namespace.no_publish:
             return
 
@@ -164,7 +185,10 @@ def _get_parser():
     RustCrates.set_up_subcommand("stratisd", subparsers, _stratisd_release)
 
     RustCrates.set_up_subcommand(
-        "devicemapper-rs", subparsers, _devicemapper_rs_release
+        "devicemapper-rs",
+        subparsers,
+        _devicemapper_rs_release,
+        add_github_release_option=True,
     )
 
     RustCrates.set_up_subcommand(
@@ -310,34 +334,7 @@ def _devicemapper_rs_release(namespace):
     """
     Create a devicemapper release.
     """
-    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
-    if not os.path.exists(manifest_abs_path):
-        raise RuntimeError(
-            "Need script to run at top-level of package, in same directory as Cargo.toml"
-        )
-
-    (release_version, repository) = get_package_info(manifest_abs_path, "devicemapper")
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
-
-    changelog_url = get_changelog_url(repository.geturl(), get_branch())
-
-    create_release(repository, tag, release_version, changelog_url)
-
-    if namespace.no_publish:
-        return
-
-    _publish()
+    return RustCrates.tag_rust_library(namespace, "devicemapper")
 
 
 def _tag_python_library(namespace, git_url):
