@@ -22,6 +22,7 @@ import argparse
 import os
 import subprocess
 import sys
+from unittest.mock import patch
 
 # isort: THIRDPARTY
 from semantic_version import Version
@@ -85,6 +86,14 @@ class RustCrates:
         new_subparser.set_defaults(func=target_func)
 
         new_subparser.add_argument(
+            "--dry-run",
+            action="store_true",
+            default=False,
+            dest="dry_run",
+            help="Only report actions, do not do them",
+        )
+
+        new_subparser.add_argument(
             "--no-publish",
             action="store_true",
             default=False,
@@ -105,6 +114,50 @@ class RustCrates:
 
     @staticmethod
     def tag_rust_library(namespace, name):
+        """
+        Set new tag for rust library.
+
+        If namespace.dry_run is True, mock all methods invoked in
+        _tag_rust_library() that have side-effects on the environment that
+        would require undoing, like applying a git tag, or that have
+        side-effects on the larger world, like publishing a release.
+
+        :param namespace: parser namespace
+        :param str name: the Rust name (as in Cargo.toml) and the GitHub repo name
+        """
+        if namespace.dry_run:
+
+            def side_effect(name):
+                def print_message(*args):
+                    print(f"Mocking {name}: {args}")
+
+                return print_message
+
+            def func_patch(to_patch_str):
+                return patch(
+                    to_patch_str,
+                    return_value=None,
+                    side_effect=side_effect(to_patch_str),
+                )
+
+            with func_patch(
+                "__main__.set_tag",
+            ):
+                with func_patch(
+                    "__main__.create_release",
+                ):
+                    with func_patch(
+                        "__main__._publish",
+                    ):
+                        with func_patch(
+                            "__main__._push_tag",
+                        ):
+                            RustCrates._tag_rust_library(namespace, name)
+        else:
+            RustCrates._tag_rust_library(namespace, name)
+
+    @staticmethod
+    def _tag_rust_library(namespace, name):
         """
         Set new tag for rust library.
 
