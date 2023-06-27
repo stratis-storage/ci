@@ -73,22 +73,19 @@ def _with_dry_run(dry_run):
             side_effect=side_effect(to_patch_str),
         )
 
-    if dry_run:
+    def func(name, closure, *, skip=False):
+        """
+        :param str name: the name of the method to mock
+        :param closure: the closure to run, invoked w/ no arguments
+        :param bool skip: If True, just skip.
+        """
+        if skip:
+            return
 
-        def func(name, closure):
-            """
-            :param str name: the name of the method to mock
-            :param closure: the closure to run, invoked w/ no arguments
-            """
+        if dry_run:
             with func_patch(name):
                 closure()
-
-    else:
-
-        def func(_, closure):
-            """
-            :param closure: the closure to run, invoked w/ no arguments
-            """
+        else:
             closure()
 
     return func
@@ -216,18 +213,18 @@ class RustCrates:
 
         changelog_url = get_changelog_url(repository.geturl(), get_branch())
 
-        if namespace.no_github_release:
-            return
-
         dry_run_caller(
             "__main__.create_release",
             lambda: create_release(repository, tag, release_version, changelog_url),
+            skip=namespace.no_github_release,
         )
 
-        if namespace.no_publish:
-            return
-
-        dry_run_caller("__main__._publish", _publish)
+        # pylint: disable=unnecessary-lambda
+        # The lambda is necessary in order to prevent the interpreter from
+        # resolving _publish before the mock method is put into place.
+        dry_run_caller(
+            "__main__._publish", lambda: _publish(), skip=namespace.no_publish
+        )
 
 
 def _get_parser():
