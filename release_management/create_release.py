@@ -22,6 +22,7 @@ import argparse
 import os
 import subprocess
 import sys
+from unittest.mock import patch
 
 # isort: THIRDPARTY
 from semantic_version import Version
@@ -38,6 +39,59 @@ from _utils import (
     set_tag,
     vendor,
 )
+
+
+def _with_dry_run(dry_run):
+    """
+    Run closure either w/ or w/out patch for name.
+
+    :param bool dry_run: True if dry_run only
+    """
+
+    def func_patch(to_patch_str):
+        """
+        Make a generic patch for an imported method.
+
+        :param str to_patch_str: the string that identifies the method
+        """
+
+        def side_effect(name):
+            """
+            Utility method for printing a message when mocking a method.
+
+            :param str name: the method name to print
+            """
+
+            def print_message(*args):
+                print(f"Mocking {name}: {args}")
+
+            return print_message
+
+        return patch(
+            to_patch_str,
+            return_value=None,
+            side_effect=side_effect(to_patch_str),
+        )
+
+    if dry_run:
+
+        def func(name, closure):
+            """
+            :param str name: the name of the method to mock
+            :param closure: the closure to run, invoked w/ no arguments
+            """
+            with func_patch(name):
+                closure()
+
+    else:
+
+        def func(_, closure):
+            """
+            :param closure: the closure to run, invoked w/ no arguments
+            """
+            closure()
+
+    return func
 
 
 def _push_tag(repository_url, tag):
@@ -85,6 +139,14 @@ class RustCrates:
         new_subparser.set_defaults(func=target_func)
 
         new_subparser.add_argument(
+            "--dry-run",
+            action="store_true",
+            default=False,
+            dest="dry_run",
+            help="Only report actions, do not do them",
+        )
+
+        new_subparser.add_argument(
             "--no-publish",
             action="store_true",
             default=False,
@@ -111,6 +173,8 @@ class RustCrates:
         :param namespace: parser namespace
         :param str name: the Rust name (as in Cargo.toml) and the GitHub repo name
         """
+        dry_run_caller = _with_dry_run(namespace.dry_run)
+
         manifest_abs_path = os.path.abspath(MANIFEST_PATH)
         if not os.path.exists(manifest_abs_path):
             raise RuntimeError(
@@ -138,24 +202,32 @@ class RustCrates:
 
         tag = f"{name}-v{release_version}"
 
-        set_tag(tag, f"{name} version {release_version}")
+        dry_run_caller(
+            "__main__.set_tag",
+            lambda: set_tag(tag, f"{name} version {release_version}"),
+        )
 
         if namespace.no_release:
             return
 
-        _push_tag(repository.geturl(), tag)
+        dry_run_caller(
+            "__main__._push_tag", lambda: _push_tag(repository.geturl(), tag)
+        )
 
         changelog_url = get_changelog_url(repository.geturl(), get_branch())
 
         if namespace.no_github_release:
             return
 
-        create_release(repository, tag, release_version, changelog_url)
+        dry_run_caller(
+            "__main__.create_release",
+            lambda: create_release(repository, tag, release_version, changelog_url),
+        )
 
         if namespace.no_publish:
             return
 
-        _publish()
+        dry_run_caller("__main__._publish", _publish)
 
 
 def _get_parser():
