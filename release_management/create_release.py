@@ -219,7 +219,12 @@ class RustCrates:
             skip=namespace.no_github_release,
         )
 
-        dry_run_caller("__main__._publish", _publish, skip=namespace.no_publish)
+        # pylint: disable=unnecessary-lambda
+        # The lambda is necessary in order to prevent the interpreter from
+        # resolving _publish before the mock method is put into place.
+        dry_run_caller(
+            "__main__._publish", lambda: _publish(), skip=namespace.no_publish
+        )
 
 
 def _get_parser():
