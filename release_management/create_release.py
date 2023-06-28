@@ -185,7 +185,6 @@ class RustCrates:
                 [
                     "cargo",
                     "package",
-                    "--all-features",
                     "--manifest-path",
                     MANIFEST_PATH,
                 ],
