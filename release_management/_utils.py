@@ -155,7 +155,9 @@ def get_branch():
     return branch_str.decode("utf-8").rstrip()
 
 
-def create_release(repository, tag, release_version, changelog_url):
+def create_release(
+    repository, tag, release_version, changelog_url, *, additional_assets=None
+):
     """
     Create draft release from a pre-established GitHub tag for this repository.
 
@@ -163,6 +165,8 @@ def create_release(repository, tag, release_version, changelog_url):
     :param str tag: release tag
     :param str release_version: release version
     :param str changelog_url: changelog URL for the release notes
+    :param additional_assets: names of additional assets to add to release
+    :type additional_assets: (list of str) or None
     :return: GitHub release object
     """
     api_key = os.environ.get("GITHUB_API_KEY")
@@ -179,6 +183,9 @@ def create_release(repository, tag, release_version, changelog_url):
         f"See {changelog_url}",
         draft=True,
     )
+
+    for asset in [] if additional_assets is None else additional_assets:
+        release.upload_asset(asset, label=asset)
 
     return release
 
