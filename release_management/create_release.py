@@ -62,8 +62,8 @@ def _with_dry_run(dry_run):
             :param str name: the method name to print
             """
 
-            def print_message(*args):
-                print(f"Mocking {name}: {args}")
+            def print_message(*args, **kwargs):
+                print(f"Mocking {name}: {args} {kwargs}")
 
             return print_message
 
@@ -120,7 +120,12 @@ class RustCrates:
 
     @staticmethod
     def set_up_subcommand(
-        subcmd, subparsers, target_func, *, add_github_release_option=False
+        subcmd,
+        subparsers,
+        target_func,
+        *,
+        add_github_release_option=False,
+        add_vendor_option=False,
     ):
         """
         Set up subcommand parsers
@@ -128,6 +133,7 @@ class RustCrates:
         :param argparse subparsers: the subparsers variable
         :param function target_func: the target function to call
         :param bool add_github_release_option: whether to pass no-github-release option
+        :param bool add_vendor_option: whether to allow no-vendor option
         """
         new_subparser = subparsers.add_parser(
             subcmd, help=f"Create a release for {subcmd}."
@@ -162,6 +168,17 @@ class RustCrates:
         else:
             new_subparser.set_defaults(no_github_release=True)
 
+        if add_vendor_option:
+            new_subparser.add_argument(
+                "--no-vendor",
+                action="store_true",
+                default=False,
+                dest="no_vendor",
+                help="Do not make a vendor tarfile",
+            )
+        else:
+            new_subparser.set_defaults(no_vendor=True)
+
     @staticmethod
     def tag_rust_library(namespace, name):
         """
@@ -193,6 +210,15 @@ class RustCrates:
         finally:
             subprocess.run(["cargo", "clean"], check=True)
 
+        additional_assets = []
+        if not namespace.no_vendor:
+            r_v = ReleaseVersion(release_version, None)
+            (vendor_tarfile_name, _) = vendor(manifest_abs_path, r_v)
+            additional_assets = [vendor_tarfile_name]
+
+            vendor_tarfile_abs_path = os.path.abspath(vendor_tarfile_name)
+            subprocess.run(["sha512sum", vendor_tarfile_abs_path], check=True)
+
         if namespace.no_tag:
             return
 
@@ -214,7 +240,13 @@ class RustCrates:
 
         dry_run_caller(
             "__main__.create_release",
-            lambda: create_release(repository, tag, release_version, changelog_url),
+            lambda: create_release(
+                repository,
+                tag,
+                release_version,
+                changelog_url,
+                additional_assets=additional_assets,
+            ),
             skip=namespace.no_github_release,
         )
 
@@ -250,7 +282,13 @@ def _get_parser():
 
     subparsers = parser.add_subparsers(title="subcommands")
 
-    RustCrates.set_up_subcommand("stratisd", subparsers, _stratisd_release)
+    RustCrates.set_up_subcommand(
+        "stratisd",
+        subparsers,
+        _stratisd_release,
+        add_github_release_option=True,
+        add_vendor_option=True,
+    )
 
     RustCrates.set_up_subcommand(
         "devicemapper-rs",
@@ -361,41 +399,7 @@ def _stratisd_release(namespace):
     """
     Create a stratisd release.
     """
-    manifest_abs_path = os.path.abspath(MANIFEST_PATH)
-    if not os.path.exists(manifest_abs_path):
-        raise RuntimeError(
-            "Need script to run at top-level of package, in same directory as Cargo.toml"
-        )
-
-    (release_version, repository) = get_package_info(manifest_abs_path, "stratisd")
-
-    r_v = ReleaseVersion(release_version, None)
-    (vendor_tarfile_name, _) = vendor(manifest_abs_path, r_v)
-    vendor_tarfile_abs_path = os.path.abspath(vendor_tarfile_name)
-    subprocess.run(["sha512sum", vendor_tarfile_abs_path], check=True)
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
-
-    changelog_url = get_changelog_url(repository.geturl(), get_branch())
-
-    release = create_release(repository, tag, release_version, changelog_url)
-
-    release.upload_asset(vendor_tarfile_name, label=vendor_tarfile_name)
-
-    if namespace.no_publish:
-        return
-
-    _publish()
+    return RustCrates.tag_rust_library(namespace, "stratisd")
 
 
 def _devicemapper_rs_release(namespace):
