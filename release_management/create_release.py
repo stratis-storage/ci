@@ -125,6 +125,7 @@ class RustCrates:
         *,
         add_github_release_option=False,
         add_vendor_option=False,
+        subcmd_aliases=None,
     ):
         """
         Set up subcommand parsers
@@ -133,8 +134,11 @@ class RustCrates:
         :param bool add_github_release_option: whether to pass no-github-release option
         :param bool add_vendor_option: whether to allow no-vendor option
         """
+
+        subcmd_aliases = [] if subcmd_aliases is None else subcmd_aliases
+
         new_subparser = subparsers.add_parser(
-            subcmd, help=f"Create a release for {subcmd}."
+            subcmd, help=f"Create a release for {subcmd}.", aliases=subcmd_aliases
         )
 
         new_subparser.set_defaults(
@@ -293,11 +297,11 @@ def _get_parser():
         "devicemapper",
         subparsers,
         add_github_release_option=True,
+        subcmd_aliases=["devicemapper-rs"],
     )
 
     RustCrates.set_up_subcommand(
-        "devicemapper-sys",
-        subparsers,
+        "devicemapper-sys", subparsers, subcmd_aliases=["devicemapper-rs-sys"]
     )
 
     RustCrates.set_up_subcommand(
