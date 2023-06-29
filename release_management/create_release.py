@@ -393,14 +393,14 @@ def main():
     return 0
 
 
-def _tag_python_library(namespace, git_url):
+def _tag_python_library(namespace, name):
     """
     Tag a Python library.
 
     :param namespace: parser namespace
-    :param str git_url: git URL
+    :param str name: package_name
     """
-    (release_version, repository) = get_python_package_info(git_url)
+    (release_version, repository) = get_python_package_info(name)
 
     if namespace.no_tag:
         return
@@ -420,9 +420,7 @@ def _stratis_cli_release(namespace):
     Create a stratis-cli release.
     """
 
-    (release_version, repository) = get_python_package_info(
-        "https://github.com/stratis-storage/stratis-cli"
-    )
+    (release_version, repository) = get_python_package_info("stratis-cli")
 
     if namespace.no_tag:
         return
@@ -447,48 +445,42 @@ def _dbus_python_client_gen_release(namespace):
     """
     Create a dbus_python_clietn_gen release.
     """
-    _tag_python_library(
-        namespace, "https://github.com/stratis-storage/dbus-python-client-gen"
-    )
+    _tag_python_library(namespace, "dbus-python-client-gen")
 
 
 def _dbus_client_gen_release(namespace):
     """
     Create a dbus_client_gen release.
     """
-    _tag_python_library(namespace, "https://github.com/stratis-storage/dbus-client-gen")
+    _tag_python_library(namespace, "dbus-client-gen")
 
 
 def _into_dbus_python_release(namespace):
     """
     Create a into_dbus_python release.
     """
-    _tag_python_library(
-        namespace, "https://github.com/stratis-storage/into-dbus-python"
-    )
+    _tag_python_library(namespace, "into-dbus-python")
 
 
 def _dbus_signature_pyparsing_release(namespace):
     """
     Create a into_dbus_python release.
     """
-    _tag_python_library(
-        namespace, "https://github.com/stratis-storage/dbus-signature-pyparsing"
-    )
+    _tag_python_library(namespace, "dbus-signature-pyparsing")
 
 
 def _justbases_release(namespace):
     """
     Create a justbases release.
     """
-    _tag_python_library(namespace, "https://github.com/mulkieran/justbases")
+    _tag_python_library(namespace, "justbases")
 
 
 def _justbytes_release(namespace):
     """
     Create a justbytes release.
     """
-    _tag_python_library(namespace, "https://github.com/mulkieran/justbytes")
+    _tag_python_library(namespace, "justbytes")
 
 
 def _pyudev_release(namespace):
@@ -496,7 +488,7 @@ def _pyudev_release(namespace):
     Create a pyudev release.
     """
 
-    _tag_python_library(namespace, "https://github.com/pyudev/pyudev")
+    _tag_python_library(namespace, "pyudev")
 
 
 def _testing_release(namespace):
