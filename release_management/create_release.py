@@ -261,6 +261,83 @@ class RustCrates:
         )
 
 
+class PythonPackages:
+    """
+    Methods for assisting in building and releasing Python packages.
+    """
+
+    @staticmethod
+    def set_up_subcommand(subcmd, subparsers, *, add_github_release_option=False):
+        """
+        Set up subcommand parsers
+        :param str subcmd: the name of the subcommand
+        :param argparse subparsers: the subparsers variable
+        :param bool add_github_release_option: whether to pass no-github-release option
+        """
+        new_subparser = subparsers.add_parser(
+            subcmd, help=f"Create a release for {subcmd}"
+        )
+        new_subparser.set_defaults(
+            func=lambda namespace: PythonPackages.tag_python_library(namespace, subcmd)
+        )
+
+        if add_github_release_option:
+            new_subparser.add_argument(
+                "--no-github-release",
+                action="store_true",
+                default=False,
+                dest="no_github_release",
+                help="Do not release to GitHub",
+            )
+        else:
+            new_subparser.set_defaults(no_github_release=True)
+
+        new_subparser.add_argument(
+            "--dry-run",
+            action="store_true",
+            default=False,
+            dest="dry_run",
+            help="Only report actions, do not do them",
+        )
+
+    @staticmethod
+    def tag_python_library(namespace, name):
+        """
+        Tag a Python library.
+
+        :param namespace: parser namespace
+        :param str name: package_name
+        """
+        dry_run_caller = _with_dry_run(namespace.dry_run)
+
+        (release_version, repository) = get_python_package_info(name)
+
+        if namespace.no_tag:
+            return
+
+        tag = f"v{release_version}"
+
+        dry_run_caller(
+            "__main__.set_tag",
+            lambda: set_tag(tag, f"{name} version {release_version}"),
+        )
+
+        if namespace.no_release:
+            return
+
+        dry_run_caller(
+            "__main__._push_tag", lambda: _push_tag(repository.geturl(), tag)
+        )
+
+        changelog_url = get_changelog_url(repository.geturl(), get_branch())
+
+        dry_run_caller(
+            "__main__.create_release",
+            lambda: create_release(repository, tag, release_version, changelog_url),
+            skip=namespace.no_github_release,
+        )
+
+
 def _get_parser():
     """
     Build parser
@@ -322,51 +399,23 @@ def _get_parser():
 
     RustCrates.set_up_subcommand("stratisd_proc_macros", subparsers)
 
-    stratis_cli_parser = subparsers.add_parser(
-        "stratis-cli", help="Create a stratis-cli release"
+    PythonPackages.set_up_subcommand(
+        "stratis-cli", subparsers, add_github_release_option=True
     )
 
-    stratis_cli_parser.set_defaults(func=_stratis_cli_release)
+    PythonPackages.set_up_subcommand("pyudev", subparsers)
 
-    pyudev_parser = subparsers.add_parser("pyudev", help="Create a pyudev release")
+    PythonPackages.set_up_subcommand("dbus-python-client-gen", subparsers)
 
-    pyudev_parser.set_defaults(func=_pyudev_release)
+    PythonPackages.set_up_subcommand("dbus-client-gen", subparsers)
 
-    dbus_python_client_gen_parser = subparsers.add_parser(
-        "dbus-python-client-gen", help="Create a dbus-python-client-gen release"
-    )
+    PythonPackages.set_up_subcommand("into-dbus-python", subparsers)
 
-    dbus_python_client_gen_parser.set_defaults(func=_dbus_python_client_gen_release)
+    PythonPackages.set_up_subcommand("dbus-signature-pyparsing", subparsers)
 
-    dbus_client_gen_parser = subparsers.add_parser(
-        "dbus-client-gen", help="Create a dbus-client-gen release"
-    )
+    PythonPackages.set_up_subcommand("justbases", subparsers)
 
-    dbus_client_gen_parser.set_defaults(func=_dbus_client_gen_release)
-
-    into_dbus_python_parser = subparsers.add_parser(
-        "into-dbus-python", help="Create a into-dbus-python release"
-    )
-
-    into_dbus_python_parser.set_defaults(func=_into_dbus_python_release)
-
-    dbus_signature_pyparsing_parser = subparsers.add_parser(
-        "dbus-signature-pyparsing", help="Create a dbus-signature-pyparsing release"
-    )
-
-    dbus_signature_pyparsing_parser.set_defaults(func=_dbus_signature_pyparsing_release)
-
-    justbases_parser = subparsers.add_parser(
-        "justbases", help="Create a into-dbus-python release"
-    )
-
-    justbases_parser.set_defaults(func=_justbases_release)
-
-    justbytes_parser = subparsers.add_parser(
-        "justbytes", help="Create a into-dbus-python release"
-    )
-
-    justbytes_parser.set_defaults(func=_justbytes_release)
+    PythonPackages.set_up_subcommand("justbytes", subparsers)
 
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
     testing_parser.add_argument(
@@ -390,104 +439,6 @@ def main():
     namespace.func(namespace)
 
     return 0
-
-
-def _tag_python_library(namespace, name):
-    """
-    Tag a Python library.
-
-    :param namespace: parser namespace
-    :param str name: package_name
-    """
-    (release_version, repository) = get_python_package_info(name)
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag(repository.geturl(), tag)
-
-
-def _stratis_cli_release(namespace):
-    """
-    Create a stratis-cli release.
-    """
-
-    (release_version, repository) = get_python_package_info("stratis-cli")
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    repository_url = repository.geturl()
-
-    _push_tag(repository_url, tag)
-
-    changelog_url = get_changelog_url(repository_url, get_branch())
-
-    create_release(repository, tag, release_version, changelog_url)
-
-
-def _dbus_python_client_gen_release(namespace):
-    """
-    Create a dbus_python_clietn_gen release.
-    """
-    _tag_python_library(namespace, "dbus-python-client-gen")
-
-
-def _dbus_client_gen_release(namespace):
-    """
-    Create a dbus_client_gen release.
-    """
-    _tag_python_library(namespace, "dbus-client-gen")
-
-
-def _into_dbus_python_release(namespace):
-    """
-    Create a into_dbus_python release.
-    """
-    _tag_python_library(namespace, "into-dbus-python")
-
-
-def _dbus_signature_pyparsing_release(namespace):
-    """
-    Create a into_dbus_python release.
-    """
-    _tag_python_library(namespace, "dbus-signature-pyparsing")
-
-
-def _justbases_release(namespace):
-    """
-    Create a justbases release.
-    """
-    _tag_python_library(namespace, "justbases")
-
-
-def _justbytes_release(namespace):
-    """
-    Create a justbytes release.
-    """
-    _tag_python_library(namespace, "justbytes")
-
-
-def _pyudev_release(namespace):
-    """
-    Create a pyudev release.
-    """
-
-    _tag_python_library(namespace, "pyudev")
 
 
 def _testing_release(namespace):
