@@ -136,9 +136,7 @@ def _stratis_cli_artifacts(namespace):
     output_path = namespace.output_dir
     os.makedirs(output_path, exist_ok=True)
 
-    (release_version, _) = get_python_package_info(
-        "https://github.com/stratis-storage/stratis-cli"
-    )
+    (release_version, _) = get_python_package_info("stratis-cli")
 
     if release_version != namespace.version:
         raise RuntimeError("Version mismatch.")
