@@ -63,16 +63,24 @@ class ReleaseVersion:
         return self.base
 
 
-def get_python_package_info(github_url):
+def get_python_package_info(name):
     """
     Get info about the python package.
 
-    :param str github_url: the github URL
+    :param str name: the project name
     :returns: str * ParseResult
     """
+    command = ["python", "setup.py", "--name"]
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        assert proc.stdout.readline().strip().decode("utf-8") == name
+
     command = ["python", "setup.py", "--version"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         release_version = proc.stdout.readline().strip().decode("utf-8")
+
+    command = ["python", "setup.py", "--url"]
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        github_url = proc.stdout.readline().strip().decode("utf-8")
 
     github_repo = urlparse(github_url)
     assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
