@@ -261,6 +261,25 @@ class RustCrates:
         )
 
 
+class PythonPackages:  # pylint: disable=too-few-public-methods
+    """
+    Methods for assisting in building and releasing Python packages.
+    """
+
+    @staticmethod
+    def set_up_subcommand(subcmd, subparsers, target_func):
+        """
+        Set up subcommand parsers
+        :param str subcmd: the name of the subcommand
+        :param argparse subparsers: the subparsers variable
+        :param function target_func: the target function to call
+        """
+        new_subparser = subparsers.add_parser(
+            subcmd, help=f"Create a release for {subcmd}"
+        )
+        new_subparser.set_defaults(func=target_func)
+
+
 def _get_parser():
     """
     Build parser
