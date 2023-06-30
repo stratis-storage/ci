@@ -21,7 +21,6 @@ Make a GitHub Draft release.
 import argparse
 import os
 import subprocess
-import sys
 from unittest.mock import patch
 
 # isort: THIRDPARTY
@@ -512,8 +511,4 @@ def _testing_release(namespace):
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as err:  # pylint: disable=broad-except
-        print(err)
-        sys.exit(1)
+    main()
