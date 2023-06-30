@@ -369,11 +369,9 @@ def _get_parser():
 
     into_dbus_python_parser.set_defaults(func=_into_dbus_python_release)
 
-    dbus_signature_pyparsing_parser = subparsers.add_parser(
-        "dbus-signature-pyparsing", help="Create a dbus-signature-pyparsing release"
+    PythonPackages.set_up_subcommand(
+        "dbus-signature-pyparsing", subparsers, _dbus_signature_pyparsing_release
     )
-
-    dbus_signature_pyparsing_parser.set_defaults(func=_dbus_signature_pyparsing_release)
 
     PythonPackages.set_up_subcommand("justbases", subparsers, _justbases_release)
 
