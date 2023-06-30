@@ -377,11 +377,7 @@ def _get_parser():
 
     PythonPackages.set_up_subcommand("justbases", subparsers, _justbases_release)
 
-    justbytes_parser = subparsers.add_parser(
-        "justbytes", help="Create a into-dbus-python release"
-    )
-
-    justbytes_parser.set_defaults(func=_justbytes_release)
+    PythonPackages.set_up_subcommand("justbytes", subparsers, _justbytes_release)
 
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
     testing_parser.add_argument(
