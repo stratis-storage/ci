@@ -375,11 +375,7 @@ def _get_parser():
 
     dbus_signature_pyparsing_parser.set_defaults(func=_dbus_signature_pyparsing_release)
 
-    justbases_parser = subparsers.add_parser(
-        "justbases", help="Create a into-dbus-python release"
-    )
-
-    justbases_parser.set_defaults(func=_justbases_release)
+    PythonPackages.set_up_subcommand("justbases", subparsers, _justbases_release)
 
     justbytes_parser = subparsers.add_parser(
         "justbytes", help="Create a into-dbus-python release"
