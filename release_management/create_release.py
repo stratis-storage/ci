@@ -417,6 +417,8 @@ def _get_parser():
 
     PythonPackages.set_up_subcommand("justbytes", subparsers)
 
+    PythonPackages.set_up_subcommand("hs-dbus-signature", subparsers)
+
     testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
     testing_parser.add_argument(
         "release", action="store", type=Version, help="release_version"
