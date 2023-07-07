@@ -23,9 +23,6 @@ import os
 import subprocess
 from unittest.mock import patch
 
-# isort: THIRDPARTY
-from semantic_version import Version
-
 # isort: LOCAL
 from _utils import (
     MANIFEST_PATH,
@@ -419,12 +416,7 @@ def _get_parser():
 
     PythonPackages.set_up_subcommand("hs-dbus-signature", subparsers)
 
-    testing_parser = subparsers.add_parser("testing", help="Create a testing tag")
-    testing_parser.add_argument(
-        "release", action="store", type=Version, help="release_version"
-    )
-
-    testing_parser.set_defaults(func=_testing_release)
+    PythonPackages.set_up_subcommand("testing", subparsers)
 
     return parser
 
@@ -441,26 +433,6 @@ def main():
     namespace.func(namespace)
 
     return 0
-
-
-def _testing_release(namespace):
-    """
-    Tag a testing release.
-    """
-
-    release_version = namespace.release
-
-    if namespace.no_tag:
-        return
-
-    tag = f"v{release_version}"
-
-    set_tag(tag, f"version {release_version}")
-
-    if namespace.no_release:
-        return
-
-    _push_tag("https://github.com/stratis-storage/testing", tag)
 
 
 if __name__ == "__main__":
