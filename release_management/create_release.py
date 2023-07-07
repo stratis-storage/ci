@@ -100,15 +100,6 @@ def _push_tag(repository_url, tag):
     )
 
 
-def _publish():
-    """
-    Run git commands to publish a crate to crates.io.
-    """
-    subprocess.run(["git", "clean", "-xdf"], check=True)
-    subprocess.run(["cargo", "clean"], check=True)
-    subprocess.run(["cargo", "publish"], check=True)
-
-
 class RustCrates:
     """
     Methods for assisting in building and releasing Rust crates.
@@ -254,8 +245,19 @@ class RustCrates:
         # The lambda is necessary in order to prevent the interpreter from
         # resolving _publish before the mock method is put into place.
         dry_run_caller(
-            "__main__._publish", lambda: _publish(), skip=namespace.no_publish
+            "__main__.RustCrates._publish",
+            lambda: RustCrates._publish(),
+            skip=namespace.no_publish,
         )
+
+    @staticmethod
+    def _publish():
+        """
+        Run git commands to publish a crate to crates.io.
+        """
+        subprocess.run(["git", "clean", "-xdf"], check=True)
+        subprocess.run(["cargo", "clean"], check=True)
+        subprocess.run(["cargo", "publish"], check=True)
 
 
 class PythonPackages:
