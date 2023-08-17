@@ -219,12 +219,13 @@ def create_release(
     return release
 
 
-def vendor(manifest_abs_path, release_version):
+def vendor(manifest_abs_path, release_version, *, filterer=False):
     """
     Makes a vendor tarfile, suitable for uploading.
 
     :param str manifest_abs_path: manifest path (absolute)
     :param ReleaseVersion release_version: the release version
+    :param bool filterer: filter dependencies in vendor tarfile
     :return: name of vendored tarfile and path of crate relative to manifest
     :rtype: str * str
     """
@@ -248,16 +249,27 @@ def vendor(manifest_abs_path, release_version):
         "Cargo.toml",
     )
 
-    subprocess.run(
-        [
-            "cargo",
-            "vendor",
-            "--quiet",
-            f"--manifest-path={package_manifest}",
-            vendor_dir,
-        ],
-        check=True,
-    )
+    if filterer:
+        subprocess.run(
+            [
+                "cargo",
+                "vendor-filterer",
+                f"--manifest-path={package_manifest}",
+                vendor_dir,
+            ],
+            check=True,
+        )
+    else:
+        subprocess.run(
+            [
+                "cargo",
+                "vendor",
+                "--quiet",
+                f"--manifest-path={package_manifest}",
+                vendor_dir,
+            ],
+            check=True,
+        )
 
     vendor_tarfile_name = f"stratisd-{release_version}-vendor.tar.gz"
 

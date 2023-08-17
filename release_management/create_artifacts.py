@@ -67,6 +67,13 @@ def main():
         default=False,
         help="do automatic actions for a pre-release version",
     )
+    parser.add_argument(
+        "--vendor-method",
+        action="store",
+        help="Method of Rust vendoring",
+        choices=["standard", "filtered"],
+        default="standard",
+    )
 
     subparsers = parser.add_subparsers(title="subcommands")
 
@@ -119,12 +126,15 @@ def _stratisd_artifacts(namespace):
 
     release_version = ReleaseVersion(source_version, suffix=pre_release_suffix)
 
+    filtered = namespace.vendor_method == "filtered"
+
     source_tarfile_path = make_source_tarball("stratisd", release_version, output_path)
     print(os.path.relpath(source_tarfile_path))
 
     (vendor_tarfile_name, cargo_crate_path) = vendor(
         manifest_abs_path,
         release_version,
+        filterer=filtered,
     )
 
     crate_path = os.path.join(
