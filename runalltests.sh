@@ -20,7 +20,7 @@ chmod +x install_rustup.sh
 # shellcheck source=/dev/null
 source $HOME/.cargo/env
 
-rustup default 1.71.0
+rustup default 1.71.1
 
 # Then, choose the directory of the test to be executed, and prep
 # the $WORKSPACE environment variable.
