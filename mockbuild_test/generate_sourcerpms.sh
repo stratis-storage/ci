@@ -29,7 +29,7 @@ case $DIST_RELEASE in
 	;;
 
 "fedora-latest")
-	MOCKCONFIG="/etc/mock/fedora-36-x86_64.cfg"
+	MOCKCONFIG="/etc/mock/fedora-38-x86_64.cfg"
 	;;
 
 *)
