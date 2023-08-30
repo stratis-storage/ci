@@ -133,14 +133,6 @@ class RustCrates:
         )
 
         new_subparser.add_argument(
-            "--dry-run",
-            action="store_true",
-            default=False,
-            dest="dry_run",
-            help="Only report actions, do not do them",
-        )
-
-        new_subparser.add_argument(
             "--no-publish",
             action="store_true",
             default=False,
@@ -291,14 +283,6 @@ class PythonPackages:
         else:
             new_subparser.set_defaults(no_github_release=True)
 
-        new_subparser.add_argument(
-            "--dry-run",
-            action="store_true",
-            default=False,
-            dest="dry_run",
-            help="Only report actions, do not do them",
-        )
-
     @staticmethod
     def tag_python_library(namespace, name):
         """
@@ -342,6 +326,14 @@ def _get_parser():
     Build parser
     """
     parser = argparse.ArgumentParser(description="Create a GitHub Draft release.")
+
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=False,
+        dest="dry_run",
+        help="Only report actions, do not do them",
+    )
 
     parser.add_argument(
         "--no-tag",
