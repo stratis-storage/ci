@@ -133,14 +133,6 @@ class RustCrates:
         )
 
         new_subparser.add_argument(
-            "--dry-run",
-            action="store_true",
-            default=False,
-            dest="dry_run",
-            help="Only report actions, do not do them",
-        )
-
-        new_subparser.add_argument(
             "--no-publish",
             action="store_true",
             default=False,
@@ -291,14 +283,6 @@ class PythonPackages:
         else:
             new_subparser.set_defaults(no_github_release=True)
 
-        new_subparser.add_argument(
-            "--dry-run",
-            action="store_true",
-            default=False,
-            dest="dry_run",
-            help="Only report actions, do not do them",
-        )
-
     @staticmethod
     def tag_python_library(namespace, name):
         """
@@ -337,29 +321,7 @@ class PythonPackages:
         )
 
 
-def _get_parser():
-    """
-    Build parser
-    """
-    parser = argparse.ArgumentParser(description="Create a GitHub Draft release.")
-
-    parser.add_argument(
-        "--no-tag",
-        action="store_true",
-        default=False,
-        dest="no_tag",
-        help="only create artifacts",
-    )
-
-    parser.add_argument(
-        "--no-release",
-        action="store_true",
-        default=False,
-        dest="no_release",
-        help="stop before pushing any changes to GitHub repo",
-    )
-
-    subparsers = parser.add_subparsers(title="subcommands")
+def _create_rust_subcommands(subparsers):
 
     RustCrates.set_up_subcommand(
         "stratisd",
@@ -398,6 +360,9 @@ def _get_parser():
 
     RustCrates.set_up_subcommand("stratisd_proc_macros", subparsers)
 
+
+def _create_python_subcommands(subparsers):
+
     PythonPackages.set_up_subcommand(
         "stratis-cli", subparsers, add_github_release_option=True
     )
@@ -419,6 +384,51 @@ def _get_parser():
     PythonPackages.set_up_subcommand("hs-dbus-signature", subparsers)
 
     PythonPackages.set_up_subcommand("testing", subparsers)
+
+
+def _get_parser():
+    """
+    Build parser
+    """
+    parser = argparse.ArgumentParser(description="Create a GitHub Draft release.")
+
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        default=False,
+        dest="dry_run",
+        help="Only report actions, do not do them",
+    )
+
+    parser.add_argument(
+        "--no-tag",
+        action="store_true",
+        default=False,
+        dest="no_tag",
+        help="only create artifacts",
+    )
+
+    parser.add_argument(
+        "--no-release",
+        action="store_true",
+        default=False,
+        dest="no_release",
+        help="stop before pushing any changes to GitHub repo",
+    )
+
+    subparsers = parser.add_subparsers(title="subcommands")
+
+    rust_subparser = subparsers.add_parser(
+        "rust", help="Create a release for a rust package."
+    )
+
+    _create_rust_subcommands(rust_subparser)
+
+    python_subparser = subparsers.add_parser(
+        "python", help="Create a release for a python package."
+    )
+
+    _create_python_subcommands(python_subparser)
 
     return parser
 
