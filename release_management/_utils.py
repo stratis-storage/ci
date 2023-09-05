@@ -70,15 +70,15 @@ def get_python_package_info(name):
     :param str name: the project name
     :returns: str * ParseResult
     """
-    command = ["python", "setup.py", "--name"]
+    command = ["python3", "setup.py", "--name"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         assert proc.stdout.readline().strip().decode("utf-8") == name
 
-    command = ["python", "setup.py", "--version"]
+    command = ["python3", "setup.py", "--version"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         release_version = proc.stdout.readline().strip().decode("utf-8")
 
-    command = ["python", "setup.py", "--url"]
+    command = ["python3", "setup.py", "--url"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         github_url = proc.stdout.readline().strip().decode("utf-8")
 
