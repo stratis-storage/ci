@@ -19,7 +19,8 @@ BuildRequires:  python3-packaging
 BuildRequires:  python3-psutil
 BuildRequires:  python3-wcwidth
 %endif
-# It runs without, but totally useless
+
+# Require the version of stratisd that supports a compatible D-Bus interface
 Requires:       (stratisd >= 3.6.0 with stratisd < 4.0.0)
 
 # Exclude the same arches for stratis-cli as are excluded for stratisd
