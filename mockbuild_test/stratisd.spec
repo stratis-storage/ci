@@ -5,7 +5,7 @@
 
 Name:           stratisd
 Version:        3.6.0
-Release:        dev%{?dist}
+Release:        D%{?dist}
 Summary:        Daemon that manages block devices to create filesystems
 
 License:        MPL-2.0

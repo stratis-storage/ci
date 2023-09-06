@@ -20,13 +20,14 @@ Create artifacts for packaging tests.
 # isort: STDLIB
 import argparse
 import os
-import subprocess
 import sys
 
 # isort: LOCAL
 from _utils import (
     MANIFEST_PATH,
     ReleaseVersion,
+    calc_pre_release_suffix,
+    edit_specfile,
     get_package_info,
     get_python_package_info,
     make_source_tarball,
@@ -54,9 +55,17 @@ def main():
         type=os.path.abspath,
     )
     parser.add_argument(
-        "--pre-release-suffix",
+        "--specfile-path",
         action="store",
-        help="pre-release suffix to add to the version",
+        default=None,
+        help="path to specfile to edit",
+        type=lambda p: p if p is None else os.path.abspath(p),
+    )
+    parser.add_argument(
+        "--pre-release",
+        action="store_true",
+        default=False,
+        help="do automatic actions for a pre-release version",
     )
 
     subparsers = parser.add_subparsers(title="subcommands")
@@ -97,26 +106,45 @@ def _stratisd_artifacts(namespace):
     output_path = namespace.output_dir
     os.makedirs(output_path, exist_ok=True)
 
-    (release_version, _) = get_package_info(manifest_abs_path, "stratisd")
+    (source_version, _) = get_package_info(manifest_abs_path, "stratisd")
 
-    if release_version != namespace.version:
+    if source_version != namespace.version:
         raise RuntimeError("Version mismatch.")
 
-    r_v = ReleaseVersion(release_version, suffix=namespace.pre_release_suffix)
+    pre_release_suffix = calc_pre_release_suffix() if namespace.pre_release else None
 
-    source_tarfile = make_source_tarball("stratisd", r_v, output_path)
-    (vendor_tarfile_name, crate_path) = vendor(manifest_abs_path, r_v)
-    os.rename(vendor_tarfile_name, os.path.join(output_path, vendor_tarfile_name))
+    specfile_path = namespace.specfile_path
+    if specfile_path is None and pre_release_suffix is not None:
+        raise RuntimeError("must specify specfile using --specfile-path option")
 
-    source_vendor_tarfile = os.path.join(output_path, vendor_tarfile_name)
+    release_version = ReleaseVersion(source_version, suffix=pre_release_suffix)
 
-    crate_suffix_name = f"stratisd-{r_v.to_crate_str()}.crate"
-    source_crate = os.path.join(output_path, crate_suffix_name)
-    os.rename(crate_path, source_crate)
-    subprocess.run(["sha512sum", source_crate], check=True)
+    source_tarfile_path = make_source_tarball("stratisd", release_version, output_path)
+    print(os.path.relpath(source_tarfile_path))
 
-    subprocess.run(["sha512sum", source_tarfile], check=True)
-    subprocess.run(["sha512sum", source_vendor_tarfile], check=True)
+    (vendor_tarfile_name, cargo_crate_path) = vendor(
+        manifest_abs_path,
+        release_version,
+    )
+
+    crate_path = os.path.join(
+        output_path, f"stratisd-{release_version.to_crate_str()}.crate"
+    )
+
+    os.rename(cargo_crate_path, crate_path)
+
+    vendor_tarfile_path = os.path.join(output_path, vendor_tarfile_name)
+
+    os.rename(vendor_tarfile_name, vendor_tarfile_path)
+
+    edit_specfile(
+        specfile_path,
+        release_version=release_version,
+        sources=[
+            os.path.basename(path)
+            for path in [source_tarfile_path, vendor_tarfile_path, crate_path]
+        ],
+    )
 
 
 def _stratis_cli_artifacts(namespace):
@@ -126,14 +154,32 @@ def _stratis_cli_artifacts(namespace):
     output_path = namespace.output_dir
     os.makedirs(output_path, exist_ok=True)
 
-    (release_version, _) = get_python_package_info("stratis-cli")
+    (source_version, _) = get_python_package_info("stratis-cli")
 
-    if release_version != namespace.version:
+    if source_version != namespace.version:
         raise RuntimeError("Version mismatch.")
 
-    r_v = ReleaseVersion(release_version, suffix=namespace.pre_release_suffix)
+    pre_release_suffix = calc_pre_release_suffix() if namespace.pre_release else None
+    specfile_path = namespace.specfile_path
 
-    make_source_tarball("stratis-cli", r_v, output_path)
+    if specfile_path is None and pre_release_suffix is not None:
+        raise RuntimeError("must specify specfile using --specfile-path option")
+
+    release_version = ReleaseVersion(source_version, suffix=pre_release_suffix)
+
+    source_tarfile = make_source_tarball(
+        "stratis-cli",
+        release_version,
+        output_path,
+    )
+
+    edit_specfile(
+        specfile_path,
+        release_version=release_version,
+        sources=[os.path.basename(source_tarfile)],
+    )
+
+    print(os.path.relpath(source_tarfile))
 
 
 if __name__ == "__main__":

@@ -24,6 +24,7 @@ jobs:
               python3-pygithub
               python3-requests
               python3-semantic_version
+              python3-specfile
             task: lint
           - dependencies: >
               black
