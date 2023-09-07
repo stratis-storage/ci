@@ -95,7 +95,7 @@ Requires:     stratisd
 # previously extracted directory and its contents at the same time. Move the
 # newly created tar file to the SOURCE0 location.
 tar --transform="s/^stratisd\-stratisd-v/stratisd-/" --extract --file %{SOURCE0}
-tar --extract --overwrite --file %{SOURCE2}
+tar --directory=./stratisd-%{version} --strip-components=1 --extract --overwrite --file %{SOURCE2}
 tar --create --gzip --file %{SOURCE0}.newfile ./stratisd-%{version} --remove-files
 mv %{SOURCE0}.newfile %{SOURCE0}
 
