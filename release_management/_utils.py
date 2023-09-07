@@ -211,20 +211,19 @@ def vendor(manifest_abs_path, release_version):
     vendor_dir = "vendor"
 
     subprocess.run(
-        ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
+        ["cargo", "package", "--no-verify", f"--manifest-path={manifest_abs_path}"],
+        check=True,
     )
 
-    crate_subdir = os.path.join(
-        "target", "package", f"stratisd-{release_version.base_only()}"
-    )
+    stratis_package_name = f"stratisd-{release_version.base_only()}"
 
-    crate_path = os.path.join(
-        "target", "package", f"stratisd-{release_version.base_only()}.crate"
-    )
+    crate_path = os.path.join("target", "package", f"{stratis_package_name}.crate")
+
+    subprocess.run(["tar", "--extract", f"--file={crate_path}"], check=True)
 
     package_manifest = os.path.join(
         os.path.dirname(manifest_abs_path),
-        crate_subdir,
+        stratis_package_name,
         "Cargo.toml",
     )
 
