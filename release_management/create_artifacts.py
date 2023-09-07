@@ -110,11 +110,10 @@ def _stratisd_artifacts(namespace):
 
     source_vendor_tarfile = os.path.join(output_path, vendor_tarfile_name)
 
-    if crate_path is not None:
-        crate_suffix_name = f"stratisd-{r_v.to_crate_str()}.crate"
-        source_crate = os.path.join(output_path, crate_suffix_name)
-        os.rename(crate_path, source_crate)
-        subprocess.run(["sha512sum", source_crate], check=True)
+    crate_suffix_name = f"stratisd-{r_v.to_crate_str()}.crate"
+    source_crate = os.path.join(output_path, crate_suffix_name)
+    os.rename(crate_path, source_crate)
+    subprocess.run(["sha512sum", source_crate], check=True)
 
     subprocess.run(["sha512sum", source_tarfile], check=True)
     subprocess.run(["sha512sum", source_vendor_tarfile], check=True)
