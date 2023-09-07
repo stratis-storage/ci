@@ -67,13 +67,6 @@ def main():
 
     stratisd_parser.set_defaults(func=_stratisd_artifacts)
     stratisd_parser.add_argument("version", action="store", help="version")
-    stratisd_parser.add_argument(
-        "--omit-packaging",
-        action="store_true",
-        default=False,
-        dest="omit_packaging",
-        help="Do not package crate; use source Cargo.toml for vendoring.",
-    )
 
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Generate artifacts for a stratis-cli release."
@@ -112,9 +105,7 @@ def _stratisd_artifacts(namespace):
     r_v = ReleaseVersion(release_version, suffix=namespace.pre_release_suffix)
 
     source_tarfile = make_source_tarball("stratisd", r_v, output_path)
-    (vendor_tarfile_name, crate_path) = vendor(
-        manifest_abs_path, r_v, omit_packaging=namespace.omit_packaging
-    )
+    (vendor_tarfile_name, crate_path) = vendor(manifest_abs_path, r_v)
     os.rename(vendor_tarfile_name, os.path.join(output_path, vendor_tarfile_name))
 
     source_vendor_tarfile = os.path.join(output_path, vendor_tarfile_name)
