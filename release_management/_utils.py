@@ -198,41 +198,34 @@ def create_release(
     return release
 
 
-def vendor(manifest_abs_path, release_version, *, omit_packaging=False):
+def vendor(manifest_abs_path, release_version):
     """
     Makes a vendor tarfile, suitable for uploading.
 
     :param str manifest_abs_path: manifest path (absolute)
     :param ReleaseVersion release_version: the release version
-    :param bool omit_packaging. do not vendor packaged project
     :return: name of vendored tarfile and path of crate relative to manifest
-    :rtype: str * (str or NoneType)
+    :rtype: str * str
     """
 
     vendor_dir = "vendor"
 
-    crate_path = None
+    subprocess.run(
+        ["cargo", "package", "--no-verify", f"--manifest-path={manifest_abs_path}"],
+        check=True,
+    )
 
-    if omit_packaging:
-        package_manifest = manifest_abs_path
-    else:
-        subprocess.run(
-            ["cargo", "package", f"--manifest-path={manifest_abs_path}"], check=True
-        )
+    stratis_package_name = f"stratisd-{release_version.base_only()}"
 
-        crate_subdir = os.path.join(
-            "target", "package", f"stratisd-{release_version.base_only()}"
-        )
+    crate_path = os.path.join("target", "package", f"{stratis_package_name}.crate")
 
-        crate_path = os.path.join(
-            "target", "package", f"stratisd-{release_version.base_only()}.crate"
-        )
+    subprocess.run(["tar", "--extract", f"--file={crate_path}"], check=True)
 
-        package_manifest = os.path.join(
-            os.path.dirname(manifest_abs_path),
-            crate_subdir,
-            "Cargo.toml",
-        )
+    package_manifest = os.path.join(
+        os.path.dirname(manifest_abs_path),
+        stratis_package_name,
+        "Cargo.toml",
+    )
 
     subprocess.run(
         [
