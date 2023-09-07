@@ -421,13 +421,13 @@ def _get_parser():
 
     rust_subparser = subparsers.add_parser(
         "rust", help="Create a release for a rust package."
-    ).add_subparsers(title="rust")
+    ).add_subparsers(title="rust", required=True)
 
     _create_rust_subcommands(rust_subparser)
 
     python_subparser = subparsers.add_parser(
         "python", help="Create a release for a python package."
-    ).add_subparsers(title="python")
+    ).add_subparsers(title="python", required=True)
 
     _create_python_subcommands(python_subparser)
 
