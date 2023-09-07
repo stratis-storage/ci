@@ -37,7 +37,7 @@ class ReleaseVersion:
     Release version for the package.
     """
 
-    def __init__(self, base, suffix):
+    def __init__(self, base, *, suffix=None):
         """
         Initializer.
         :param str base: Base version

@@ -195,12 +195,13 @@ class RustCrates:
 
         additional_assets = []
         if not namespace.no_vendor:
-            r_v = ReleaseVersion(release_version, None)
-            (vendor_tarfile_name, _) = vendor(manifest_abs_path, r_v)
+            (vendor_tarfile_name, _) = vendor(
+                manifest_abs_path, ReleaseVersion(release_version)
+            )
+            subprocess.run(
+                ["sha512sum", os.path.abspath(vendor_tarfile_name)], check=True
+            )
             additional_assets = [vendor_tarfile_name]
-
-            vendor_tarfile_abs_path = os.path.abspath(vendor_tarfile_name)
-            subprocess.run(["sha512sum", vendor_tarfile_abs_path], check=True)
 
         if namespace.no_tag:
             return
@@ -420,13 +421,13 @@ def _get_parser():
 
     rust_subparser = subparsers.add_parser(
         "rust", help="Create a release for a rust package."
-    ).add_subparsers(title="rust")
+    ).add_subparsers(title="rust", required=True)
 
     _create_rust_subcommands(rust_subparser)
 
     python_subparser = subparsers.add_parser(
         "python", help="Create a release for a python package."
-    ).add_subparsers(title="python")
+    ).add_subparsers(title="python", required=True)
 
     _create_python_subcommands(python_subparser)
 
