@@ -117,7 +117,6 @@ mv %{SOURCE0}.newfile %{SOURCE0}
 %{__cargo} rustc %{?_smp_mflags} --release --bin=stratis-base32-decode --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
 %{__cargo} build %{?_smp_mflags} --release --bin=stratis-dumpmetadata --no-default-features --features engine,extras,min
 %else
-%cargo_license_summary -f engine,dbus_enabled,min,systemd_compat,extras,udev_scripts
 %{cargo_license -f engine,dbus_enabled,min,systemd_compat,extras,udev_scripts} > LICENSE.dependencies
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features engine,min,systemd_compat
