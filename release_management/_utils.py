@@ -235,7 +235,13 @@ def vendor(manifest_abs_path, release_version, *, omit_packaging=False):
         )
 
     subprocess.run(
-        ["cargo", "vendor", f"--manifest-path={package_manifest}", vendor_dir],
+        [
+            "cargo",
+            "vendor",
+            "--quiet",
+            f"--manifest-path={package_manifest}",
+            vendor_dir,
+        ],
         check=True,
     )
 
