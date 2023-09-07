@@ -195,7 +195,7 @@ class RustCrates:
 
         additional_assets = []
         if not namespace.no_vendor:
-            r_v = ReleaseVersion(release_version, None)
+            r_v = ReleaseVersion(release_version)
             (vendor_tarfile_name, _) = vendor(manifest_abs_path, r_v)
             additional_assets = [vendor_tarfile_name]
 

@@ -109,7 +109,7 @@ def _stratisd_artifacts(namespace):
     if release_version != namespace.version:
         raise RuntimeError("Version mismatch.")
 
-    r_v = ReleaseVersion(release_version, namespace.pre_release_suffix)
+    r_v = ReleaseVersion(release_version, suffix=namespace.pre_release_suffix)
 
     source_tarfile = make_source_tarball("stratisd", r_v, output_path)
     (vendor_tarfile_name, crate_path) = vendor(
@@ -141,7 +141,7 @@ def _stratis_cli_artifacts(namespace):
     if release_version != namespace.version:
         raise RuntimeError("Version mismatch.")
 
-    r_v = ReleaseVersion(release_version, namespace.pre_release_suffix)
+    r_v = ReleaseVersion(release_version, suffix=namespace.pre_release_suffix)
 
     make_source_tarball("stratis-cli", r_v, output_path)
 
