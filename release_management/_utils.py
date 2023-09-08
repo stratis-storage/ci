@@ -71,7 +71,7 @@ def calc_pre_release_suffix():
     :rtype: str
     :returns: standard pre-release suffix
     """
-    command = ["git", "rev-parse", "--short", "HEAD"]
+    command = ["git", "rev-parse", "--short=8", "HEAD"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         commit_hash = proc.stdout.readline().strip().decode("utf-8")
     return f"{datetime.today():%Y%m%d%H%M}git{commit_hash}"
