@@ -22,12 +22,14 @@ import json
 import os
 import subprocess
 import tarfile
+from datetime import datetime
 from getpass import getpass
 from urllib.parse import urlparse
 
 # isort: THIRDPARTY
 import requests
 from github import Github
+from specfile import specfile
 
 MANIFEST_PATH = "./Cargo.toml"
 
@@ -45,22 +47,52 @@ class ReleaseVersion:
         :type suffix: str or Nonetype
         """
         self.base = base
-        self.suffix = "" if suffix is None else suffix
+        self.suffix = suffix
 
     def __str__(self):
-        return self.base + self.suffix
+        return f"{self.base}{'' if self.suffix is None else '~' + self.suffix}"
 
     def to_crate_str(self):
         """
         Return the release version in a crates.io-friendly string.
         """
-        return (self.base + self.suffix).replace("~", "-")
+        return f"{self.base}{'' if self.suffix is None else '-' + self.suffix}"
 
     def base_only(self):
         """
         Return only the base.
         """
         return self.base
+
+
+def calc_pre_release_suffix():
+    """
+    Return a standard value for the pre-release suffix for the version
+    :rtype: str
+    :returns: standard pre-release suffix
+    """
+    command = ["git", "rev-parse", "--short", "HEAD"]
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        commit_hash = proc.stdout.readline().strip().decode("utf-8")
+    return f"{datetime.today():%Y%m%d%H%M}git{commit_hash}"
+
+
+def edit_specfile(specfile_path, *, release_version=None, sources=None):
+    """
+    Edit the specfile in place
+    :param specfile_path: abspath of specfile
+    :type specfile_path: str or NoneType
+    :param ReleaseVersion release_version: release version to set in spec file
+    :param sources: local source files
+    :type sources: list of str or NoneType
+    """
+    if specfile_path is not None:
+        with specfile.Specfile(specfile_path) as spec:
+            spec.version = str(release_version)
+            if sources is not None:
+                with spec.sources() as entries:  # pylint: disable=not-context-manager
+                    for index, value in enumerate(sources):
+                        entries[index].location = value
 
 
 def get_python_package_info(name):

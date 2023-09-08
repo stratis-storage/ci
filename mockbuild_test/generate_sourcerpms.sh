@@ -8,7 +8,6 @@ if ! groups | grep mock; then
 	exit 1
 fi
 
-DATECODE=$(date +%Y%m%d)
 DIST_RELEASE=$1
 
 STRATISD_SPEC_VERSION=$(rpmspec -q --srpm --qf "%{version}\n" stratisd.spec)
@@ -67,22 +66,14 @@ cd upstream
 git clone https://github.com/stratis-storage/stratisd
 git clone https://github.com/stratis-storage/stratis-cli
 cd stratisd
-STRATISD_HEADREV=$(git rev-parse --short HEAD)
-STRATISD_SUFFIX="~${DATECODE}git${STRATISD_HEADREV}"
-../../../release_management/create_artifacts.py ../../SOURCES/ --pre-release-suffix="${STRATISD_SUFFIX}" stratisd "$STRATISD_SPEC_VERSION"
+../../../release_management/create_artifacts.py ../../SOURCES/ --pre-release --specfile-path=../../SPECS/stratisd.spec stratisd "$STRATISD_SPEC_VERSION"
 cd ..
 cd stratis-cli
-STRATISCLI_HEADREV=$(git rev-parse --short HEAD)
-STRATISCLI_SUFFIX="~${DATECODE}git${STRATISCLI_HEADREV}"
-../../../release_management/create_artifacts.py ../../SOURCES/ --pre-release-suffix="${STRATISCLI_SUFFIX}" stratis-cli "$STRATISCLI_SPEC_VERSION"
+../../../release_management/create_artifacts.py ../../SOURCES/ --pre-release --specfile-path=../../SPECS/stratis-cli.spec stratis-cli "$STRATISCLI_SPEC_VERSION"
 cd ../..
 
-# Fix the "Requires: stratisd" line in stratis-cli.spec.
-sed --in-place -E "s/(^Requires.*stratisd.*)${STRATISD_SPEC_VERSION}/\1${STRATISD_SPEC_VERSION}${STRATISD_SUFFIX}/g" SPECS/stratis-cli.spec
-
-# Before running mock, the spec versions need to be changed.
-sed --in-place -E "s/(^Version.*)${STRATISD_SPEC_VERSION}/\1${STRATISD_SPEC_VERSION}${STRATISD_SUFFIX}/g" SPECS/stratisd.spec
-sed --in-place -E "s/(^Version.*)${STRATISCLI_SPEC_VERSION}/\1${STRATISCLI_SPEC_VERSION}${STRATISCLI_SUFFIX}/g" SPECS/stratis-cli.spec
+# Remove the "Requires: stratisd" line in stratis-cli.spec.
+sed -i "/Requires.*stratisd/d" SPECS/stratis-cli.spec
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratis-cli.spec --sources SOURCES/ --resultdir=SRPMS/stratis-cli/

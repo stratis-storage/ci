@@ -87,8 +87,8 @@ cd ../..
 
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratis-cli.spec --sources SOURCES/ --resultdir=SRPMS/stratis-cli/
-mock --rebuild -r $MOCKCONFIG SRPMS/stratisd/stratisd-"$STRATISD_SPEC_VERSION"-77.$DIST.src.rpm --resultdir=RPMS/stratisd/
-mock --rebuild -r $MOCKCONFIG SRPMS/stratis-cli/stratis-cli-"$STRATISCLI_SPEC_VERSION"-77.$DIST.src.rpm --resultdir=RPMS/stratis-cli/
+mock --rebuild -r $MOCKCONFIG SRPMS/stratisd/stratisd-"$STRATISD_SPEC_VERSION"-D.$DIST.src.rpm --resultdir=RPMS/stratisd/
+mock --rebuild -r $MOCKCONFIG SRPMS/stratis-cli/stratis-cli-"$STRATISCLI_SPEC_VERSION"-D.$DIST.src.rpm --resultdir=RPMS/stratis-cli/
 
 for package in stratisd stratis-cli; do
 	find RPMS -name "$package*.rpm" -exec cp -v -t output/$package {} +

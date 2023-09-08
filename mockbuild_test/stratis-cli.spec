@@ -1,6 +1,6 @@
 Name:           stratis-cli
 Version:        3.6.0
-Release:        77%{?dist}
+Release:        D%{?dist}
 Summary:        Command-line tool for interacting with the Stratis daemon
 
 License:        Apache-2.0
