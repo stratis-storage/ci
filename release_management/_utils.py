@@ -18,10 +18,10 @@ Calculates values useful for making a release.
 """
 
 # isort: STDLIB
-import json
 import os
 import subprocess
 import tarfile
+import tomllib
 from datetime import datetime
 from getpass import getpass
 from urllib.parse import urlparse
@@ -130,21 +130,10 @@ def get_package_info(manifest_abs_path, package_name):
     """
     assert os.path.isabs(manifest_abs_path)
 
-    command = [
-        "cargo",
-        "metadata",
-        "--format-version=1",
-        "--no-deps",
-        f"--manifest-path={manifest_abs_path}",
-    ]
+    with open(manifest_abs_path, "rb") as manifest:
+        metadata = tomllib.load(manifest)
 
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        metadata_str = proc.stdout.readline()
-
-    metadata = json.loads(metadata_str)
-    packages = metadata["packages"]
-    assert len(packages) == 1, "Unexpected Cargo metadata format"
-    package = packages[0]
+    package = metadata["package"]
     assert package["name"] == package_name, (
         f'crate name in Cargo.toml ({package["name"]}) != specified'
         f"package name ({package_name})"
