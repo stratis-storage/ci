@@ -20,7 +20,6 @@ Calculates values useful for making a release.
 # isort: STDLIB
 import os
 import subprocess
-import tarfile
 import tomllib
 from datetime import datetime
 from getpass import getpass
@@ -309,17 +308,16 @@ def make_source_tarball(package_name, release_version, output_dir):
 
     output_file = os.path.join(output_dir, f"{prefix}.tar.gz")
 
-    with tarfile.open(output_file, "w:gz") as tar:
-        for root, _, files in os.walk("."):
-            for filename in files:
-                name = os.path.normpath(os.path.join(root, filename))
-                if name.startswith(".git"):
-                    continue
-                tar.add(
-                    name,
-                    arcname=os.path.normpath(os.path.join(prefix, name)),
-                    recursive=False,
-                )
+    archive_cmd = [
+        "git",
+        "archive",
+        "--format=tar.gz",
+        f"--output={output_file}",
+        f"--prefix={prefix}/",
+        "HEAD",
+    ]
+
+    subprocess.run(archive_cmd, check=True)
 
     return output_file
 
