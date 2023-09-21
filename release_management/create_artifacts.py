@@ -67,13 +67,6 @@ def main():
         default=False,
         help="do automatic actions for a pre-release version",
     )
-    parser.add_argument(
-        "--vendor-method",
-        action="store",
-        help="Method of Rust vendoring",
-        choices=["standard", "filtered"],
-        default="standard",
-    )
 
     subparsers = parser.add_subparsers(title="subcommands")
 
@@ -83,6 +76,13 @@ def main():
 
     stratisd_parser.set_defaults(func=_stratisd_artifacts)
     stratisd_parser.add_argument("version", action="store", help="version")
+    stratisd_parser.add_argument(
+        "--vendor-method",
+        action="store",
+        help="Method of Rust vendoring",
+        choices=["standard", "filtered"],
+        default="standard",
+    )
 
     stratis_cli_parser = subparsers.add_parser(
         "stratis-cli", help="Generate artifacts for a stratis-cli release."
