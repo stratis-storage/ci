@@ -159,6 +159,13 @@ class RustCrates:
                 dest="no_vendor",
                 help="Do not make a vendor tarfile",
             )
+            new_subparser.add_argument(
+                "--vendor-method",
+                action="store",
+                help="Method of Rust vendoring",
+                choices=["standard", "filtered"],
+                default="standard",
+            )
         else:
             new_subparser.set_defaults(no_vendor=True)
 
@@ -195,8 +202,11 @@ class RustCrates:
 
         additional_assets = []
         if not namespace.no_vendor:
+            filtered = namespace.vendor_method == "filtered"
             (vendor_tarfile_name, _) = vendor(
-                manifest_abs_path, ReleaseVersion(release_version)
+                manifest_abs_path,
+                ReleaseVersion(release_version),
+                filterer=filtered,
             )
             subprocess.run(
                 ["sha512sum", os.path.abspath(vendor_tarfile_name)], check=True
