@@ -65,6 +65,7 @@ ExcludeArch:    i686
 
 Requires:     stratisd
 Requires:     dracut >= 051
+Requires:     systemd
 
 %description dracut
 %{summary}. This package should not be used in production.
