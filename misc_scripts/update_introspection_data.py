@@ -237,7 +237,7 @@ def _make_python_spec(proxies):
 
 def _print_python_spec(specs):
     """
-    Print spec formatted according to stratis-cli and black's requirments.
+    Print spec formatted according to stratis-cli and black's requirements.
 
     :param specs: the specification to print
     :type specs: dict of str * str

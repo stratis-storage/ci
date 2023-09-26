@@ -128,7 +128,7 @@ def main():
         help=help_text,
     )
 
-    help_text = "Ignore a dependency known to be higer than those available"
+    help_text = "Ignore a dependency known to be higher than those available"
     parser.add_argument(
         "--ignore-high",
         action="extend",
