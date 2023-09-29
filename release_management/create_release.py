@@ -333,7 +333,6 @@ class PythonPackages:
 
 
 def _create_rust_subcommands(subparsers):
-
     RustCrates.set_up_subcommand(
         "stratisd",
         subparsers,
@@ -373,7 +372,6 @@ def _create_rust_subcommands(subparsers):
 
 
 def _create_python_subcommands(subparsers):
-
     PythonPackages.set_up_subcommand(
         "stratis-cli", subparsers, add_github_release_option=True
     )

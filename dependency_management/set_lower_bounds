@@ -79,7 +79,7 @@ def _do_updates(explicit_dependencies, manifest_path):
 
         tried = []
         failed = []
-        for (crate, spec) in updatables:
+        for crate, spec in updatables:
             if str(spec) == "*":
                 continue
 
@@ -193,7 +193,7 @@ def main():
         ),
         file=sys.stderr,
     )
-    for (crate, version) in tried:
+    for crate, version in tried:
         print(f"{crate} could not be updated to {version}", file=sys.stderr)
     return 1
 

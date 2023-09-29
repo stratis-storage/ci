@@ -32,7 +32,6 @@ def search_file(search_key, old_verstring, new_verstring, filename):
 
     with open(filename, "r", encoding="utf-8") as file:
         for line in file:
-
             if search_key in line:
                 templine = line.replace(old_verstring, new_verstring)
                 if new_verstring not in templine:
