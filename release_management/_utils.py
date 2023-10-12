@@ -257,6 +257,7 @@ def vendor(manifest_abs_path, release_version, *, filterer=False):
                 vendor_dir,
             ],
             check=True,
+            stderr=subprocess.DEVNULL,
         )
     else:
         subprocess.run(
