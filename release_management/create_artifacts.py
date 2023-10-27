@@ -75,7 +75,6 @@ def main():
     )
 
     stratisd_parser.set_defaults(func=_stratisd_artifacts)
-    stratisd_parser.add_argument("version", action="store", help="version")
     stratisd_parser.add_argument(
         "--vendor-method",
         action="store",
@@ -89,7 +88,6 @@ def main():
     )
 
     stratis_cli_parser.set_defaults(func=_stratis_cli_artifacts)
-    stratis_cli_parser.add_argument("version", action="store", help="version")
 
     parser.set_defaults(func=lambda _: parser.error("missing sub-command"))
 
@@ -114,9 +112,6 @@ def _stratisd_artifacts(namespace):
     os.makedirs(output_path, exist_ok=True)
 
     (source_version, _) = get_package_info(manifest_abs_path, "stratisd")
-
-    if source_version != namespace.version:
-        raise RuntimeError("Version mismatch.")
 
     pre_release_suffix = calc_pre_release_suffix() if namespace.pre_release else None
 
@@ -165,9 +160,6 @@ def _stratis_cli_artifacts(namespace):
     os.makedirs(output_path, exist_ok=True)
 
     (source_version, _) = get_python_package_info("stratis-cli")
-
-    if source_version != namespace.version:
-        raise RuntimeError("Version mismatch.")
 
     pre_release_suffix = calc_pre_release_suffix() if namespace.pre_release else None
     specfile_path = namespace.specfile_path
