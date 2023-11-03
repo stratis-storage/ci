@@ -69,9 +69,6 @@ cd stratis-cli
 ../../../release_management/create_artifacts.py ../../SOURCES/ --pre-release --specfile-path=../../SPECS/stratis-cli.spec stratis-cli
 cd ../..
 
-# Remove the "Requires: stratisd" line in stratis-cli.spec.
-sed -i "/Requires.*stratisd/d" SPECS/stratis-cli.spec
-
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratisd.spec --sources SOURCES/ --resultdir=SRPMS/stratisd/
 mock --buildsrpm -r $MOCKCONFIG --spec SPECS/stratis-cli.spec --sources SOURCES/ --resultdir=SRPMS/stratis-cli/
 
