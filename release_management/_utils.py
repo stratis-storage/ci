@@ -76,7 +76,7 @@ def calc_pre_release_suffix():
     return f"{datetime.today():%Y%m%d%H%M}git{commit_hash}"
 
 
-def edit_specfile(specfile_path, *, release_version=None, sources=None):
+def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrary=None):
     """
     Edit the specfile in place
     :param specfile_path: abspath of specfile
@@ -84,6 +84,8 @@ def edit_specfile(specfile_path, *, release_version=None, sources=None):
     :param ReleaseVersion release_version: release version to set in spec file
     :param sources: local source files
     :type sources: list of str or NoneType
+    :param arbitrary: a function that takes the spec and does some action
+    :type arbitrary: Specfile -> NoneType
     """
     if specfile_path is not None:
         with specfile.Specfile(specfile_path) as spec:
@@ -92,6 +94,8 @@ def edit_specfile(specfile_path, *, release_version=None, sources=None):
                 with spec.sources() as entries:  # pylint: disable=not-context-manager
                     for index, value in enumerate(sources):
                         entries[index].location = value
+            if arbitrary is not None:
+                arbitrary(spec)
 
 
 def get_python_package_info(name):

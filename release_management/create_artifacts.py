@@ -175,10 +175,28 @@ def _stratis_cli_artifacts(namespace):
         output_path,
     )
 
+    def remove_stratisd_requires(spec):
+        """
+        Remove stratisd-related Requires line, if present.
+        """
+        with spec.tags() as tags:
+            index = next(
+                (
+                    index
+                    for index, tag in enumerate(tags)
+                    if tag.name == "Requires" and "stratisd" in tag.value
+                ),
+                None,
+            )
+
+            if index is not None:
+                del tags[index]
+
     edit_specfile(
         specfile_path,
         release_version=release_version,
         sources=[os.path.basename(source_tarfile)],
+        arbitrary=remove_stratisd_requires,
     )
 
     print(os.path.relpath(source_tarfile))
