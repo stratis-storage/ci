@@ -20,6 +20,7 @@ Calculates values useful for making a release.
 # isort: STDLIB
 import os
 import subprocess
+import tarfile
 import tomllib
 from datetime import datetime
 from getpass import getpass
@@ -74,6 +75,52 @@ def calc_pre_release_suffix():
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
         commit_hash = proc.stdout.readline().strip().decode("utf-8")
     return f"{datetime.today():%Y%m%d%H%M}git{commit_hash}"
+
+
+def get_bundled_provides(vendor_tarfile):
+    """
+    Given absolute path of vendor tarfile generate bundled provides.
+    """
+    with tarfile.open(vendor_tarfile, "r") as tar:
+        for member in tar.getmembers():
+            components = member.name.split("/")
+
+            if (
+                len(components) == 3
+                and components[0] == "vendor"
+                and components[2] == "Cargo.toml"
+            ):
+                manifest = tar.extractfile(member)
+                metadata = tomllib.load(manifest)
+                directory_name = components[1]
+                package = metadata["package"]
+                package_version = package["version"]
+                package_name = package["name"]
+                if directory_name != package_name and (
+                    not directory_name.startswith(package_name)
+                    and directory_name[-len(package_version) :] != package_version
+                ):
+                    raise RuntimeError(
+                        "Unexpected disagreement between directory name "
+                        f"{directory_name} and package name in Cargo.toml, "
+                        f"{package_name}"
+                    )
+                continue
+
+            if (
+                len(components) == 4
+                and components[0] == "vendor"
+                and components[2] == "src"
+                and components[3] == "lib.rs"
+            ):
+                size = member.size
+                if size != 0:
+                    if components[1] == directory_name:
+                        yield f"Provides: bundled(crate({package_name})) = {package_version}"
+                    else:
+                        raise RuntimeError(
+                            "Found an entry for bundled provides, but no version information"
+                        )
 
 
 def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrary=None):

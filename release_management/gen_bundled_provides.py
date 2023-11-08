@@ -21,8 +21,9 @@ Generate vendored provides list from vendor tarfile.
 import argparse
 import os
 import sys
-import tarfile
-import tomllib
+
+# isort: LOCAL
+from _utils import get_bundled_provides
 
 
 def main():
@@ -47,48 +48,8 @@ def main():
 
     namespace = parser.parse_args()
 
-    with tarfile.open(namespace.vendor_tarfile, "r") as tar:
-        for member in tar.getmembers():
-            components = member.name.split("/")
-
-            if (
-                len(components) == 3
-                and components[0] == "vendor"
-                and components[2] == "Cargo.toml"
-            ):
-                manifest = tar.extractfile(member)
-                metadata = tomllib.load(manifest)
-                directory_name = components[1]
-                package = metadata["package"]
-                package_version = package["version"]
-                package_name = package["name"]
-                if directory_name != package_name and (
-                    not directory_name.startswith(package_name)
-                    and directory_name[-len(package_version) :] != package_version
-                ):
-                    raise RuntimeError(
-                        "Unexpected disagreement between directory name "
-                        f"{directory_name} and package name in Cargo.toml, "
-                        f"{package_name}"
-                    )
-                continue
-
-            if (
-                len(components) == 4
-                and components[0] == "vendor"
-                and components[2] == "src"
-                and components[3] == "lib.rs"
-            ):
-                size = member.size
-                if size != 0:
-                    if components[1] == directory_name:
-                        print(
-                            f"Provides: bundled(crate({package_name})) = {package_version}"
-                        )
-                    else:
-                        raise RuntimeError(
-                            "Found an entry for bundled provides, but no version information"
-                        )
+    for line in get_bundled_provides(namespace.vendor_tarfile):
+        print(line)
 
     return 0
 
