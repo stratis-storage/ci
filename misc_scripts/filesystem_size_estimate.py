@@ -137,7 +137,11 @@ def _do_one(size, bus, pool_proxy):
     if not real:
         pool_used_pre = None
 
-    ((_, (filesystems)), return_code, return_msg,) = Pool.Methods.CreateFilesystems(
+    (
+        (_, (filesystems)),
+        return_code,
+        return_msg,
+    ) = Pool.Methods.CreateFilesystems(
         pool_proxy,
         {
             "specs": [("fs_name", (True, size))],
@@ -180,7 +184,11 @@ def _print_values(devices):
 
     proxy = bus.get_object(_SERVICE, _TOP_OBJECT, introspect=False)
 
-    ((_, (pool_object_path, _)), return_code, return_msg,) = Manager.Methods.CreatePool(
+    (
+        (_, (pool_object_path, _)),
+        return_code,
+        return_msg,
+    ) = Manager.Methods.CreatePool(
         proxy,
         {
             "name": "pool_name",

@@ -150,7 +150,11 @@ def setup_minimal_object_set(bus):
 
     blockdev_proxy = bus.get_object(_SERVICE, dev_object_paths[0], introspect=False)
 
-    ((_, (filesystems)), return_code, return_msg,) = Pool.Methods.CreateFilesystems(
+    (
+        (_, (filesystems)),
+        return_code,
+        return_msg,
+    ) = Pool.Methods.CreateFilesystems(
         pool_proxy,
         {
             "specs": [("fs_name", (False, ""))],
