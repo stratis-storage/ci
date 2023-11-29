@@ -65,7 +65,7 @@ def build_arrays(block_size, values):
     (x_values, y_values, z_values) = ([], [], [])
     for row in values:
         (x_row, y_row, z_row) = ([], [], [])
-        for (pool_size, num_thins) in row:
+        for pool_size, num_thins in row:
             command = [
                 "thin_metadata_size",
                 f"--block-size={block_size}",
