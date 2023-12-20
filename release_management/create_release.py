@@ -370,6 +370,8 @@ def _create_rust_subcommands(subparsers):
 
     RustCrates.set_up_subcommand("stratisd_proc_macros", subparsers)
 
+    RustCrates.set_up_subcommand("loopdev-3", subparsers, subcmd_aliases=["loopdev"])
+
 
 def _create_python_subcommands(subparsers):
     PythonPackages.set_up_subcommand(
