@@ -185,7 +185,7 @@ def get_package_info(manifest_abs_path, package_name):
 
     package = metadata["package"]
     assert package["name"] == package_name, (
-        f'crate name in Cargo.toml ({package["name"]}) != specified'
+        f'package name in Cargo.toml ({package["name"]}) != specified'
         f"package name ({package_name})"
     )
     github_repo = urlparse(package["repository"].rstrip("/"))

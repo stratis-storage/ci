@@ -230,15 +230,13 @@ class RustCrates:
             "__main__._push_tag", lambda: _push_tag(repository.geturl(), tag)
         )
 
-        changelog_url = get_changelog_url(repository.geturl(), get_branch())
-
         dry_run_caller(
             "__main__.create_release",
             lambda: create_release(
                 repository,
                 tag,
                 release_version,
-                changelog_url,
+                get_changelog_url(repository.geturl(), get_branch()),
                 additional_assets=additional_assets,
             ),
             skip=namespace.no_github_release,
@@ -369,6 +367,8 @@ def _create_rust_subcommands(subparsers):
     )
 
     RustCrates.set_up_subcommand("stratisd_proc_macros", subparsers)
+
+    RustCrates.set_up_subcommand("loopdev-3", subparsers, subcmd_aliases=["loopdev"])
 
 
 def _create_python_subcommands(subparsers):
