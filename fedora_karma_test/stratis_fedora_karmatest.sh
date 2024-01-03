@@ -6,15 +6,25 @@ for repo in stratisd devicemapper-rs libcryptsetup-rs libblkid-rs; do
 	echo $repo
 	git clone https://github.com/stratis-storage/$repo
 	cd $repo
-	if [ $repo != 'stratisd' ]; then
-		make clippy
-		make fmt-ci
-		make build
-	else
+	case $repo in
+	stratisd)
 		make clippy
 		make fmt-ci
 		make build-all-rust
-	fi
+		;;
+	libcryptsetup-rs)
+		git submodule init
+		git submodule update
+		make clippy
+		make fmt-ci
+		make build
+		;;
+	*)
+		make clippy
+		make fmt-ci
+		make build
+		;;
+	esac
 	cd ..
 done
 
