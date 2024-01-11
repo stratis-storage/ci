@@ -115,14 +115,14 @@ mv %{SOURCE0}.newfile %{SOURCE0}
 %{__cargo} build %{?_smp_mflags} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features engine,min,systemd_compat
 %{__cargo} rustc %{?_smp_mflags} --release --bin=stratis-str-cmp --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
 %{__cargo} rustc %{?_smp_mflags} --release --bin=stratis-base32-decode --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
-%{__cargo} build %{?_smp_mflags} --release --bin=stratis-dumpmetadata --no-default-features --features engine,extras,min
+%{__cargo} build %{?_smp_mflags} --release --bin=stratisd-tools --no-default-features --features engine,extras,min
 %else
 %{cargo_license -f engine,dbus_enabled,min,systemd_compat,extras,udev_scripts} > LICENSE.dependencies
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd
 %{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features engine,min,systemd_compat
 %{__cargo} rustc %{?__cargo_common_opts} --release --bin=stratis-str-cmp --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
 %{__cargo} rustc %{?__cargo_common_opts} --release --bin=stratis-base32-decode --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
-%{__cargo} build %{?__cargo_common_opts} --release --bin=stratis-dumpmetadata --no-default-features --features engine,extras,min
+%{__cargo} build %{?__cargo_common_opts} --release --bin=stratisd-tools --no-default-features --features engine,extras,min
 %endif
 a2x -f manpage docs/stratisd.txt
 a2x -f manpage docs/stratis-dumpmetadata.txt
@@ -188,6 +188,7 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 
 %files tools
 %license LICENSE
+%{_bindir}/stratisd-tools
 %{_bindir}/stratis-dumpmetadata
 %{_mandir}/man8/stratis-dumpmetadata.8*
 
