@@ -172,6 +172,7 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 %{_unitdir}/stratis-fstab-setup@.service
 %{_bindir}/stratis-min
 %{_libexecdir}/stratisd-min
+%{_bindir}/stratis-decode-dm
 %{_systemd_util_dir}/stratis-fstab-setup
 
 
