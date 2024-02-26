@@ -152,12 +152,13 @@ def build_koji_repo_dict(crates, release):
     return koji_repo_dict
 
 
-def build_cargo_metadata(manifest_path):
+def build_cargo_metadata(manifest_path, *, skip_path=False):
     """
     Build a dict mapping crate to version spec from Cargo.toml.
 
     :param manifest_path: the path to the Cargo manifest file
     :type manifest_path: str or NoneType
+    :param bool skip_path: if True, skip path dependencies
     :returns: a dict mapping crate name to version specification
     :rtype: str * SimpleSpec
     """
@@ -180,10 +181,10 @@ def build_cargo_metadata(manifest_path):
     package = packages[0]
     dependencies = package["dependencies"]
 
-    result = {}
-    for item in dependencies:
-        # cargo-metadata insert spaces into "req" value; SimpleSpec constructor
-        # rejects specifications that contain spaces.
-        result[item["name"]] = SimpleSpec(item["req"].replace(" ", ""))
-
-    return result
+    # cargo-metadata insert spaces into "req" value; SimpleSpec constructor
+    # rejects specifications that contain spaces.
+    return {
+        item["name"]: SimpleSpec(item["req"].replace(" ", ""))
+        for item in dependencies
+        if not skip_path or not "path" in item
+    }

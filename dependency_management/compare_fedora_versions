@@ -161,6 +161,15 @@ def main():
         help=help_text,
     )
 
+    help_text = "Do not ignore path dependencies"
+    parser.add_argument(
+        "--deny-path",
+        action="store_true",
+        dest="deny_path",
+        default=False,
+        help=help_text,
+    )
+
     help_text = "Allow partial version expressions in Cargo.toml (example 0.14)"
     parser.add_argument(
         "--allow-partial-versions",
@@ -196,7 +205,9 @@ def main():
         )
 
     # Read the dependency versions specified in Cargo.toml
-    explicit_dependencies = build_cargo_metadata(args.manifest_path)
+    explicit_dependencies = build_cargo_metadata(
+        args.manifest_path, skip_path=not args.deny_path
+    )
 
     # Build koji dict
     try:
