@@ -132,12 +132,9 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 
 %if %{with check}
 %check
-# Compile stratisd tests only where package does not use vendoring.
-# This is a temporary step, to address the problem of loopdev crate
-# 0.4.0 failing to build properly in some situations due to a failure of
-# bindgen 0.59.0.
-# See https://github.com/stratis-storage/project/issues/607
-%if !0%{?rhel}
+%if 0%{?rhel}
+%cargo_test --no-run
+%else
 %cargo_test -- --no-run
 %endif
 %endif
