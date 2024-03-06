@@ -425,7 +425,7 @@ def _get_parser():
         help="stop before pushing any changes to GitHub repo",
     )
 
-    subparsers = parser.add_subparsers(title="subcommands")
+    subparsers = parser.add_subparsers(title="subcommands", required=True)
 
     rust_subparser = subparsers.add_parser(
         "rust", help="Create a release for a rust package."
