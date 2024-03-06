@@ -226,9 +226,11 @@ class RustCrates:
         if namespace.no_release:
             return
 
-        dry_run_caller(
-            "__main__._push_tag", lambda: _push_tag(repository.geturl(), tag)
+        push_git_url = (
+            repository.geturl() if namespace.git_repo is None else namespace.git_repo
         )
+
+        dry_run_caller("__main__._push_tag", lambda: _push_tag(push_git_url, tag))
 
         dry_run_caller(
             "__main__.create_release",
@@ -317,9 +319,11 @@ class PythonPackages:
         if namespace.no_release:
             return
 
-        dry_run_caller(
-            "__main__._push_tag", lambda: _push_tag(repository.geturl(), tag)
+        push_git_url = (
+            repository.geturl() if namespace.git_repo is None else namespace.git_repo
         )
+
+        dry_run_caller("__main__._push_tag", lambda: _push_tag(push_git_url, tag))
 
         changelog_url = get_changelog_url(repository.geturl(), get_branch())
 
@@ -423,6 +427,12 @@ def _get_parser():
         default=False,
         dest="no_release",
         help="stop before pushing any changes to GitHub repo",
+    )
+
+    parser.add_argument(
+        "--git-repo",
+        dest="git_repo",
+        help="Use alternate Git repository URL for tag push",
     )
 
     subparsers = parser.add_subparsers(title="subcommands", required=True)
