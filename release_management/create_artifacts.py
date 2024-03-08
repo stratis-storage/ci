@@ -124,7 +124,9 @@ def _stratisd_artifacts(namespace):
 
     filtered = namespace.vendor_method == "filtered"
 
-    source_tarfile_path = make_source_tarball("stratisd", release_version, output_path)
+    source_tarfile_path = make_source_tarball(
+        "stratisd", f"stratisd-{release_version}", output_path
+    )
     print(os.path.relpath(source_tarfile_path))
 
     (vendor_tarfile_name, cargo_crate_path) = vendor(
