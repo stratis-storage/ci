@@ -203,7 +203,7 @@ class RustCrates:
         additional_assets = []
         if not namespace.no_vendor:
             filtered = namespace.vendor_method == "filtered"
-            (vendor_tarfile_name, _) = vendor(
+            vendor_tarfile_name = vendor(
                 manifest_abs_path,
                 ReleaseVersion(release_version),
                 filterer=filtered,

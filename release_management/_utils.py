@@ -276,35 +276,18 @@ def vendor(manifest_abs_path, release_version, *, filterer=False):
     :param str manifest_abs_path: manifest path (absolute)
     :param ReleaseVersion release_version: the release version
     :param bool filterer: filter dependencies in vendor tarfile
-    :return: name of vendored tarfile and path of crate relative to manifest
-    :rtype: str * str
+    :return: name of vendored tarfile
+    :rtype: str
     """
 
     vendor_dir = "vendor"
-
-    subprocess.run(
-        ["cargo", "package", "--no-verify", f"--manifest-path={manifest_abs_path}"],
-        check=True,
-    )
-
-    stratis_package_name = f"stratisd-{release_version.base_only()}"
-
-    crate_path = os.path.join("target", "package", f"{stratis_package_name}.crate")
-
-    subprocess.run(["tar", "--extract", f"--file={crate_path}"], check=True)
-
-    package_manifest = os.path.join(
-        os.path.dirname(manifest_abs_path),
-        stratis_package_name,
-        "Cargo.toml",
-    )
 
     if filterer:
         subprocess.run(
             [
                 "cargo",
                 "vendor-filterer",
-                f"--manifest-path={package_manifest}",
+                f"--manifest-path={manifest_abs_path}",
                 vendor_dir,
             ],
             check=True,
@@ -316,7 +299,7 @@ def vendor(manifest_abs_path, release_version, *, filterer=False):
                 "cargo",
                 "vendor",
                 "--quiet",
-                f"--manifest-path={package_manifest}",
+                f"--manifest-path={manifest_abs_path}",
                 vendor_dir,
             ],
             check=True,
@@ -339,7 +322,7 @@ def vendor(manifest_abs_path, release_version, *, filterer=False):
         check=True,
     )
 
-    return (vendor_tarfile_name, crate_path)
+    return vendor_tarfile_name
 
 
 def make_source_tarball(package_name, release_version, output_dir):
