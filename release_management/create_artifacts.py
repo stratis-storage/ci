@@ -129,17 +129,11 @@ def _stratisd_artifacts(namespace):
     )
     print(os.path.relpath(source_tarfile_path))
 
-    (vendor_tarfile_name, cargo_crate_path) = vendor(
+    vendor_tarfile_name = vendor(
         manifest_abs_path,
         release_version,
         filterer=filtered,
     )
-
-    crate_path = os.path.join(
-        output_path, f"stratisd-{release_version.to_crate_str()}.crate"
-    )
-
-    os.rename(cargo_crate_path, crate_path)
 
     vendor_tarfile_path = os.path.join(output_path, vendor_tarfile_name)
 
@@ -161,7 +155,7 @@ def _stratisd_artifacts(namespace):
         release_version=release_version,
         sources=[
             os.path.basename(path)
-            for path in [source_tarfile_path, vendor_tarfile_path, crate_path]
+            for path in [source_tarfile_path, vendor_tarfile_path]
         ],
         arbitrary=insert_bundled_provides,
     )
