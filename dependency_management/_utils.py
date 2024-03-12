@@ -177,7 +177,6 @@ def build_cargo_metadata(manifest_path, *, skip_path=False):
 
     metadata = json.loads(metadata_str)
     packages = metadata["packages"]
-    assert len(packages) == 1
     package = packages[0]
     dependencies = package["dependencies"]
 
