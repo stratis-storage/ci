@@ -83,9 +83,11 @@ Requires:     stratisd
 %{summary}. This package should not be used in production.
 
 %prep
-%autosetup -n stratisd-stratisd-v%{version}
+%autosetup -n stratisd-stratisd-v%{version} %{?rhel:-a1}
 
-%if 0%{?rhel}
+%if 0%{?rhel} >= 10
+%cargo_prep -v vendor
+%elif 0%{?rhel} && 0%{?rhel} < 10
 %cargo_prep -V 1
 %else
 %cargo_prep
@@ -94,7 +96,7 @@ Requires:     stratisd
 %endif
 
 %build
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 10
 %{__cargo} build %{?_smp_mflags} --release --bin=stratisd
 %{__cargo} build %{?_smp_mflags} --release --bin=stratis-min --bin=stratisd-min --bin=stratis-utils --no-default-features --features engine,min,systemd_compat
 %{__cargo} rustc %{?_smp_mflags} --release --bin=stratis-str-cmp --no-default-features --features udev_scripts -- -Ctarget-feature=+crt-static
@@ -110,13 +112,16 @@ Requires:     stratisd
 %endif
 a2x -f manpage docs/stratisd.txt
 a2x -f manpage docs/stratis-dumpmetadata.txt
+%if 0%{?rhel} >= 10
+%{cargo_vendor_manifest}
+%endif
 
 %install
 %make_install DRACUTDIR=%{dracutdir} PROFILEDIR=release
 
 %if %{with check}
 %check
-%if 0%{?rhel}
+%if 0%{?rhel} && 0%{?rhel} < 10
 %cargo_test --no-run
 %else
 %cargo_test -- --no-run
@@ -134,9 +139,11 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 
 %files
 %license LICENSE
-%if 0%{?rhel}
-%else
+%if !(0%{?rhel} && 0%{?rhel} < 10)
 %license LICENSE.dependencies
+%endif
+%if 0%{?rhel} >= 10
+%license cargo-vendor.txt
 %endif
 %doc README.md
 %{_libexecdir}/stratisd
