@@ -28,7 +28,6 @@ from _utils import (
     ReleaseVersion,
     calc_pre_release_suffix,
     edit_specfile,
-    get_bundled_provides,
     get_package_info,
     get_python_package_info,
     make_source_tarball,
@@ -139,17 +138,6 @@ def _stratisd_artifacts(namespace):
 
     os.rename(vendor_tarfile_name, vendor_tarfile_path)
 
-    def insert_bundled_provides(spec):
-        """
-        Insert bundled provides in the spec file.
-        """
-        with spec.sections() as sections:
-            preamble = sections.package
-            preamble.append("%if 0%{?rhel}")
-            preamble.extend(get_bundled_provides(vendor_tarfile_path))
-            preamble.append("%endif")
-            preamble.append("")
-
     edit_specfile(
         specfile_path,
         release_version=release_version,
@@ -157,7 +145,6 @@ def _stratisd_artifacts(namespace):
             os.path.basename(path)
             for path in [source_tarfile_path, vendor_tarfile_path]
         ],
-        arbitrary=insert_bundled_provides,
     )
 
 
