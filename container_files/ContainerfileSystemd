@@ -1,0 +1,6 @@
+FROM fedora:39
+
+RUN sudo dnf install -y passwd systemd util-linux
+RUN sudo passwd -d root
+
+CMD ["/usr/sbin/init"]
