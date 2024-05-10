@@ -325,11 +325,14 @@ class PythonPackages:
 
         dry_run_caller("__main__._push_tag", lambda: _push_tag(push_git_url, tag))
 
-        changelog_url = get_changelog_url(repository.geturl(), get_branch())
-
         dry_run_caller(
             "__main__.create_release",
-            lambda: create_release(repository, tag, release_version, changelog_url),
+            lambda: create_release(
+                repository,
+                tag,
+                release_version,
+                get_changelog_url(repository.geturl(), get_branch()),
+            ),
             skip=namespace.no_github_release,
         )
 
