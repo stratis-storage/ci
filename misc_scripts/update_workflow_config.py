@@ -97,6 +97,7 @@ def process_toolchain(args):
 
     :param args: the arguments passed on the command line
     """
+    search_key = False
     if args.toolchain == "lowest":
         search_key = KEY_LSRT
     elif args.toolchain == "current":
@@ -110,6 +111,7 @@ def process_env(args):
 
     :param args: the arguments passed on the command line
     """
+    search_key = False
     if args.fedora == "lowest":
         search_key = KEY_LFDE
     elif args.fedora == "current":
