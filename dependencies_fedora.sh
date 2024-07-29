@@ -41,4 +41,7 @@ dnf -y install git \
 	python3-pyudev \
 	python3-semantic_version \
 	python3-setuptools \
-	python3-wcwidth
+	python3-wcwidth \
+	python3-isort \
+	bandit \
+	black
