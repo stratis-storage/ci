@@ -7,15 +7,39 @@ version.
 
 # isort: STDLIB
 import argparse
+from enum import Enum
 
 KEY_LSRT = r"# LOWEST SUPPORTED RUST TOOLCHAIN"
 KEY_CDRT = r"# CURRENT DEVELOPMENT RUST TOOLCHAIN"
-TOOLCHAIN_CHOICES = ["lowest", "current"]
 
 KEY_LFDE = r"# LOWEST DEVELOPMENT ENVIRONMENT"
 KEY_CFDE = r"# CURRENT DEVELOPMENT ENVIRONMENT"
 KEY_NFDE = r"# NEXT DEVELOPMENT ENVIRONMENT"
-ENV_CHOICES = ["lowest", "current", "next"]
+
+
+class FedoraRelease(Enum):
+    """
+    Which Fedora release to modify.
+    """
+
+    LOWEST = "lowest"
+    CURRENT = "current"
+    NEXT = "next"
+
+    def __str__(self):
+        return self.value
+
+
+class RustRelease(Enum):
+    """
+    Which Rust release to modify.
+    """
+
+    LOWEST = "lowest"
+    CURRENT = "current"
+
+    def __str__(self):
+        return self.value
 
 
 def search_file(search_key, old_verstring, new_verstring, filename):
@@ -51,7 +75,10 @@ def gen_parser():
     subparsers = parser.add_subparsers()
     parser_r = subparsers.add_parser("rust", help="Rust version")
     parser_r.add_argument(
-        "toolchain", choices=TOOLCHAIN_CHOICES, help="the toolchain to change"
+        "toolchain",
+        choices=list(RustRelease),
+        help="the toolchain to change",
+        type=RustRelease,
     )
     parser_r.add_argument("file", help="the configuration file to read")
     parser_r.add_argument("outfile", help="the configuration file to write")
@@ -61,7 +88,10 @@ def gen_parser():
 
     parser_e = subparsers.add_parser("fedora", help="Fedora version")
     parser_e.add_argument(
-        "fedora", choices=ENV_CHOICES, help="the environment to change"
+        "fedora",
+        choices=list(FedoraRelease),
+        help="the development environment to change",
+        type=FedoraRelease,
     )
     parser_e.add_argument("file", help="the configuration file to read")
     parser_e.add_argument("outfile", help="the configuration file to write")
@@ -97,10 +127,13 @@ def process_toolchain(args):
 
     :param args: the arguments passed on the command line
     """
-    if args.toolchain == "lowest":
+    if args.toolchain is RustRelease.LOWEST:
         search_key = KEY_LSRT
-    elif args.toolchain == "current":
+    elif args.toolchain is RustRelease.CURRENT:
         search_key = KEY_CDRT
+    else:
+        assert False, "unreachable"
+
     process_file(search_key, args)
 
 
@@ -110,12 +143,15 @@ def process_env(args):
 
     :param args: the arguments passed on the command line
     """
-    if args.fedora == "lowest":
+    if args.fedora is FedoraRelease.LOWEST:
         search_key = KEY_LFDE
-    elif args.fedora == "current":
+    elif args.fedora is FedoraRelease.CURRENT:
         search_key = KEY_CFDE
-    elif args.fedora == "next":
+    elif args.fedora is FedoraRelease.NEXT:
         search_key = KEY_NFDE
+    else:
+        assert False, "unreachable"
+
     process_file(search_key, args)
 
 
