@@ -16,9 +16,14 @@ if [ -z "$DIST_RELEASE" ]; then
 fi
 
 case $DIST_RELEASE in
-"centos-stream")
+"centos-9-stream")
 	DIST="el9"
 	MOCKCONFIG="/etc/mock/centos-stream-9-x86_64.cfg"
+	;;
+
+"centos-10-stream")
+	DIST="el10"
+	MOCKCONFIG="/etc/mock/centos-stream-10-x86_64.cfg"
 	;;
 
 "fedora-rawhide")
@@ -42,7 +47,7 @@ case $DIST_RELEASE in
 	;;
 
 *)
-	echo "Usage: $0 centos-stream | fedora-rawhide | fedora-next | fedora-latest | fedora-previous"
+	echo "Usage: $0 centos-9-stream | centos-10-stream | fedora-rawhide | fedora-next | fedora-latest | fedora-previous"
 	exit 1
 	;;
 esac
