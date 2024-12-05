@@ -163,6 +163,7 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 %license LICENSE
 %{_bindir}/stratisd-tools
 %{_bindir}/stratis-dumpmetadata
+%{_bindir}/stratis-checkmetadata
 %{_mandir}/man8/stratis-dumpmetadata.8*
 
 %changelog
