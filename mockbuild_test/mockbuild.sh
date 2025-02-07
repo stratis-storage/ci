@@ -27,23 +27,23 @@ case $DIST_RELEASE in
 	;;
 
 "fedora-rawhide")
-	DIST="fc42"
+	DIST="fc43"
 	MOCKCONFIG="/etc/mock/fedora-rawhide-x86_64.cfg"
 	;;
 
 "fedora-next")
+	DIST="fc42"
+	MOCKCONFIG="/etc/mock/fedora-42-x86_64.cfg"
+	;;
+
+"fedora-latest")
 	DIST="fc41"
 	MOCKCONFIG="/etc/mock/fedora-41-x86_64.cfg"
 	;;
 
-"fedora-latest")
+"fedora-previous")
 	DIST="fc40"
 	MOCKCONFIG="/etc/mock/fedora-40-x86_64.cfg"
-	;;
-
-"fedora-previous")
-	DIST="fc39"
-	MOCKCONFIG="/etc/mock/fedora-39-x86_64.cfg"
 	;;
 
 *)
