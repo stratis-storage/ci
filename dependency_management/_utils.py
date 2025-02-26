@@ -172,8 +172,15 @@ def build_cargo_metadata(manifest_path, *, skip_path=False):
     if manifest_path is not None:
         command.append(f"--manifest-path={manifest_path}")
 
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        metadata_str = proc.stdout.readline()
+    with subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    ) as proc:
+        result = proc.communicate()
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f'"cargo metadata" failed to process Cargo.toml: {bytes(result[1]).decode("utf-8")}'
+            )
+        metadata_str = bytes(result[0]).decode("utf-8")
 
     metadata = json.loads(metadata_str)
     packages = metadata["packages"]
