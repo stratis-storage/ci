@@ -36,62 +36,6 @@ KOJI_RE = re.compile(
 )
 
 
-def version_from_spec(spec, *, strict_versions=True):
-    """
-    Return a version calculated from a spec string by stripping '^'.
-
-    Precondition: Spec string must start with a '^'
-
-    :param SimpleSpec spec: a spec string from "cargo metadata" output
-    :param bool strict_versions: whether or not to allow partial version strings
-    :returns: the lowest version that spec could correspond to
-    :rtype: Version
-    :raises RuntimeError: if spec string can not be interpreted
-    """
-    spec_str = str(spec)
-
-    if spec_str[0] != "^":
-        raise RuntimeError(f"Expected specification format {spec} to begin with a '^'")
-
-    if len(spec_str.split(",", maxsplit=1)) > 1:
-        raise RuntimeError(
-            f"Expected specification format {spec} to be simple, not compound."
-        )
-
-    return Version(spec_str[1:], partial=not strict_versions)
-
-
-def build_cargo_tree_dict(manifest_path):
-    """
-    Build a map of crate names to versions from the output of cargo tree.
-    Determine only the versions of direct dependencies.
-
-    :param manifest_path: the path to the Cargo manifest file
-    :type manifest_path: str or NoneType
-    :returns: a map from crates names to sets of versions
-    :rtype: dict of str * set of Version
-    """
-    command = ["cargo", "tree", "--charset=ascii", "--all-features"]
-    if manifest_path is not None:
-        command.append(f"--manifest-path={manifest_path}")
-
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        stream = proc.stdout
-
-        version_dict = {}
-        line = stream.readline()
-        while line != b"":
-            line_str = line.decode("utf-8").rstrip()
-            cargo_tree_match = CARGO_TREE_RE.search(line_str)
-            if cargo_tree_match is not None:
-                version_dict[cargo_tree_match.group("crate")] = Version(
-                    cargo_tree_match.group("version")
-                )
-            line = stream.readline()
-
-    return version_dict
-
-
 def build_koji_repo_dict(crates, release):
     """
     :param crates: a set of crates
@@ -172,8 +116,15 @@ def build_cargo_metadata(manifest_path, *, skip_path=False):
     if manifest_path is not None:
         command.append(f"--manifest-path={manifest_path}")
 
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        metadata_str = proc.stdout.readline()
+    with subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    ) as proc:
+        result = proc.communicate()
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f'"cargo metadata" failed to process Cargo.toml: {bytes(result[1]).decode("utf-8")}'
+            )
+        metadata_str = bytes(result[0]).decode("utf-8")
 
     metadata = json.loads(metadata_str)
     packages = metadata["packages"]
