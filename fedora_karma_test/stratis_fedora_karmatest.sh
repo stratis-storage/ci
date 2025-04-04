@@ -2,7 +2,7 @@
 set -e
 set -x
 
-for repo in stratisd devicemapper-rs libcryptsetup-rs libblkid-rs; do
+for repo in stratisd devicemapper-rs libcryptsetup-rs libblkid-rs loopdev-3; do
 	echo $repo
 	git clone https://github.com/stratis-storage/$repo
 	cd $repo
