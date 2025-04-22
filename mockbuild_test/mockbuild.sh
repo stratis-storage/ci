@@ -32,18 +32,18 @@ case $DIST_RELEASE in
 	;;
 
 "fedora-next")
+	DIST="fc43"
+	MOCKCONFIG="/etc/mock/fedora-43-x86_64.cfg"
+	;;
+
+"fedora-latest")
 	DIST="fc42"
 	MOCKCONFIG="/etc/mock/fedora-42-x86_64.cfg"
 	;;
 
-"fedora-latest")
+"fedora-previous")
 	DIST="fc41"
 	MOCKCONFIG="/etc/mock/fedora-41-x86_64.cfg"
-	;;
-
-"fedora-previous")
-	DIST="fc40"
-	MOCKCONFIG="/etc/mock/fedora-40-x86_64.cfg"
 	;;
 
 *)
