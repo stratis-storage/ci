@@ -142,6 +142,7 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 %{_bindir}/stratis-predict-usage
 %{_unitdir}/stratisd-min-postinitrd.service
 %{_unitdir}/stratis-fstab-setup@.service
+%{_unitdir}/stratis-fstab-setup-with-network@.service
 %{_bindir}/stratis-min
 %{_libexecdir}/stratisd-min
 %{_bindir}/stratis-decode-dm
