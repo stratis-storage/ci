@@ -60,7 +60,11 @@ def calc_release_suffix():
     """
     command = ["git", "rev-parse", "--short=8", "HEAD"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        commit_hash = proc.stdout.readline().strip().decode("utf-8")
+        commit_hash = (
+            proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+            .strip()
+            .decode("utf-8")
+        )
     return f"{datetime.today():%Y%m%d%H%M}git{commit_hash}"
 
 
@@ -95,15 +99,28 @@ def get_python_package_info(name):
     """
     command = ["python3", "setup.py", "--name"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        assert proc.stdout.readline().strip().decode("utf-8") == name
+        assert (
+            proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+            .strip()
+            .decode("utf-8")
+            == name
+        )
 
     command = ["python3", "setup.py", "--version"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        release_version = proc.stdout.readline().strip().decode("utf-8")
+        release_version = (
+            proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+            .strip()
+            .decode("utf-8")
+        )
 
     command = ["python3", "setup.py", "--url"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        github_url = proc.stdout.readline().strip().decode("utf-8")
+        github_url = (
+            proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+            .strip()
+            .decode("utf-8")
+        )
 
     github_repo = urlparse(github_url)
     assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
@@ -144,7 +161,9 @@ def verify_tag(tag):
     """
     command = ["git", "tag", "--points-at"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        tag_str = proc.stdout.readline()
+        tag_str = (
+            proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+        )
     return tag_str.decode("utf-8").rstrip() == tag
 
 
@@ -171,7 +190,9 @@ def get_branch():
     """
     command = ["git", "branch", "--show-current"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        branch_str = proc.stdout.readline()
+        branch_str = (
+            proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+        )
     return branch_str.decode("utf-8").rstrip()
 
 
