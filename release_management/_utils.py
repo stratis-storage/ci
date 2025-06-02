@@ -33,7 +33,7 @@ from specfile import specfile
 MANIFEST_PATH = "./Cargo.toml"
 
 
-class ReleaseVersion:
+class ReleaseVersion:  # pylint: disable=too-few-public-methods
     """
     Release version for the package.
     """
@@ -50,18 +50,6 @@ class ReleaseVersion:
 
     def __str__(self):
         return f"{self.base}{'' if self.suffix is None else '~' + self.suffix}"
-
-    def to_crate_str(self):
-        """
-        Return the release version in a crates.io-friendly string.
-        """
-        return f"{self.base}{'' if self.suffix is None else '-' + self.suffix}"
-
-    def base_only(self):
-        """
-        Return only the base.
-        """
-        return self.base
 
 
 def calc_pre_release_suffix():
