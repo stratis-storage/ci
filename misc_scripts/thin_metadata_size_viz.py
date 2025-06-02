@@ -112,7 +112,9 @@ def plot_figure(x_inputs, y_inputs, z_inputs):
         ylabel="Number of thin devices",
         zlabel="Metadata size",
     )
-    axes.plot_wireframe(x_inputs, y_inputs, z_inputs)
+    axes.plot_wireframe(  # pyright: ignore [ reportAttributeAccessIssue ]
+        x_inputs, y_inputs, z_inputs
+    )
     return fig
 
 
