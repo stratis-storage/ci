@@ -26,7 +26,7 @@ import sys
 from _utils import (
     MANIFEST_PATH,
     ReleaseVersion,
-    calc_pre_release_suffix,
+    calc_release_suffix,
     edit_specfile,
     get_package_info,
     get_python_package_info,
@@ -113,13 +113,13 @@ def _stratisd_artifacts(namespace):
 
     (source_version, _) = get_package_info(manifest_abs_path, "stratisd")
 
-    pre_release_suffix = calc_pre_release_suffix() if namespace.pre_release else None
+    pre_release_suffix = calc_release_suffix() if namespace.pre_release else None
 
     specfile_path = namespace.specfile_path
     if specfile_path is None and pre_release_suffix is not None:
         raise RuntimeError("must specify specfile using --specfile-path option")
 
-    release_version = ReleaseVersion(source_version, suffix=pre_release_suffix)
+    release_version = ReleaseVersion(source_version, prerelease=pre_release_suffix)
 
     filtered = namespace.vendor_method == "filtered"
 
@@ -157,13 +157,13 @@ def _stratis_cli_artifacts(namespace):
 
     (source_version, _) = get_python_package_info("stratis-cli")
 
-    pre_release_suffix = calc_pre_release_suffix() if namespace.pre_release else None
+    pre_release_suffix = calc_release_suffix() if namespace.pre_release else None
     specfile_path = namespace.specfile_path
 
     if specfile_path is None and pre_release_suffix is not None:
         raise RuntimeError("must specify specfile using --specfile-path option")
 
-    release_version = ReleaseVersion(source_version, suffix=pre_release_suffix)
+    release_version = ReleaseVersion(source_version, prerelease=pre_release_suffix)
 
     source_tarfile = make_source_tarball(
         "stratis-cli",
