@@ -51,7 +51,7 @@ def gen_parser():
     return parser
 
 
-def build_arrays(block_size, values):
+def build_arrays(block_size, values):  # pylint: disable=too-many-locals
     """
     Build three matrices of values where the z_values are the result of
     running thin_metadata_size on the x and y values.
@@ -73,8 +73,20 @@ def build_arrays(block_size, values):
                 f"--max-thins={num_thins}",
                 "-n",
             ]
-            with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-                result = int(proc.stdout.readline().decode("utf-8").strip())
+            with subprocess.Popen(
+                command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            ) as proc:
+                try:
+                    result = int(
+                        proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+                        .decode("utf-8")
+                        .strip()
+                    )
+                except ValueError as err:
+                    error_message = (
+                        proc.stderr.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+                    )
+                    raise RuntimeError(error_message.decode("utf-8")) from err
             x_row.append(pool_size)
             y_row.append(num_thins)
             z_row.append(result)
