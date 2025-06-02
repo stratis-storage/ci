@@ -27,19 +27,19 @@ jobs:
               python3-requests
               python3-semantic_version
               python3-specfile
-            task: lint
+            task: PATH=${PATH}:/github/home/.local/bin make -f Makefile lint
           - dependencies: >
               black
               python3-isort
               shfmt
-            task: fmt-travis
+            task: make -f Makefile fmt-travis
           - dependencies: >
               yamllint
-            task: yamllint
+            task: make -f Makefile yamllint
           - dependencies: >
               findutils
               ShellCheck
-            task: shellcheck
+            task: make -f Makefile shellcheck
     runs-on: ubuntu-latest
     container: fedora:41  # CURRENT DEVELOPMENT ENVIRONMENT
     steps:
@@ -48,6 +48,9 @@ jobs:
         run: >
           dnf install -y
           make
+          pip
           ${{ matrix.dependencies }}
+      - name: Install pyright
+        run: pip install --user pyright
       - name: Run test
-        run: make -f Makefile ${{ matrix.task }}
+        run: ${{ matrix.task }}
