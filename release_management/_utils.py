@@ -86,6 +86,7 @@ def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrar
         with specfile.Specfile(specfile_path) as spec:
             if release_version is not None:
                 spec.version = str(release_version)
+                spec.release = release_stamp()
             if sources is not None:
                 with spec.sources() as entries:  # pylint: disable=not-context-manager
                     for index, value in enumerate(sources):
