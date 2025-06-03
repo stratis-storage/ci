@@ -39,17 +39,19 @@ class ReleaseVersion:  # pylint: disable=too-few-public-methods
     Release version for the package.
     """
 
-    def __init__(self, base: Version, *, pre: bool = False):
+    def __init__(self, base: Version, *, pre: bool = False, post: bool = False):
         """
         Initializer.
         :param Version base: Base version
         :param bool pre: whether or not this is a pre-release
         """
+        assert not (pre and post), "Impossible for a release to be pre- and post-"
         self.base = base
         self.pre = pre
+        self.post = post
 
     def __str__(self):
-        return f"{self.base}{'~pre' if self.pre else ''}"
+        return f"{self.base}{'~pre' if self.pre else ''}{'^post' if self.post else ''}"
 
 
 def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrary=None):
