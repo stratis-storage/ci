@@ -26,7 +26,6 @@ import sys
 from _utils import (
     MANIFEST_PATH,
     ReleaseVersion,
-    calc_release_suffix,
     edit_specfile,
     get_package_info,
     get_python_package_info,
@@ -61,11 +60,17 @@ def main():
         help="path to specfile to edit",
         type=lambda p: p if p is None else os.path.abspath(p),
     )
-    parser.add_argument(
+
+    pre_or_post = parser.add_mutually_exclusive_group(required=False)
+    pre_or_post.add_argument(
         "--pre-release",
         action="store_true",
-        default=False,
         help="do automatic actions for a pre-release version",
+    )
+    pre_or_post.add_argument(
+        "--post-release",
+        action="store_true",
+        help="do automatic actions for a post-release version",
     )
 
     subparsers = parser.add_subparsers(title="subcommands")
@@ -113,13 +118,13 @@ def _stratisd_artifacts(namespace):
 
     (source_version, _) = get_package_info(manifest_abs_path, "stratisd")
 
-    pre_release_suffix = calc_release_suffix() if namespace.pre_release else None
-
     specfile_path = namespace.specfile_path
-    if specfile_path is None and pre_release_suffix is not None:
+    if specfile_path is None and (namespace.pre_release or namespace.post_release):
         raise RuntimeError("must specify specfile using --specfile-path option")
 
-    release_version = ReleaseVersion(source_version, prerelease=pre_release_suffix)
+    release_version = ReleaseVersion(
+        source_version, pre=namespace.pre_release, post=namespace.post_release
+    )
 
     filtered = namespace.vendor_method == "filtered"
 
@@ -157,13 +162,14 @@ def _stratis_cli_artifacts(namespace):
 
     (source_version, _) = get_python_package_info("stratis-cli")
 
-    pre_release_suffix = calc_release_suffix() if namespace.pre_release else None
     specfile_path = namespace.specfile_path
 
-    if specfile_path is None and pre_release_suffix is not None:
+    if specfile_path is None and (namespace.pre_release or namespace.post_release):
         raise RuntimeError("must specify specfile using --specfile-path option")
 
-    release_version = ReleaseVersion(source_version, prerelease=pre_release_suffix)
+    release_version = ReleaseVersion(
+        source_version, pre=namespace.pre_release, post=namespace.post_release
+    )
 
     source_tarfile = make_source_tarball(
         "stratis-cli",
