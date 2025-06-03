@@ -21,6 +21,7 @@ Calculates values useful for making a release.
 import os
 import subprocess
 import tomllib
+from datetime import datetime
 from getpass import getpass
 from typing import Any
 from urllib.parse import urlparse
@@ -52,6 +53,22 @@ class ReleaseVersion:  # pylint: disable=too-few-public-methods
 
     def __str__(self):
         return f"{self.base}{'~pre' if self.pre else ''}{'^post' if self.post else ''}"
+
+
+def release_stamp() -> str:
+    """
+    Return a release stamp. Should be unique to the second.
+    :rtype: str
+    :returns: a release stamp for modifying releases
+    """
+    command = ["git", "rev-parse", "--short=8", "HEAD"]
+    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
+        commit_hash = (
+            proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
+            .strip()
+            .decode("utf-8")
+        )
+    return f"{datetime.today():%Y%m%d%H%M}git{commit_hash}"
 
 
 def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrary=None):
