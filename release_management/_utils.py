@@ -23,11 +23,13 @@ import subprocess
 import tomllib
 from datetime import datetime
 from getpass import getpass
+from typing import Any
 from urllib.parse import urlparse
 
 # isort: THIRDPARTY
 import requests
 from github import Github
+from semantic_version import Version
 from specfile import specfile
 
 MANIFEST_PATH = "./Cargo.toml"
@@ -38,10 +40,10 @@ class ReleaseVersion:  # pylint: disable=too-few-public-methods
     Release version for the package.
     """
 
-    def __init__(self, base, *, prerelease=None):
+    def __init__(self, base: Version, *, prerelease=None):
         """
         Initializer.
-        :param str base: Base version
+        :param Version base: Base version
         :param prerelease: pre-release
         :type prerelease: str or Nonetype
         """
@@ -91,12 +93,12 @@ def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrar
                 arbitrary(spec)
 
 
-def get_python_package_info(name):
+def get_python_package_info(name) -> tuple[Version, Any]:
     """
     Get info about the python package.
 
     :param str name: the project name
-    :returns: str * ParseResult
+    :returns: Version * ParseResult
     """
     command = ["python3", "setup.py", "--name"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
@@ -109,7 +111,7 @@ def get_python_package_info(name):
 
     command = ["python3", "setup.py", "--version"]
     with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        release_version = (
+        release_version = Version(
             proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
             .strip()
             .decode("utf-8")
@@ -128,14 +130,14 @@ def get_python_package_info(name):
     return (release_version, github_repo)
 
 
-def get_package_info(manifest_abs_path, package_name):
+def get_package_info(manifest_abs_path, package_name) -> tuple[Version, Any]:
     """
     Extract the version string and repo URL from Cargo.toml and return it.
 
     :param str manifest_path: absolute path to a Cargo.toml file
     :param str package_name: the expected name of the package
     :returns: stratisd version string and repository URL
-    :rtype: str * ParseResult
+    :rtype: Version * ParseResult
     """
     assert os.path.isabs(manifest_abs_path)
 
@@ -149,7 +151,7 @@ def get_package_info(manifest_abs_path, package_name):
     )
     github_repo = urlparse(package["repository"].rstrip("/"))
     assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
-    return (package["version"], github_repo)
+    return (Version(package["version"]), github_repo)
 
 
 def verify_tag(tag):
