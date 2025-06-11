@@ -21,9 +21,10 @@ Calculates values useful for making a release.
 import os
 import subprocess
 import tomllib
+from collections.abc import Callable
 from datetime import datetime
 from getpass import getpass
-from typing import Any
+from typing import Any, List, Optional
 from urllib.parse import urlparse
 
 # isort: THIRDPARTY
@@ -33,26 +34,6 @@ from semantic_version import Version
 from specfile import specfile
 
 MANIFEST_PATH = "./Cargo.toml"
-
-
-class ReleaseVersion:  # pylint: disable=too-few-public-methods
-    """
-    Release version for the package.
-    """
-
-    def __init__(self, base: Version, *, pre: bool = False, post: bool = False):
-        """
-        Initializer.
-        :param Version base: Base version
-        :param bool pre: whether or not this is a pre-release
-        """
-        assert not (pre and post), "Impossible for a release to be pre- and post-"
-        self.base = base
-        self.pre = pre
-        self.post = post
-
-    def __str__(self):
-        return f"{self.base}{'~pre' if self.pre else ''}{'^post' if self.post else ''}"
 
 
 def release_stamp() -> str:
@@ -71,7 +52,39 @@ def release_stamp() -> str:
     return f"{datetime.today():%Y%m%d%H%M}git{commit_hash}"
 
 
-def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrary=None):
+class ReleaseVersion:
+    """
+    Release version for the package.
+    """
+
+    def __init__(self, base: Version, *, pre: bool = False, post: bool = False):
+        """
+        Initializer.
+        :param Version base: Base version
+        :param bool pre: whether or not this is a pre-release
+        """
+        assert not (pre and post), "Impossible for a release to be pre- and post-"
+        self.base = base
+        self.pre = pre
+        self.post = post
+
+    def __str__(self):
+        return f"{self.base}{'~pre' if self.pre else ''}{'^post' if self.post else ''}"
+
+    def release(self) -> Optional[str]:
+        """
+        Optional release string for spec file.
+        """
+        return release_stamp() if self.pre or self.post else None
+
+
+def edit_specfile(
+    specfile_path,
+    *,
+    release_version: Optional[ReleaseVersion] = None,
+    sources: Optional[List[str]] = None,
+    arbitrary: Optional[Callable[[specfile.Specfile], None]] = None,
+):
     """
     Edit the specfile in place
     :param specfile_path: abspath of specfile
@@ -86,7 +99,9 @@ def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrar
         with specfile.Specfile(specfile_path) as spec:
             if release_version is not None:
                 spec.version = str(release_version)
-                spec.release = release_stamp()
+                release = release_version.release()
+                if release is not None:
+                    spec.release = release
             if sources is not None:
                 with spec.sources() as entries:  # pylint: disable=not-context-manager
                     for index, value in enumerate(sources):
