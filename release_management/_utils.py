@@ -21,9 +21,10 @@ Calculates values useful for making a release.
 import os
 import subprocess
 import tomllib
+from collections.abc import Callable
 from datetime import datetime
 from getpass import getpass
-from typing import Any
+from typing import Any, List, Optional
 from urllib.parse import urlparse
 
 # isort: THIRDPARTY
@@ -71,7 +72,13 @@ def release_stamp() -> str:
     return f"{datetime.today():%Y%m%d%H%M}git{commit_hash}"
 
 
-def edit_specfile(specfile_path, *, release_version=None, sources=None, arbitrary=None):
+def edit_specfile(
+    specfile_path,
+    *,
+    release_version: Optional[ReleaseVersion] = None,
+    sources: Optional[List[str]] = None,
+    arbitrary: Optional[Callable[[specfile.Specfile], None]] = None,
+):
     """
     Edit the specfile in place
     :param specfile_path: abspath of specfile
