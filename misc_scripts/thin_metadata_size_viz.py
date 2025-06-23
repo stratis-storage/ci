@@ -77,15 +77,13 @@ def build_arrays(block_size, values):  # pylint: disable=too-many-locals
                 command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             ) as proc:
                 try:
-                    result = int(
-                        proc.stdout.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
-                        .decode("utf-8")
-                        .strip()
-                    )
+                    stdout = proc.stdout
+                    assert stdout is not None, "stdout set in subprocess call"
+                    result = int(stdout.readline().decode("utf-8").strip())
                 except ValueError as err:
-                    error_message = (
-                        proc.stderr.readline()  # pyright: ignore [ reportOptionalMemberAccess ]
-                    )
+                    stderr = proc.stderr
+                    assert stderr is not None, "stderr set in subprocess call"
+                    error_message = stderr.readline()
                     raise RuntimeError(error_message.decode("utf-8")) from err
             x_row.append(pool_size)
             y_row.append(num_thins)
