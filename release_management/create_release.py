@@ -209,7 +209,7 @@ class RustCrates:
                 filterer=filtered,
             )
             subprocess.run(
-                ["sha512sum", os.path.abspath(vendor_tarfile_name)], check=True
+                ["sha256sum", os.path.abspath(vendor_tarfile_name)], check=True
             )
             additional_assets = [vendor_tarfile_name]
 
