@@ -8,7 +8,6 @@ URL:            https://github.com/stratis-storage/stratis-cli
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  python3-devel
-BuildRequires:  python3-setuptools
 BuildRequires:  %{_bindir}/a2x
 %if 0%{?rhel}
 BuildRequires:  python3-dateutil
@@ -36,21 +35,25 @@ Stratis-cli test build.  This package should not be used in production
 %prep
 %autosetup
 
+%generate_buildrequires
+%pyproject_buildrequires
+
 %build
-%py3_build
+%pyproject_wheel
 a2x -f manpage docs/stratis.txt
 
 %install
-%py3_install
+%pyproject_install
+%pyproject_save_files -l stratis_cli
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratis.8
 
-%files
-%license LICENSE
+%check
+%pyproject_check_import
+
+%files -f %{pyproject_files}
 %doc README.rst
 %{_bindir}/stratis
 %{_mandir}/man8/stratis.8*
-%{python3_sitelib}/stratis_cli/
-%{python3_sitelib}/stratis_cli-*.egg-info/
 
 %changelog
 * Fri Mar 22 2233 Stratis Team <stratis-team@redhat.com> - 77.77.77-77
