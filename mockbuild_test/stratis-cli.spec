@@ -42,15 +42,6 @@ a2x -f manpage docs/stratis.txt
 
 %install
 %py3_install
-# Do not install tab-completion files for RHEL
-%if !0%{?rhel}
-%{__install} -Dpm0644 -t %{buildroot}%{_datadir}/bash-completion/completions \
-  shell-completion/bash/stratis
-%{__install} -Dpm0644 -t %{buildroot}%{_datadir}/zsh/site-functions \
-  shell-completion/zsh/_stratis
-%{__install} -Dpm0644 -t %{buildroot}%{_datadir}/fish/vendor_completions.d \
-  shell-completion/fish/stratis.fish
-%endif
 %{__install} -Dpm0644 -t %{buildroot}%{_mandir}/man8 docs/stratis.8
 
 %files
@@ -58,17 +49,6 @@ a2x -f manpage docs/stratis.txt
 %doc README.rst
 %{_bindir}/stratis
 %{_mandir}/man8/stratis.8*
-%if !0%{?rhel}
-%dir %{_datadir}/bash-completion
-%dir %{_datadir}/bash-completion/completions
-%{_datadir}/bash-completion/completions/stratis
-%dir %{_datadir}/zsh
-%dir %{_datadir}/zsh/site-functions
-%{_datadir}/zsh/site-functions/_stratis
-%dir %{_datadir}/fish
-%dir %{_datadir}/fish/vendor_completions.d
-%{_datadir}/fish/vendor_completions.d/stratis.fish
-%endif
 %{python3_sitelib}/stratis_cli/
 %{python3_sitelib}/stratis_cli-*.egg-info/
 
