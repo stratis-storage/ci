@@ -109,7 +109,7 @@ a2x -f manpage docs/stratis-dumpmetadata.txt
 
 %if %{with check}
 %check
-%if 0%{?rhel} && 0%{?rhel} < 10
+%if 0%{?rhel} && 0%{?rhel} < 9
 %cargo_test --no-run
 %else
 %cargo_test -- --no-run
