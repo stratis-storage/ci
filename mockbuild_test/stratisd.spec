@@ -3,6 +3,8 @@
 %global udevdir %(pkg-config --variable=udevdir udev)
 %global dracutdir %(pkg-config --variable=dracutdir dracut)
 
+%global build_rustflags %{build_rustflags} --cap-lints=warn
+
 Name:           stratisd
 Version:        V
 Release:        D%{?dist}
