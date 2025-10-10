@@ -85,15 +85,9 @@ Requires:     stratisd
 %{summary}. This package should not be used in production.
 
 %prep
-%autosetup -n stratisd-stratisd-v%{version} %{?rhel:-a1}
+%autosetup -n stratisd-stratisd-v%{version} -a1
 
-%if 0%{?rhel}
 %cargo_prep -v vendor
-%else
-%cargo_prep
-%generate_buildrequires
-%cargo_generate_buildrequires -f engine,dbus_enabled,min,systemd_compat,extras,udev_scripts
-%endif
 
 %build
 %{cargo_license -f engine,dbus_enabled,min,systemd_compat,extras,udev_scripts} > LICENSE.dependencies
