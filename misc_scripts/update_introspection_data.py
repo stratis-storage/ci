@@ -23,9 +23,11 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 from enum import Enum
+from typing import List, Mapping, Sequence
 
 # isort: THIRDPARTY
 import dbus
+from dbus.proxies import ProxyObject
 from semantic_version import Version
 
 # isort: FIRSTPARTY
@@ -109,16 +111,16 @@ BLOCKDEV_OBJECT_INTERFACE_PREFIXES = ["org.storage.stratis3.blockdev"]
 FILESYSTEM_OBJECT_INTERFACE_PREFIXES = ["org.storage.stratis3.filesystem"]
 
 
-def _xml_object_to_str(xml_object):
+def _xml_object_to_str(xml_object: ET.Element) -> str:
     """
     Convert XML object read from D-Bus to a string.
-
-    :param xml_bytes: the bytes representing some XML
     """
     return ET.tostring(xml_object).decode("utf-8").rstrip(" \n")
 
 
-def setup_minimal_object_set(bus):
+def setup_minimal_object_set(
+    bus: dbus.SystemBus,
+) -> dict[ProxyType, ProxyObject]:
     """
     Set up the minimal set of objects to be introspected on.
 
@@ -177,7 +179,7 @@ def setup_minimal_object_set(bus):
     }
 
 
-def _make_python_spec(proxies):
+def _make_python_spec(proxies: Mapping[ProxyType, ProxyObject]) -> dict[str, str]:
     """
     Make the introspection spec for python consumption.
     """
@@ -186,12 +188,12 @@ def _make_python_spec(proxies):
         f"r{Version(Manager.Properties.Version.Get(proxies[ProxyType.MANAGER])).minor}"
     )
 
-    def get_current_interfaces(interface_prefixes):
+    def get_current_interfaces(interface_prefixes: Sequence[str]) -> List[str]:
         return [f"{prefix}.{revision}" for prefix in interface_prefixes]
 
     specs = {}
 
-    def _add_data(proxy_key, interfaces):
+    def _add_data(proxy_key: ProxyType, interfaces: Sequence[str]):
         """
         Introspect on the proxy, get the information for the specified
         interfaces, and add it to specs.
@@ -239,7 +241,7 @@ def _make_python_spec(proxies):
     return specs
 
 
-def _print_python_spec(specs):
+def _print_python_spec(specs: Mapping[str, str]):
     """
     Print spec formatted according to stratis-cli and black's requirements.
 
@@ -257,7 +259,7 @@ def _print_python_spec(specs):
     print("}")
 
 
-def _python_output(_namespace):
+def _python_output(_namespace: argparse.Namespace):
     """
     Generate python output
     """
@@ -267,14 +269,14 @@ def _python_output(_namespace):
     _print_python_spec(specs)
 
 
-def _make_docs_spec(proxies):
+def _make_docs_spec(proxies: Mapping[ProxyType, ProxyObject]) -> dict[ProxyType, str]:
     """
     Make the introspection spec for use in docs repo.
     """
 
     specs = {}
 
-    def _add_data(proxy_key):
+    def _add_data(proxy_key: ProxyType):
         """
         Get the introspection data, and add it to the spec.
 
@@ -291,7 +293,7 @@ def _make_docs_spec(proxies):
     return specs
 
 
-def _print_docs_spec(specs, namespace):
+def _print_docs_spec(specs: Mapping[ProxyType, str], namespace: argparse.Namespace):
     """
     Print spec for inclusion on docs website.
 
@@ -300,7 +302,7 @@ def _print_docs_spec(specs, namespace):
     :param namespace: the namespace parsed from the command-line arguments
     """
 
-    def _proxy_type_to_filename(proxy_type):
+    def _proxy_type_to_filename(proxy_type: ProxyType) -> str:
         """
         Return filename for proxy type.
         """
@@ -327,7 +329,7 @@ def _print_docs_spec(specs, namespace):
             print(introspection_data, file=file)
 
 
-def _docs_output(namespace):
+def _docs_output(namespace: argparse.Namespace):
     """
     Generate python output
     """
@@ -337,7 +339,7 @@ def _docs_output(namespace):
     _print_docs_spec(specs, namespace)
 
 
-def _gen_parser():
+def _gen_parser() -> argparse.ArgumentParser:
     """
     Generate the parser.
     """
