@@ -115,6 +115,7 @@ def _xml_object_to_str(xml_object: ET.Element) -> str:
     """
     Convert XML object read from D-Bus to a string.
     """
+    xml_object[:] = sorted(xml_object, key=lambda child: (child.tag, child.get("name")))
     return ET.tostring(xml_object).decode("utf-8").rstrip(" \n")
 
 
