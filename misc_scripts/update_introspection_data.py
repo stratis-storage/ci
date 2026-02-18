@@ -23,7 +23,7 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 from enum import Enum
-from typing import List, Mapping, Sequence
+from typing import List, Mapping, Optional, Sequence
 
 # isort: THIRDPARTY
 import dbus
@@ -115,6 +115,7 @@ def _xml_object_to_str(xml_object: ET.Element) -> str:
     """
     Convert XML object read from D-Bus to a string.
     """
+    xml_object[:] = sorted(xml_object, key=lambda child: (child.tag, child.get("name")))
     return ET.tostring(xml_object).decode("utf-8").rstrip(" \n")
 
 
@@ -179,14 +180,20 @@ def setup_minimal_object_set(
     }
 
 
-def _make_python_spec(proxies: Mapping[ProxyType, ProxyObject]) -> dict[str, str]:
+def _make_python_spec(
+    proxies: Mapping[ProxyType, ProxyObject], *, revision_number: Optional[int] = None
+) -> dict[str, str]:
     """
     Make the introspection spec for python consumption.
     """
 
-    revision = (
-        f"r{Version(Manager.Properties.Version.Get(proxies[ProxyType.MANAGER])).minor}"
+    revision_number = (
+        Version(Manager.Properties.Version.Get(proxies[ProxyType.MANAGER])).minor
+        if revision_number is None
+        else revision_number
     )
+
+    revision = f"r{revision_number}"
 
     def get_current_interfaces(interface_prefixes: Sequence[str]) -> List[str]:
         return [f"{prefix}.{revision}" for prefix in interface_prefixes]
@@ -259,13 +266,13 @@ def _print_python_spec(specs: Mapping[str, str]):
     print("}")
 
 
-def _python_output(_namespace: argparse.Namespace):
+def _python_output(namespace: argparse.Namespace):
     """
     Generate python output
     """
     bus = dbus.SystemBus()
     proxies = setup_minimal_object_set(bus)
-    specs = _make_python_spec(proxies)
+    specs = _make_python_spec(proxies, revision_number=namespace.revision_number)
     _print_python_spec(specs)
 
 
@@ -356,6 +363,9 @@ def _gen_parser() -> argparse.ArgumentParser:
 
     python_parser = subparsers.add_parser(
         "python", help="Generate introspection data for consumption by Python scripts"
+    )
+    python_parser.add_argument(
+        "--revision-number", help="D-Bus interface revision number", type=int
     )
     python_parser.set_defaults(func=_python_output)
 
