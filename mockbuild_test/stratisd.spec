@@ -45,6 +45,7 @@ Requires:       systemd-libs
 Requires:       dbus-libs
 Requires:       cryptsetup-libs
 Requires:       libblkid
+Requires:       dbus-python
 
 # stratisd does not require clevis; it can be used in restricted environments
 # where clevis is not available.
