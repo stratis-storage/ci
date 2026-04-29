@@ -51,7 +51,7 @@ def gen_parser():
     return parser
 
 
-def build_arrays(block_size, values):  # pylint: disable=too-many-locals
+def build_arrays(block_size, values):
     """
     Build three matrices of values where the z_values are the result of
     running thin_metadata_size on the x and y values.
@@ -116,7 +116,7 @@ def plot_figure(x_inputs, y_inputs, z_inputs):
     return fig
 
 
-def main():  # pylint: disable=too-many-locals
+def main():
     """
     Main method
     """

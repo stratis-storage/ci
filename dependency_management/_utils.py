@@ -18,7 +18,6 @@ Calculates information comparing the versions of dependencies in a Rust project
 to the versions of dependencies available on Fedora Rawhide.
 """
 
-
 # isort: STDLIB
 import json
 import re
@@ -57,7 +56,7 @@ def build_koji_repo_dict(crates, release):
 
             release_number = int(release[1:])
 
-            if release_number < 34:
+            if release_number < 34:  # noqa: PLR2004
                 raise RuntimeError(
                     f"release number must be at least 34, was {release_number}"
                 )
@@ -72,7 +71,7 @@ def build_koji_repo_dict(crates, release):
     )
 
     requests_var = requests.get(url, timeout=30)
-    if requests_var.status_code != 200:
+    if requests_var.status_code != requests.codes.ok:
         raise RuntimeError(f"Page at URL {url} not found")
 
     packages = requests_var.text
@@ -106,13 +105,7 @@ def build_cargo_metadata(manifest_path, *, skip_path=False):
     :returns: a dict mapping crate name to version specification
     :rtype: str * SimpleSpec
     """
-    command = [
-        "cargo",
-        "metadata",
-        "--format-version=1",
-        "--no-deps",
-        "--all-features",
-    ]
+    command = ["cargo", "metadata", "--format-version=1", "--no-deps", "--all-features"]
     if manifest_path is not None:
         command.append(f"--manifest-path={manifest_path}")
 

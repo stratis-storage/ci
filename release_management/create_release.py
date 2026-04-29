@@ -64,9 +64,7 @@ def _with_dry_run(dry_run):
             return print_message
 
         return patch(
-            to_patch_str,
-            return_value=None,
-            side_effect=side_effect(to_patch_str),
+            to_patch_str, return_value=None, side_effect=side_effect(to_patch_str)
         )
 
     def func(name, closure, *, skip=False):
@@ -94,10 +92,7 @@ def _push_tag(repository_url, tag):
     :param str repository_url: the repo to push to
     :param str tag: the tag to push
     """
-    subprocess.run(
-        ["git", "push", repository_url, "tag", tag],
-        check=True,
-    )
+    subprocess.run(["git", "push", repository_url, "tag", tag], check=True)
 
 
 class RustCrates:
@@ -189,13 +184,7 @@ class RustCrates:
 
         try:
             subprocess.run(
-                [
-                    "cargo",
-                    "package",
-                    "--manifest-path",
-                    MANIFEST_PATH,
-                ],
-                check=True,
+                ["cargo", "package", "--manifest-path", MANIFEST_PATH], check=True
             )
         finally:
             subprocess.run(["cargo", "clean"], check=True)
@@ -204,9 +193,7 @@ class RustCrates:
         if not namespace.no_vendor:
             filtered = namespace.vendor_method == "filtered"
             vendor_tarfile_name = vendor(
-                manifest_abs_path,
-                ReleaseVersion(release_version),
-                filterer=filtered,
+                manifest_abs_path, ReleaseVersion(release_version), filterer=filtered
             )
             subprocess.run(
                 ["sha256sum", os.path.abspath(vendor_tarfile_name)], check=True
@@ -244,12 +231,11 @@ class RustCrates:
             skip=namespace.no_github_release,
         )
 
-        # pylint: disable=unnecessary-lambda
         # The lambda is necessary in order to prevent the interpreter from
         # resolving _publish before the mock method is put into place.
         dry_run_caller(
             "__main__.RustCrates._publish",
-            lambda: RustCrates._publish(),
+            lambda: RustCrates._publish(),  # noqa: PLW0108
             skip=namespace.no_publish,
         )
 
@@ -339,10 +325,7 @@ class PythonPackages:
 
 def _create_rust_subcommands(subparsers):
     RustCrates.set_up_subcommand(
-        "stratisd",
-        subparsers,
-        add_github_release_option=True,
-        add_vendor_option=True,
+        "stratisd", subparsers, add_github_release_option=True, add_vendor_option=True
     )
 
     RustCrates.set_up_subcommand(
@@ -356,22 +339,13 @@ def _create_rust_subcommands(subparsers):
         "devicemapper-sys", subparsers, subcmd_aliases=["devicemapper-rs-sys"]
     )
 
-    RustCrates.set_up_subcommand(
-        "libcryptsetup-rs",
-        subparsers,
-    )
+    RustCrates.set_up_subcommand("libcryptsetup-rs", subparsers)
 
-    RustCrates.set_up_subcommand(
-        "libcryptsetup-rs-sys",
-        subparsers,
-    )
+    RustCrates.set_up_subcommand("libcryptsetup-rs-sys", subparsers)
 
     RustCrates.set_up_subcommand("libblkid-rs", subparsers)
 
-    RustCrates.set_up_subcommand(
-        "libblkid-rs-sys",
-        subparsers,
-    )
+    RustCrates.set_up_subcommand("libblkid-rs-sys", subparsers)
 
     RustCrates.set_up_subcommand("stratisd_proc_macros", subparsers)
 

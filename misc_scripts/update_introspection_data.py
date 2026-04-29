@@ -93,7 +93,6 @@ _MANAGER_IFACE = "org.storage.stratis3.Manager.r0"
 _POOL_IFACE = "org.storage.stratis3.pool.r0"
 _TIMEOUT = 120000
 
-# pylint: disable=invalid-name
 Introspectable = make_class(
     "Introspectable", ET.fromstring(SPECS[_INTROSPECTABLE_IFACE]), _TIMEOUT
 )
@@ -119,9 +118,7 @@ def _xml_object_to_str(xml_object: ET.Element) -> str:
     return ET.tostring(xml_object).decode("utf-8").rstrip(" \n")
 
 
-def setup_minimal_object_set(
-    bus: dbus.SystemBus,
-) -> dict[ProxyType, ProxyObject]:
+def setup_minimal_object_set(bus: dbus.SystemBus) -> dict[ProxyType, ProxyObject]:
     """
     Set up the minimal set of objects to be introspected on.
 
@@ -131,19 +128,17 @@ def setup_minimal_object_set(
     """
     proxy = bus.get_object(_SERVICE, "/org/storage/stratis3", introspect=False)
 
-    (
-        (_, (pool_object_path, dev_object_paths)),
-        return_code,
-        return_msg,
-    ) = Manager.Methods.CreatePool(
-        proxy,
-        {
-            "name": "pool_name",
-            "redundancy": (True, 0),
-            "devices": ["/fake/fake"],
-            "key_desc": (False, ""),
-            "clevis_info": (False, ("", "")),
-        },
+    ((_, (pool_object_path, dev_object_paths)), return_code, return_msg) = (
+        Manager.Methods.CreatePool(
+            proxy,
+            {
+                "name": "pool_name",
+                "redundancy": (True, 0),
+                "devices": ["/fake/fake"],
+                "key_desc": (False, ""),
+                "clevis_info": (False, ("", "")),
+            },
+        )
     )
 
     if return_code != 0:
@@ -153,15 +148,8 @@ def setup_minimal_object_set(
 
     blockdev_proxy = bus.get_object(_SERVICE, dev_object_paths[0], introspect=False)
 
-    (
-        (_, (filesystems)),
-        return_code,
-        return_msg,
-    ) = Pool.Methods.CreateFilesystems(
-        pool_proxy,
-        {
-            "specs": [("fs_name", (False, ""))],
-        },
+    ((_, (filesystems)), return_code, return_msg) = Pool.Methods.CreateFilesystems(
+        pool_proxy, {"specs": [("fs_name", (False, ""))]}
     )
 
     if return_code != 0:
@@ -227,18 +215,11 @@ def _make_python_spec(
 
     _add_data(ProxyType.MANAGER, [OBJECT_MANAGER_INTERFACE])
 
-    _add_data(
-        ProxyType.MANAGER,
-        get_current_interfaces(TOP_OBJECT_INTERFACE_PREFIXES),
-    )
-    _add_data(
-        ProxyType.POOL,
-        get_current_interfaces(POOL_OBJECT_INTERFACE_PREFIXES),
-    )
+    _add_data(ProxyType.MANAGER, get_current_interfaces(TOP_OBJECT_INTERFACE_PREFIXES))
+    _add_data(ProxyType.POOL, get_current_interfaces(POOL_OBJECT_INTERFACE_PREFIXES))
 
     _add_data(
-        ProxyType.BLOCKDEV,
-        get_current_interfaces(BLOCKDEV_OBJECT_INTERFACE_PREFIXES),
+        ProxyType.BLOCKDEV, get_current_interfaces(BLOCKDEV_OBJECT_INTERFACE_PREFIXES)
     )
     _add_data(
         ProxyType.FILESYSTEM,

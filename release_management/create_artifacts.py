@@ -133,11 +133,7 @@ def _stratisd_artifacts(namespace):
     )
     print(os.path.relpath(source_tarfile_path))
 
-    vendor_tarfile_name = vendor(
-        manifest_abs_path,
-        release_version,
-        filterer=filtered,
-    )
+    vendor_tarfile_name = vendor(manifest_abs_path, release_version, filterer=filtered)
 
     vendor_tarfile_path = os.path.join(output_path, vendor_tarfile_name)
 
@@ -171,11 +167,7 @@ def _stratis_cli_artifacts(namespace):
         source_version, pre=namespace.pre_release, post=namespace.post_release
     )
 
-    source_tarfile = make_source_tarball(
-        "stratis-cli",
-        release_version,
-        output_path,
-    )
+    source_tarfile = make_source_tarball("stratis-cli", release_version, output_path)
 
     def remove_stratisd_requires(spec):
         """
@@ -207,6 +199,6 @@ def _stratis_cli_artifacts(namespace):
 if __name__ == "__main__":
     try:
         main()
-    except Exception as err:  # pylint: disable=broad-except
+    except Exception as err:
         print(err)
         sys.exit(1)

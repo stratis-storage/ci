@@ -101,7 +101,7 @@ def edit_specfile(
                 if release is not None:
                     spec.release = release
             if sources is not None:
-                with spec.sources() as entries:  # pylint: disable=not-context-manager
+                with spec.sources() as entries:
                     for index, value in enumerate(sources):
                         entries[index].location = value
             if arbitrary is not None:
@@ -154,7 +154,7 @@ def get_package_info(manifest_abs_path, package_name) -> tuple[Version, Any]:
 
     package = metadata["package"]
     assert package["name"] == package_name, (
-        f'package name in Cargo.toml ({package["name"]}) != specified'
+        f"package name in Cargo.toml ({package['name']}) != specified"
         f"package name ({package_name})"
     )
     github_repo = urlparse(package["repository"].rstrip("/"))
@@ -188,8 +188,7 @@ def set_tag(tag, message):
     """
     if not verify_tag(tag):
         subprocess.run(
-            ["git", "tag", "--annotate", tag, f'--message="{message}"'],
-            check=True,
+            ["git", "tag", "--annotate", tag, f"--message={message}"], check=True
         )
 
 
@@ -230,10 +229,7 @@ def create_release(
     repo = git.get_repo(repository.path.strip("/"))
 
     release = repo.create_git_release(
-        tag,
-        f"Version {release_version}",
-        f"See {changelog_url}",
-        draft=True,
+        tag, f"Version {release_version}", f"See {changelog_url}", draft=True
     )
 
     for asset in [] if additional_assets is None else additional_assets:
@@ -339,7 +335,7 @@ def get_changelog_url(repository_url, branch):
     """
     changelog_url = f"{repository_url}/blob/{branch}/CHANGES.txt"
     requests_var = requests.get(changelog_url, timeout=30)
-    if requests_var.status_code != 200:
+    if requests_var.status_code != requests.codes.ok:
         raise RuntimeError(f"Page at URL {changelog_url} not found")
 
     return changelog_url

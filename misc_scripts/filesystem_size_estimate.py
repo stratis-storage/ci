@@ -93,7 +93,6 @@ _FILESYSTEM_IFACE = "org.storage.stratis3.filesystem.r0"
 
 _TIMEOUT = 120000
 
-# pylint: disable=invalid-name
 Manager = make_class("Manager", ET.fromstring(SPECS[_MANAGER_IFACE]), _TIMEOUT)
 Pool = make_class("Pool", ET.fromstring(SPECS[_POOL_IFACE]), _TIMEOUT)
 Filesystem = make_class("Filesystem", ET.fromstring(SPECS[_FILESYSTEM_IFACE]), _TIMEOUT)
@@ -137,15 +136,8 @@ def _do_one(size, bus, pool_proxy):
     if not real:
         pool_used_pre = None
 
-    (
-        (_, (filesystems)),
-        return_code,
-        return_msg,
-    ) = Pool.Methods.CreateFilesystems(
-        pool_proxy,
-        {
-            "specs": [("fs_name", (True, size))],
-        },
+    ((_, (filesystems)), return_code, return_msg) = Pool.Methods.CreateFilesystems(
+        pool_proxy, {"specs": [("fs_name", (True, size))]}
     )
 
     if return_code != 0:
@@ -184,11 +176,7 @@ def _print_values(devices):
 
     proxy = bus.get_object(_SERVICE, _TOP_OBJECT, introspect=False)
 
-    (
-        (_, (pool_object_path, _)),
-        return_code,
-        return_msg,
-    ) = Manager.Methods.CreatePool(
+    ((_, (pool_object_path, _)), return_code, return_msg) = Manager.Methods.CreatePool(
         proxy,
         {
             "name": "pool_name",
@@ -209,9 +197,9 @@ def _print_values(devices):
 
         (size, fs_used, pool_used_pre, pool_used_post) = _do_one(size, bus, pool_proxy)
         print(
-            f'{size} {"ERROR" if fs_used is None else fs_used} '
-            f'{"ERROR" if pool_used_pre is None else pool_used_pre} '
-            f'{"ERROR" if pool_used_post is None else pool_used_post}'
+            f"{size} {'ERROR' if fs_used is None else fs_used} "
+            f"{'ERROR' if pool_used_pre is None else pool_used_pre} "
+            f"{'ERROR' if pool_used_post is None else pool_used_post}"
         )
 
     (_, return_code, return_msg) = Manager.Methods.DestroyPool(
