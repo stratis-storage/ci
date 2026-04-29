@@ -22,7 +22,6 @@ given arguments as the array items.
 Example: "generate_test_config /dev/vdb1 /dev/vdb2 /dev/vdb3"
 """
 
-# isort: STDLIB
 import json
 import sys
 

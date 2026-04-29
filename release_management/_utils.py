@@ -17,7 +17,6 @@
 Calculates values useful for making a release.
 """
 
-# isort: STDLIB
 import os
 import subprocess
 import tomllib
@@ -27,7 +26,6 @@ from getpass import getpass
 from typing import Any, List, Optional
 from urllib.parse import urlparse
 
-# isort: THIRDPARTY
 import requests
 from github import Github
 from semantic_version import Version

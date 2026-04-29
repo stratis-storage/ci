@@ -17,13 +17,11 @@
 Make a GitHub Draft release.
 """
 
-# isort: STDLIB
 import argparse
 import os
 import subprocess
 from unittest.mock import patch
 
-# isort: LOCAL
 from _utils import (
     MANIFEST_PATH,
     ReleaseVersion,

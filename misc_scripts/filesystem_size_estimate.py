@@ -3,15 +3,12 @@
 Estimate filesystem size consumption for logical filesystem sizes.
 """
 
-# isort: STDLIB
 import argparse
 import sys
 import xml.etree.ElementTree as ET
 
-# isort: THIRDPARTY
 import dbus
 
-# isort: FIRSTPARTY
 from dbus_python_client_gen import make_class
 
 # a minimal chunk of introspection data, enough for the methods needed.
