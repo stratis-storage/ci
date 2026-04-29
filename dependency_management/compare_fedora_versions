@@ -205,10 +205,7 @@ def main():
             f'Unable to parse repo page for release "{args.release}"'
         ) from err
 
-    result = _main_engine(
-        explicit_dependencies,
-        koji_repo_dict,
-    )
+    result = _main_engine(explicit_dependencies, koji_repo_dict)
 
     result = {
         "missing": filter_items(result["missing"], "missing"),
