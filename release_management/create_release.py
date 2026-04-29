@@ -244,7 +244,6 @@ class RustCrates:
             skip=namespace.no_github_release,
         )
 
-        # pylint: disable=unnecessary-lambda
         # The lambda is necessary in order to prevent the interpreter from
         # resolving _publish before the mock method is put into place.
         dry_run_caller(

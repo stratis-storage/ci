@@ -101,7 +101,7 @@ def edit_specfile(
                 if release is not None:
                     spec.release = release
             if sources is not None:
-                with spec.sources() as entries:  # pylint: disable=not-context-manager
+                with spec.sources() as entries:
                     for index, value in enumerate(sources):
                         entries[index].location = value
             if arbitrary is not None:

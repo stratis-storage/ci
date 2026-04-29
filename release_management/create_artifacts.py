@@ -207,6 +207,6 @@ def _stratis_cli_artifacts(namespace):
 if __name__ == "__main__":
     try:
         main()
-    except Exception as err:  # pylint: disable=broad-except
+    except Exception as err:
         print(err)
         sys.exit(1)

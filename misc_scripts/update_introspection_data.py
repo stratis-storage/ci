@@ -93,7 +93,6 @@ _MANAGER_IFACE = "org.storage.stratis3.Manager.r0"
 _POOL_IFACE = "org.storage.stratis3.pool.r0"
 _TIMEOUT = 120000
 
-# pylint: disable=invalid-name
 Introspectable = make_class(
     "Introspectable", ET.fromstring(SPECS[_INTROSPECTABLE_IFACE]), _TIMEOUT
 )

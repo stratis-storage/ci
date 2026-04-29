@@ -93,7 +93,6 @@ _FILESYSTEM_IFACE = "org.storage.stratis3.filesystem.r0"
 
 _TIMEOUT = 120000
 
-# pylint: disable=invalid-name
 Manager = make_class("Manager", ET.fromstring(SPECS[_MANAGER_IFACE]), _TIMEOUT)
 Pool = make_class("Pool", ET.fromstring(SPECS[_POOL_IFACE]), _TIMEOUT)
 Filesystem = make_class("Filesystem", ET.fromstring(SPECS[_FILESYSTEM_IFACE]), _TIMEOUT)
