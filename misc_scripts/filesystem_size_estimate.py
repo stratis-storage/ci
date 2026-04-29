@@ -136,15 +136,8 @@ def _do_one(size, bus, pool_proxy):
     if not real:
         pool_used_pre = None
 
-    (
-        (_, (filesystems)),
-        return_code,
-        return_msg,
-    ) = Pool.Methods.CreateFilesystems(
-        pool_proxy,
-        {
-            "specs": [("fs_name", (True, size))],
-        },
+    ((_, (filesystems)), return_code, return_msg) = Pool.Methods.CreateFilesystems(
+        pool_proxy, {"specs": [("fs_name", (True, size))]}
     )
 
     if return_code != 0:
@@ -183,11 +176,7 @@ def _print_values(devices):
 
     proxy = bus.get_object(_SERVICE, _TOP_OBJECT, introspect=False)
 
-    (
-        (_, (pool_object_path, _)),
-        return_code,
-        return_msg,
-    ) = Manager.Methods.CreatePool(
+    ((_, (pool_object_path, _)), return_code, return_msg) = Manager.Methods.CreatePool(
         proxy,
         {
             "name": "pool_name",
@@ -208,9 +197,9 @@ def _print_values(devices):
 
         (size, fs_used, pool_used_pre, pool_used_post) = _do_one(size, bus, pool_proxy)
         print(
-            f'{size} {"ERROR" if fs_used is None else fs_used} '
-            f'{"ERROR" if pool_used_pre is None else pool_used_pre} '
-            f'{"ERROR" if pool_used_post is None else pool_used_post}'
+            f"{size} {'ERROR' if fs_used is None else fs_used} "
+            f"{'ERROR' if pool_used_pre is None else pool_used_pre} "
+            f"{'ERROR' if pool_used_post is None else pool_used_post}"
         )
 
     (_, return_code, return_msg) = Manager.Methods.DestroyPool(

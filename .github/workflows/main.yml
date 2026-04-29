@@ -27,10 +27,10 @@ jobs:
               python3-requests
               python3-semantic_version
               python3-specfile
+              ruff
             task: PATH=${PATH}:/github/home/.local/bin make -f Makefile lint
           - dependencies: >
-              black
-              python3-isort
+              ruff
               shfmt
             task: make -f Makefile fmt-travis
           - dependencies: >

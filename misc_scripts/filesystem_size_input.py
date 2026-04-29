@@ -18,19 +18,11 @@ def gen_parser():
     )
 
     parser.add_argument(
-        "--start",
-        action="store",
-        type=int,
-        default=512 * 1024**2,
-        help="Start value",
+        "--start", action="store", type=int, default=512 * 1024**2, help="Start value"
     )
 
     parser.add_argument(
-        "--stop",
-        action="store",
-        type=int,
-        default=8 * 1024**4,
-        help="End value",
+        "--stop", action="store", type=int, default=8 * 1024**4, help="End value"
     )
 
     return parser
