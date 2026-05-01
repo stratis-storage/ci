@@ -4,11 +4,9 @@ thin_metadata_size_viz: visualize the relation of thin_metadata_size inputs
 to output.
 """
 
-# isort: STDLIB
 import argparse
 import subprocess
 
-# isort: THIRDPARTY
 import numpy
 from matplotlib import pyplot
 

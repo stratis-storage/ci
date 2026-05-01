@@ -18,12 +18,10 @@ Calculates information comparing the versions of dependencies in a Rust project
 to the versions of dependencies available on Fedora Rawhide.
 """
 
-# isort: STDLIB
 import json
 import re
 import subprocess
 
-# isort: THIRDPARTY
 import requests
 from semantic_version import SimpleSpec, Version
 

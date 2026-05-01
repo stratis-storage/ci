@@ -17,12 +17,10 @@
 Create artifacts for packaging tests.
 """
 
-# isort: STDLIB
 import argparse
 import os
 import sys
 
-# isort: LOCAL
 from _utils import (
     MANIFEST_PATH,
     ReleaseVersion,

@@ -3,7 +3,6 @@
 Generate a list of integers for input to another program.
 """
 
-# isort: STDLIB
 import argparse
 
 
