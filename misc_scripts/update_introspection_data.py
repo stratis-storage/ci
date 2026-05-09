@@ -337,13 +337,14 @@ def _gen_parser() -> argparse.ArgumentParser:
         )
     )
 
+    parser.add_argument(
+        "--revision-number", help="D-Bus interface revision number", type=int
+    )
+
     subparsers = parser.add_subparsers(title="subcommands")
 
     python_parser = subparsers.add_parser(
         "python", help="Generate introspection data for consumption by Python scripts"
-    )
-    python_parser.add_argument(
-        "--revision-number", help="D-Bus interface revision number", type=int
     )
     python_parser.set_defaults(func=_python_output)
 
