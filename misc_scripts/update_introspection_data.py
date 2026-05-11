@@ -165,20 +165,26 @@ def setup_minimal_object_set(bus: dbus.SystemBus) -> dict[ProxyType, ProxyObject
     }
 
 
+def _get_revision_ext(
+    manager: ProxyObject, maybe_revision_number: int | None = None
+) -> str:
+    """
+    Return revision extension.
+    """
+    return f"r{
+        Version(Manager.Properties.Version.Get(manager)).minor
+        if maybe_revision_number is None
+        else maybe_revision_number
+    }"
+
+
 def _make_python_spec(
     proxies: Mapping[ProxyType, ProxyObject], *, revision_number: int | None = None
 ) -> dict[str, str]:
     """
     Make the introspection spec for python consumption.
     """
-
-    revision_number = (
-        Version(Manager.Properties.Version.Get(proxies[ProxyType.MANAGER])).minor
-        if revision_number is None
-        else revision_number
-    )
-
-    revision = f"r{revision_number}"
+    revision = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
 
     def get_current_interfaces(interface_prefixes: Sequence[str]) -> List[str]:
         return [f"{prefix}.{revision}" for prefix in interface_prefixes]
