@@ -256,7 +256,7 @@ def _make_python_spec(
     """
     revision_ext = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
 
-    specs = {}
+    specs: dict[str, str] = {}
 
     _add_data(specs, proxies[ProxyType.MANAGER], [OBJECT_MANAGER_INTERFACE])
     _add_stratis_specs(specs, proxies, revision_ext)
@@ -299,7 +299,7 @@ def _make_docs_spec(
     Make the introspection spec for use in docs repo.
     """
     revision_ext = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
-    specs = {}
+    specs: dict[str, str] = {}
     _add_stratis_specs(specs, proxies, revision_ext)
     return specs
 
