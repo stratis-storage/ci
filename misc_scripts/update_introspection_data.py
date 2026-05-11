@@ -22,7 +22,7 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 from enum import Enum
-from typing import List, Mapping, Optional, Sequence
+from typing import List, Mapping, Sequence
 
 import dbus
 from dbus.proxies import ProxyObject
@@ -166,7 +166,7 @@ def setup_minimal_object_set(bus: dbus.SystemBus) -> dict[ProxyType, ProxyObject
 
 
 def _make_python_spec(
-    proxies: Mapping[ProxyType, ProxyObject], *, revision_number: Optional[int] = None
+    proxies: Mapping[ProxyType, ProxyObject], *, revision_number: int | None = None
 ) -> dict[str, str]:
     """
     Make the introspection spec for python consumption.
