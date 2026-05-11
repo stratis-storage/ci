@@ -282,53 +282,47 @@ def _python_output(namespace: argparse.Namespace):
     _print_python_spec(specs)
 
 
-def _make_docs_spec(proxies: Mapping[ProxyType, ProxyObject]) -> dict[ProxyType, str]:
+def _make_docs_spec(
+    proxies: Mapping[ProxyType, ProxyObject], revision_number: int | None
+) -> dict[str, str]:
     """
     Make the introspection spec for use in docs repo.
     """
-
+    revision_ext = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
     specs = {}
 
-    def _add_data(proxy_key: ProxyType):
-        """
-        Get the introspection data, and add it to the spec.
+    _add_data(
+        specs,
+        proxies[ProxyType.MANAGER],
+        _get_current_interfaces(revision_ext, TOP_OBJECT_INTERFACE_PREFIXES),
+    )
+    _add_data(
+        specs,
+        proxies[ProxyType.POOL],
+        _get_current_interfaces(revision_ext, POOL_OBJECT_INTERFACE_PREFIXES),
+    )
 
-        :param proxy_key: key for proxies
-        """
-        string_data = Introspectable.Methods.Introspect(proxies[proxy_key], {})
-        specs[proxy_key] = _xml_object_to_str(ET.fromstring(string_data))
-
-    _add_data(ProxyType.MANAGER)
-    _add_data(ProxyType.POOL)
-    _add_data(ProxyType.BLOCKDEV)
-    _add_data(ProxyType.FILESYSTEM)
-
+    _add_data(
+        specs,
+        proxies[ProxyType.BLOCKDEV],
+        _get_current_interfaces(revision_ext, BLOCKDEV_OBJECT_INTERFACE_PREFIXES),
+    )
+    _add_data(
+        specs,
+        proxies[ProxyType.FILESYSTEM],
+        _get_current_interfaces(revision_ext, FILESYSTEM_OBJECT_INTERFACE_PREFIXES),
+    )
     return specs
 
 
-def _print_docs_spec(specs: Mapping[ProxyType, str], namespace: argparse.Namespace):
+def _print_docs_spec(specs: Mapping[str, str], namespace: argparse.Namespace):
     """
     Print spec for inclusion on docs website.
 
     :param specs: the specification to print
-    :type specs: dict of ProxyType * XML object
+    :type specs: dict of str * str
     :param namespace: the namespace parsed from the command-line arguments
     """
-
-    def _proxy_type_to_filename(proxy_type: ProxyType) -> str:
-        """
-        Return filename for proxy type.
-        """
-        if proxy_type == ProxyType.MANAGER:
-            return namespace.manager_file_name
-        if proxy_type == ProxyType.POOL:
-            return namespace.pool_file_name
-        if proxy_type == ProxyType.FILESYSTEM:
-            return namespace.filesystem_file_name
-        if proxy_type == ProxyType.BLOCKDEV:
-            return namespace.blockdev_file_name
-
-        assert False, "unreachable"
 
     abs_output_dir = os.path.abspath(namespace.output_dir)
     try:
@@ -336,8 +330,8 @@ def _print_docs_spec(specs: Mapping[ProxyType, str], namespace: argparse.Namespa
     except FileExistsError as err:
         raise RuntimeError("Cannot create output dir for files") from err
 
-    for proxy_type, introspection_data in specs.items():
-        file_path = os.path.join(abs_output_dir, _proxy_type_to_filename(proxy_type))
+    for interface_name, introspection_data in specs.items():
+        file_path = os.path.join(abs_output_dir, f"{interface_name}.xml")
         with open(file_path, "w", encoding="utf-8") as file:
             print(introspection_data, file=file)
 
@@ -348,7 +342,7 @@ def _docs_output(namespace: argparse.Namespace):
     """
     bus = dbus.SystemBus()
     proxies = setup_minimal_object_set(bus)
-    specs = _make_docs_spec(proxies)
+    specs = _make_docs_spec(proxies, revision_number=namespace.revision_number)
     _print_docs_spec(specs, namespace)
 
 
@@ -380,30 +374,6 @@ def _gen_parser() -> argparse.ArgumentParser:
         "docs", help="Generate introspection data for consumption by website docs"
     )
     docs_parser.add_argument("output_dir", help="directory for output files")
-    docs_parser.add_argument(
-        "--manager-file-name",
-        dest="manager_file_name",
-        default="manager.xml",
-        help="filename for manager object introspection data",
-    )
-    docs_parser.add_argument(
-        "--pool-file-name",
-        dest="pool_file_name",
-        default="pool.xml",
-        help="filename for pool object introspection data",
-    )
-    docs_parser.add_argument(
-        "--filesystem-file-name",
-        dest="filesystem_file_name",
-        default="filesystem.xml",
-        help="filename for filesystem object introspection data",
-    )
-    docs_parser.add_argument(
-        "--blockdev-file-name",
-        dest="blockdev_file_name",
-        default="blockdev.xml",
-        help="filename for blockdev object introspection data",
-    )
     docs_parser.set_defaults(func=_docs_output)
 
     parser.set_defaults(func=lambda _: parser.error("missing sub-command"))
