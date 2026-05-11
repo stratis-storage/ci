@@ -217,18 +217,14 @@ def _add_data(
             ) from err
 
 
-def _make_python_spec(
-    proxies: Mapping[ProxyType, ProxyObject], *, revision_number: int | None = None
-) -> dict[str, str]:
+def _add_stratis_specs(
+    specs: MutableMapping[str, str],
+    proxies: Mapping[ProxyType, ProxyObject],
+    revision_ext: str,
+):
     """
-    Make the introspection spec for python consumption.
+    Add specs for Stratis interfaces.
     """
-    revision_ext = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
-
-    specs = {}
-
-    _add_data(specs, proxies[ProxyType.MANAGER], [OBJECT_MANAGER_INTERFACE])
-
     _add_data(
         specs,
         proxies[ProxyType.MANAGER],
@@ -250,6 +246,20 @@ def _make_python_spec(
         proxies[ProxyType.FILESYSTEM],
         _get_current_interfaces(revision_ext, FILESYSTEM_OBJECT_INTERFACE_PREFIXES),
     )
+
+
+def _make_python_spec(
+    proxies: Mapping[ProxyType, ProxyObject], *, revision_number: int | None = None
+) -> dict[str, str]:
+    """
+    Make the introspection spec for python consumption.
+    """
+    revision_ext = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
+
+    specs = {}
+
+    _add_data(specs, proxies[ProxyType.MANAGER], [OBJECT_MANAGER_INTERFACE])
+    _add_stratis_specs(specs, proxies, revision_ext)
 
     return specs
 
@@ -290,28 +300,7 @@ def _make_docs_spec(
     """
     revision_ext = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
     specs = {}
-
-    _add_data(
-        specs,
-        proxies[ProxyType.MANAGER],
-        _get_current_interfaces(revision_ext, TOP_OBJECT_INTERFACE_PREFIXES),
-    )
-    _add_data(
-        specs,
-        proxies[ProxyType.POOL],
-        _get_current_interfaces(revision_ext, POOL_OBJECT_INTERFACE_PREFIXES),
-    )
-
-    _add_data(
-        specs,
-        proxies[ProxyType.BLOCKDEV],
-        _get_current_interfaces(revision_ext, BLOCKDEV_OBJECT_INTERFACE_PREFIXES),
-    )
-    _add_data(
-        specs,
-        proxies[ProxyType.FILESYSTEM],
-        _get_current_interfaces(revision_ext, FILESYSTEM_OBJECT_INTERFACE_PREFIXES),
-    )
+    _add_stratis_specs(specs, proxies, revision_ext)
     return specs
 
 
