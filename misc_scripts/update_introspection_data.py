@@ -22,7 +22,7 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 from enum import Enum
-from typing import List, Mapping, Sequence
+from typing import List, Mapping, MutableMapping, Sequence
 
 import dbus
 from dbus.proxies import ProxyObject
@@ -178,55 +178,77 @@ def _get_revision_ext(
     }"
 
 
+def _get_current_interfaces(
+    revision_ext: str, interface_prefixes: Sequence[str]
+) -> List[str]:
+    """
+    Return a list of interfaces names.
+    """
+    return [f"{prefix}.{revision_ext}" for prefix in interface_prefixes]
+
+
+def _add_data(
+    specs: MutableMapping[str, str],
+    proxy_object: ProxyObject,
+    interfaces: Sequence[str],
+):
+    """
+    Introspect on the proxy, get the information for the specified
+    interfaces, and add it to specs.
+
+    :param proxy: dbus Proxy object
+    :param list interfaces: list of interesting interface names
+    :raises: RuntimeError if some interface not found
+    """
+    string_data = Introspectable.Methods.Introspect(proxy_object, {})
+    xml_data = ET.fromstring(string_data)
+
+    for interface_name in interfaces:
+        try:
+            interface = next(
+                interface
+                for interface in xml_data
+                if interface.attrib["name"] == interface_name
+            )
+            specs[interface_name] = _xml_object_to_str(interface)
+        except StopIteration as err:
+            raise RuntimeError(
+                f"interface {interface_name} not found in introspection data"
+            ) from err
+
+
 def _make_python_spec(
     proxies: Mapping[ProxyType, ProxyObject], *, revision_number: int | None = None
 ) -> dict[str, str]:
     """
     Make the introspection spec for python consumption.
     """
-    revision = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
-
-    def get_current_interfaces(interface_prefixes: Sequence[str]) -> List[str]:
-        return [f"{prefix}.{revision}" for prefix in interface_prefixes]
+    revision_ext = _get_revision_ext(proxies[ProxyType.MANAGER], revision_number)
 
     specs = {}
 
-    def _add_data(proxy_key: ProxyType, interfaces: Sequence[str]):
-        """
-        Introspect on the proxy, get the information for the specified
-        interfaces, and add it to specs.
-
-        :param proxy: dbus Proxy object
-        :param list interfaces: list of interesting interface names
-        :raises: RuntimeError if some interface not found
-        """
-        string_data = Introspectable.Methods.Introspect(proxies[proxy_key], {})
-        xml_data = ET.fromstring(string_data)
-
-        for interface_name in interfaces:
-            try:
-                interface = next(
-                    interface
-                    for interface in xml_data
-                    if interface.attrib["name"] == interface_name
-                )
-                specs[interface_name] = _xml_object_to_str(interface)
-            except StopIteration as err:
-                raise RuntimeError(
-                    f"interface {interface_name} not found in introspection data"
-                ) from err
-
-    _add_data(ProxyType.MANAGER, [OBJECT_MANAGER_INTERFACE])
-
-    _add_data(ProxyType.MANAGER, get_current_interfaces(TOP_OBJECT_INTERFACE_PREFIXES))
-    _add_data(ProxyType.POOL, get_current_interfaces(POOL_OBJECT_INTERFACE_PREFIXES))
+    _add_data(specs, proxies[ProxyType.MANAGER], [OBJECT_MANAGER_INTERFACE])
 
     _add_data(
-        ProxyType.BLOCKDEV, get_current_interfaces(BLOCKDEV_OBJECT_INTERFACE_PREFIXES)
+        specs,
+        proxies[ProxyType.MANAGER],
+        _get_current_interfaces(revision_ext, TOP_OBJECT_INTERFACE_PREFIXES),
     )
     _add_data(
-        ProxyType.FILESYSTEM,
-        get_current_interfaces(FILESYSTEM_OBJECT_INTERFACE_PREFIXES),
+        specs,
+        proxies[ProxyType.POOL],
+        _get_current_interfaces(revision_ext, POOL_OBJECT_INTERFACE_PREFIXES),
+    )
+
+    _add_data(
+        specs,
+        proxies[ProxyType.BLOCKDEV],
+        _get_current_interfaces(revision_ext, BLOCKDEV_OBJECT_INTERFACE_PREFIXES),
+    )
+    _add_data(
+        specs,
+        proxies[ProxyType.FILESYSTEM],
+        _get_current_interfaces(revision_ext, FILESYSTEM_OBJECT_INTERFACE_PREFIXES),
     )
 
     return specs
