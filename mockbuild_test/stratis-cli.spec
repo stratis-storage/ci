@@ -14,7 +14,6 @@ BuildRequires:  %{_bindir}/a2x
 Requires:       (stratisd >= VS with stratisd < 4.0.0)
 
 # Exclude the same arches for stratis-cli as are excluded for stratisd
-ExclusiveArch:  %{rust_arches} noarch
 %if 0%{?rhel}
 ExcludeArch:    i686
 %endif
