@@ -42,9 +42,9 @@ Requires:       xfsprogs
 Requires:       device-mapper-persistent-data
 Requires:       systemd-libs
 Requires:       dbus-libs
-Requires:       cryptsetup
 Requires:       cryptsetup-libs
 Requires:       libblkid
+Requires:       cryptsetup
 
 # stratisd does not require clevis; it can be used in restricted environments
 # where clevis is not available.
