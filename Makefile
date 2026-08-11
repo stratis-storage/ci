@@ -27,3 +27,11 @@ yamllint:
 .PHONY: shellcheck
 shellcheck:
 	find . -name '*.sh' | xargs shellcheck --severity=warning
+
+.PHONY: check-typos
+check-typos:
+	typos
+
+.PHONY: fix-typos
+fix-typos:
+	typos -w
