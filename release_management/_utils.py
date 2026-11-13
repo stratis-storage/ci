@@ -31,7 +31,6 @@ import requests
 from build.util import project_wheel_metadata
 from github import Github
 from github.GitRelease import GitRelease
-from giturlparse import GitUrlParsed, parse
 from semantic_version import Version
 from specfile import specfile
 
@@ -110,7 +109,7 @@ def edit_specfile(
                 arbitrary(spec)
 
 
-def get_python_package_info(name: str) -> tuple[Version, GitUrlParsed]:
+def get_python_package_info(name: str) -> tuple[Version, ParseResult]:
     """
     Get info about the python package.
 
@@ -122,14 +121,13 @@ def get_python_package_info(name: str) -> tuple[Version, GitUrlParsed]:
 
     release_version = Version(config.get("version"))
 
-    command = ["git", "remote", "get-url", "origin", "--push"]
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        stdout = proc.stdout
-        assert stdout is not None, "stdout set in subprocess call"
-        github_url = stdout.readline().strip().decode("utf-8")
+    github_url = dict(u.split(", ", 1) for u in config.get_all("Project-URL", [])).get(
+        "Homepage"
+    )
+    assert github_url is not None, "Homepage URL not found in project metadata"
 
-    github_repo = parse(github_url)
-    assert github_repo.host == "github.com", "specified repo is not on GitHub"
+    github_repo = urlparse(github_url)
+    assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
     return (release_version, github_repo)
 
 
@@ -207,7 +205,7 @@ def get_branch() -> str:
 
 
 def create_release(
-    repository: ParseResult | GitUrlParsed,
+    repository: ParseResult,
     tag: str,
     release_version: Version | str,
     changelog_url: str,
@@ -231,13 +229,7 @@ def create_release(
 
     git = Github(api_key)
 
-    # GitUrlParsed uses pathname, ParseResult uses path
-    # giturlparse lacks type stubs, so we use getattr to access its attributes
-    if isinstance(repository, GitUrlParsed):
-        repo_path = getattr(repository, "pathname", "")
-    else:
-        repo_path = repository.path
-    repo = git.get_repo(repo_path.strip("/"))
+    repo = git.get_repo(repository.path.strip("/"))
 
     release = repo.create_git_release(
         tag, f"Version {release_version}", f"See {changelog_url}", draft=True
