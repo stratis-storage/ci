@@ -24,13 +24,13 @@ from collections.abc import Callable
 from datetime import datetime
 from functools import partial
 from getpass import getpass
-from typing import Any, List, Optional
-from urllib.parse import urlparse
+from typing import Any
+from urllib.parse import ParseResult, urlparse
 
 import requests
 from build.util import project_wheel_metadata
 from github import Github
-from giturlparse import GitUrlParsed, parse
+from github.GitRelease import GitRelease
 from semantic_version import Version
 from specfile import specfile
 
@@ -56,7 +56,7 @@ class ReleaseVersion:
     Release version for the package.
     """
 
-    def __init__(self, base: Version, *, pre: bool = False, post: bool = False):
+    def __init__(self, base: Version, *, pre: bool = False, post: bool = False) -> None:
         """
         Initializer.
         :param Version base: Base version
@@ -67,10 +67,10 @@ class ReleaseVersion:
         self.pre = pre
         self.post = post
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.base}{'~pre' if self.pre else ''}{'^post' if self.post else ''}"
 
-    def release(self) -> Optional[str]:
+    def release(self) -> str | None:
         """
         Optional release string for spec file.
         """
@@ -78,12 +78,12 @@ class ReleaseVersion:
 
 
 def edit_specfile(
-    specfile_path,
+    specfile_path: str | None,
     *,
-    release_version: Optional[ReleaseVersion] = None,
-    sources: Optional[List[str]] = None,
-    arbitrary: Optional[Callable[[specfile.Specfile], None]] = None,
-):
+    release_version: ReleaseVersion | None = None,
+    sources: list[str] | None = None,
+    arbitrary: Callable[[specfile.Specfile], None] | None = None,
+) -> None:
     """
     Edit the specfile in place
     :param specfile_path: abspath of specfile
@@ -109,7 +109,7 @@ def edit_specfile(
                 arbitrary(spec)
 
 
-def get_python_package_info(name: str) -> tuple[Version, GitUrlParsed]:
+def get_python_package_info(name: str) -> tuple[Version, ParseResult]:
     """
     Get info about the python package.
 
@@ -121,18 +121,19 @@ def get_python_package_info(name: str) -> tuple[Version, GitUrlParsed]:
 
     release_version = Version(config.get("version"))
 
-    command = ["git", "remote", "get-url", "origin", "--push"]
-    with subprocess.Popen(command, stdout=subprocess.PIPE) as proc:
-        stdout = proc.stdout
-        assert stdout is not None, "stdout set in subprocess call"
-        github_url = stdout.readline().strip().decode("utf-8")
+    github_url = dict(u.split(", ", 1) for u in config.get_all("Project-URL", [])).get(
+        "Homepage"
+    )
+    assert github_url is not None, "Homepage URL not found in project metadata"
 
-    github_repo = parse(github_url)
-    assert github_repo.host == "github.com", "specified repo is not on GitHub"
+    github_repo = urlparse(github_url)
+    assert github_repo.netloc == "github.com", "specified repo is not on GitHub"
     return (release_version, github_repo)
 
 
-def get_package_info(manifest_abs_path, package_name) -> tuple[Version, Any]:
+def get_package_info(
+    manifest_abs_path: str, package_name: str
+) -> tuple[Version, ParseResult]:
     """
     Extract the version string and repo URL from Cargo.toml and return it.
 
@@ -159,7 +160,7 @@ def get_package_info(manifest_abs_path, package_name) -> tuple[Version, Any]:
     return (Version(version), github_repo)
 
 
-def verify_tag(tag):
+def verify_tag(tag: str) -> bool:
     """
     Verify that the designated tag exists and point at current HEAD.
 
@@ -175,7 +176,7 @@ def verify_tag(tag):
     return tag_str.decode("utf-8").rstrip() == tag
 
 
-def set_tag(tag, message):
+def set_tag(tag: str, message: str) -> None:
     """
     Set specified tag on HEAD if it does not already exist.
 
@@ -189,7 +190,7 @@ def set_tag(tag, message):
         )
 
 
-def get_branch():
+def get_branch() -> str:
     """
     Get the current git branch as a string.
 
@@ -204,8 +205,13 @@ def get_branch():
 
 
 def create_release(
-    repository, tag, release_version, changelog_url, *, additional_assets=None
-):
+    repository: ParseResult,
+    tag: str,
+    release_version: Version | str,
+    changelog_url: str,
+    *,
+    additional_assets: list[str] | None = None,
+) -> GitRelease:
     """
     Create draft release from a pre-established GitHub tag for this repository.
 
@@ -235,7 +241,9 @@ def create_release(
     return release
 
 
-def vendor(manifest_abs_path, release_version, *, filterer=False):
+def vendor(
+    manifest_abs_path: str, release_version: ReleaseVersion, *, filterer: bool = False
+) -> str:
     """
     Makes a vendor tarfile, suitable for uploading.
 
@@ -291,7 +299,9 @@ def vendor(manifest_abs_path, release_version, *, filterer=False):
     return vendor_tarfile_name
 
 
-def make_source_tarball(package_name, release_version, output_dir):
+def make_source_tarball(
+    package_name: str, release_version: ReleaseVersion | str, output_dir: str
+) -> str:
     """
     Make the source tarball and place it in the output dir.
 
@@ -323,7 +333,7 @@ def make_source_tarball(package_name, release_version, output_dir):
     return output_file
 
 
-def get_changelog_url(repository_url, branch):
+def get_changelog_url(repository_url: str, branch: str) -> str:
     """
     Get the URL for the changelog in the release message.
 
